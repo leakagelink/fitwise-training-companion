@@ -14,16 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_recommendations: {
+        Row: {
+          content: string
+          created_at: string
+          for_date: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          for_date?: string
+          id?: string
+          kind?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          for_date?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
+        Row: {
+          created_at: string
+          date: string
+          diet_followed: boolean
+          energy_level: number | null
+          id: string
+          sleep_hours: number | null
+          updated_at: string
+          user_id: string
+          water_ml: number
+          workout_done: boolean
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          diet_followed?: boolean
+          energy_level?: number | null
+          id?: string
+          sleep_hours?: number | null
+          updated_at?: string
+          user_id: string
+          water_ml?: number
+          workout_done?: boolean
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          diet_followed?: boolean
+          energy_level?: number | null
+          id?: string
+          sleep_hours?: number | null
+          updated_at?: string
+          user_id?: string
+          water_ml?: number
+          workout_done?: boolean
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          activity_level: string | null
+          age: number | null
+          allergies: string[]
+          created_at: string
+          diet_type: string | null
+          equipment: string[]
+          experience_level: string | null
+          food_preferences: string | null
+          full_name: string | null
+          gender: string | null
+          goal: string | null
+          health_consent_at: string | null
+          height_cm: number | null
+          id: string
+          medical_conditions: string | null
+          onboarded_at: string | null
+          target_weight_kg: number | null
+          trial_started_at: string
+          updated_at: string
+          weight_kg: number | null
+          workout_duration_min: number | null
+          workout_frequency: number | null
+          workout_location: string | null
+        }
+        Insert: {
+          activity_level?: string | null
+          age?: number | null
+          allergies?: string[]
+          created_at?: string
+          diet_type?: string | null
+          equipment?: string[]
+          experience_level?: string | null
+          food_preferences?: string | null
+          full_name?: string | null
+          gender?: string | null
+          goal?: string | null
+          health_consent_at?: string | null
+          height_cm?: number | null
+          id: string
+          medical_conditions?: string | null
+          onboarded_at?: string | null
+          target_weight_kg?: number | null
+          trial_started_at?: string
+          updated_at?: string
+          weight_kg?: number | null
+          workout_duration_min?: number | null
+          workout_frequency?: number | null
+          workout_location?: string | null
+        }
+        Update: {
+          activity_level?: string | null
+          age?: number | null
+          allergies?: string[]
+          created_at?: string
+          diet_type?: string | null
+          equipment?: string[]
+          experience_level?: string | null
+          food_preferences?: string | null
+          full_name?: string | null
+          gender?: string | null
+          goal?: string | null
+          health_consent_at?: string | null
+          height_cm?: number | null
+          id?: string
+          medical_conditions?: string | null
+          onboarded_at?: string | null
+          target_weight_kg?: number | null
+          trial_started_at?: string
+          updated_at?: string
+          weight_kg?: number | null
+          workout_duration_min?: number | null
+          workout_frequency?: number | null
+          workout_location?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weight_logs: {
+        Row: {
+          created_at: string
+          id: string
+          logged_on: string
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logged_on?: string
+          user_id: string
+          weight_kg: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logged_on?: string
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "coach" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +341,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "coach", "user"],
+    },
   },
 } as const
