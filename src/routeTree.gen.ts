@@ -21,6 +21,8 @@ import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/_app/profile'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
 import { Route as AuthenticatedAppWorkoutRouteImport } from './routes/_authenticated/_app/workout'
+import { Route as AuthenticatedAppExercisesIndexRouteImport } from './routes/_authenticated/_app/exercises.index'
+import { Route as AuthenticatedAppExercisesExerciseIdRouteImport } from './routes/_authenticated/_app/exercises.$exerciseId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +84,18 @@ const AuthenticatedAppWorkoutRoute = AuthenticatedAppWorkoutRouteImport.update({
   path: '/workout',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppExercisesIndexRoute =
+  AuthenticatedAppExercisesIndexRouteImport.update({
+    id: '/exercises/',
+    path: '/exercises/',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppExercisesExerciseIdRoute =
+  AuthenticatedAppExercisesExerciseIdRouteImport.update({
+    id: '/exercises/$exerciseId',
+    path: '/exercises/$exerciseId',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedAppProfileRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/workout': typeof AuthenticatedAppWorkoutRoute
+  '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -106,6 +122,8 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedAppProfileRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/workout': typeof AuthenticatedAppWorkoutRoute
+  '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/exercises': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,6 +139,8 @@ export interface FileRoutesById {
   '/_authenticated/_app/profile': typeof AuthenticatedAppProfileRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/_app/workout': typeof AuthenticatedAppWorkoutRoute
+  '/_authenticated/_app/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/_authenticated/_app/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,6 +155,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/progress'
     | '/workout'
+    | '/exercises/$exerciseId'
+    | '/exercises/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -147,6 +169,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/progress'
     | '/workout'
+    | '/exercises/$exerciseId'
+    | '/exercises'
   id:
     | '__root__'
     | '/'
@@ -161,6 +185,8 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/profile'
     | '/_authenticated/_app/progress'
     | '/_authenticated/_app/workout'
+    | '/_authenticated/_app/exercises/$exerciseId'
+    | '/_authenticated/_app/exercises/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -256,6 +282,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppWorkoutRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/exercises/': {
+      id: '/_authenticated/_app/exercises/'
+      path: '/exercises'
+      fullPath: '/exercises/'
+      preLoaderRoute: typeof AuthenticatedAppExercisesIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/exercises/$exerciseId': {
+      id: '/_authenticated/_app/exercises/$exerciseId'
+      path: '/exercises/$exerciseId'
+      fullPath: '/exercises/$exerciseId'
+      preLoaderRoute: typeof AuthenticatedAppExercisesExerciseIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
   }
 }
 
@@ -266,6 +306,8 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppWorkoutRoute: typeof AuthenticatedAppWorkoutRoute
+  AuthenticatedAppExercisesExerciseIdRoute: typeof AuthenticatedAppExercisesExerciseIdRoute
+  AuthenticatedAppExercisesIndexRoute: typeof AuthenticatedAppExercisesIndexRoute
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
@@ -275,6 +317,9 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppWorkoutRoute: AuthenticatedAppWorkoutRoute,
+  AuthenticatedAppExercisesExerciseIdRoute:
+    AuthenticatedAppExercisesExerciseIdRoute,
+  AuthenticatedAppExercisesIndexRoute: AuthenticatedAppExercisesIndexRoute,
 }
 
 const AuthenticatedAppRouteRouteWithChildren =

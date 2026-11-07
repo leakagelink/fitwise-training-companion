@@ -7,7 +7,15 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const userId = context.userId;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const ownedTables = ["daily_checkins", "weight_logs", "ai_recommendations"] as const;
+    // Children (days, day exercises, sets) cascade from plans/sessions.
+    const ownedTables = [
+      "daily_checkins",
+      "weight_logs",
+      "ai_recommendations",
+      "user_favorites",
+      "workout_sessions",
+      "workout_plans",
+    ] as const;
     for (const table of ownedTables) {
       const { error } = await supabaseAdmin.from(table).delete().eq("user_id", userId);
       if (error) throw new Error(`Could not delete ${table}: ${error.message}`);
