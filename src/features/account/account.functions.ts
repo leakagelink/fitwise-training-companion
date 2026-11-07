@@ -15,6 +15,9 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       "user_favorites",
       "workout_sessions",
       "workout_plans",
+      "meal_logs",
+      "grocery_items",
+      "nutrition_plans",
     ] as const;
     for (const table of ownedTables) {
       const { error } = await supabaseAdmin.from(table).delete().eq("user_id", userId);
