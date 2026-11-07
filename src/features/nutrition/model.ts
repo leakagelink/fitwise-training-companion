@@ -23,7 +23,7 @@ export function groceryForDays(days: Diet["days"], count: number) {
   const items = new Map<string, { ingredient: string; quantity: number; unit: string; category: string; per_meal: string }>();
   if (!days.length) return [];
   for (let d = 0; d < count; d++) {
-    for (const meal of days[d % days.length].meals) for (const i of meal.ingredients) {
+    for (const meal of days[d % days.length]?.meals ?? []) for (const i of meal.ingredients) {
       const key = `${i.name.trim().toLowerCase()}|${i.unit.trim().toLowerCase()}`;
       const current = items.get(key);
       if (current) current.quantity += i.quantity;
@@ -32,7 +32,7 @@ export function groceryForDays(days: Diet["days"], count: number) {
   }
   return [...items.values()].map(i => ({ ...i, quantity: Math.round(i.quantity * 10) / 10 }));
 }
-const allergens: Record<string, string[]> = {
+const allergens = {
   Dairy: ["milk", "yogurt", "yoghurt", "cheese", "paneer", "butter", "cream", "whey", "ghee"],
   Gluten: ["wheat", "bread", "pasta", "semolina", "barley", "rye", "roti", "chapati", "couscous"],
   Peanuts: ["peanut", "groundnut"], "Tree nuts": ["almond", "walnut", "cashew", "pistachio", "pecan", "hazelnut"],
@@ -40,7 +40,7 @@ const allergens: Record<string, string[]> = {
 };
 export function mealFitsDiet(meal: Meal, diet: string | null, allergies: string[]) {
   const text = [meal.name, ...meal.ingredients.map(i => i.name), ...meal.instructions, ...meal.alternatives].join(" ").toLowerCase();
-  const banned = allergies.flatMap(a => allergens[a] ?? [a.toLowerCase()]);
+  const banned = allergies.flatMap(a => allergens[a as keyof typeof allergens] ?? [a.toLowerCase()]);
   if (diet !== "non_vegetarian") banned.push("chicken", "beef", "pork", "lamb", "turkey", "bacon", "gelatin", ...allergens.Fish, ...allergens.Shellfish);
   if (diet === "vegan" || diet === "vegetarian") banned.push(...allergens.Eggs);
   if (diet === "vegan") banned.push(...allergens.Dairy, "honey");

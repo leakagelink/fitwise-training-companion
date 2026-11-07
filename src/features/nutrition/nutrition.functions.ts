@@ -45,7 +45,10 @@ STRICTLY exclude listed allergens, their derivatives and cross-contamination ris
       }
       if (!existing && result.days.some(d => d.meals.reduce((s, m) => s + m.nutrition.calories, 0) < 1200)) throw new Error("The plan was below the safe calorie floor. Nothing was saved.");
       if (existing) {
-        oldDays[data.day].meals[data.meal] = result.days[0].meals[0];
+        const targetDay = oldDays[data.day];
+        const replacement = result.days[0]?.meals[0];
+        if (!targetDay || !replacement) throw new Error("Replacement meal was incomplete");
+        targetDay.meals[data.meal] = replacement;
         const { error: updateError } = await supabase.from("nutrition_plans").update({ days: oldDays as unknown as Json }).eq("id", existing.id);
         if (updateError) throw new Error("Could not save replacement");
       } else {
