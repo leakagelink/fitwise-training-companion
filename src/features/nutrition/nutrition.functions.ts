@@ -45,11 +45,14 @@ STRICTLY exclude listed allergens, their derivatives and cross-contamination ris
       }
       if (!existing && result.days.some(d => d.meals.reduce((s, m) => s + m.nutrition.calories, 0) < 1200)) throw new Error("The plan was below the safe calorie floor. Nothing was saved.");
       if (existing) {
-        oldDays[data.day].meals[data.meal] = result.days[0].meals[0];
+        const targetDay = oldDays[data.day];
+        const replacement = result.days[0]?.meals[0];
+        if (!targetDay || !replacement) throw new Error("Replacement meal was incomplete");
+        targetDay.meals[data.meal] = { ...replacement, type: oldMeal?.type ?? replacement.type, time: oldMeal?.time ?? replacement.time };
         const { error: updateError } = await supabase.from("nutrition_plans").update({ days: oldDays as unknown as Json }).eq("id", existing.id);
         if (updateError) throw new Error("Could not save replacement");
       } else {
-        const { data: row, error: insertError } = await supabase.from("nutrition_plans").insert({ user_id: userId, start_date: data.startDate, duration_days: data.duration, name: result.name, preferences: data.preferences, days: result.days as unknown as Json, is_active: true }).select("id").single();
+        const { data: row, error: insertError } = await supabase.from("nutrition_plans").insert({ user_id: userId, start_date: data.startDate, duration_days: data.duration, name: result.name.split(" — ")[0]?.slice(0, 120) || "Your personalized diet plan", preferences: data.preferences, days: result.days as unknown as Json, is_active: true }).select("id").single();
         if (insertError || !row) throw new Error("Could not save diet plan");
         const { error: deactivateError } = await supabase.from("nutrition_plans").update({ is_active: false }).eq("user_id", userId).neq("id", row.id);
         if (deactivateError) throw new Error("Plan saved, but previous plan could not be archived");

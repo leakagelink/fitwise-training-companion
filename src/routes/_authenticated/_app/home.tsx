@@ -8,6 +8,8 @@ import { useProfile } from "@/hooks/use-profile";
 import { ActivityRings } from "@/components/activity-rings";
 import { dailyTargets, GOAL_LABELS, todayISO, trialStatus, workoutStreak, type Goal } from "@/lib/fitness";
 import { getDailyRecommendation } from "@/features/dashboard/recommendation.functions";
+import { mealLogsQuery } from "@/features/nutrition/queries";
+import { nutrientsSchema, totalNutrition } from "@/features/nutrition/model";
 
 export const Route = createFileRoute("/_authenticated/_app/home")({
   head: () => ({ meta: [{ title: "Home — Fitness AI" }, { name: "description", content: "Your daily Fitness AI dashboard." }, { property: "og:title", content: "Home — Fitness AI" }, { property: "og:description", content: "Your daily dashboard." }] }),
@@ -18,6 +20,8 @@ function Home() {
   const { data: p } = useProfile();
   const qc = useQueryClient();
   const today = todayISO();
+  const mealLogs = useQuery(mealLogsQuery(today));
+  const nutrition = totalNutrition((mealLogs.data ?? []).flatMap(l => { const n = nutrientsSchema.safeParse(l.nutrition); return n.success ? [n.data] : []; }));
   const recFn = useServerFn(getDailyRecommendation);
   const checkins = useQuery({
     queryKey: ["checkins"],
@@ -44,7 +48,8 @@ function Home() {
   const trial = trialStatus(p.trial_started_at);
 
   async function update(patch: { water_ml?: number; workout_done?: boolean; diet_followed?: boolean }) {
-    const { error } = await supabase.from("daily_checkins").upsert({ user_id: p!.id, date: today, water_ml: water, workout_done: todayRow?.workout_done ?? false, diet_followed: todayRow?.diet_followed ?? false, ...patch }, { onConflict: "user_id,date" });
+    if (!p) return;
+    const { error } = await supabase.from("daily_checkins").upsert({ user_id: p.id, date: today, water_ml: water, workout_done: todayRow?.workout_done ?? false, diet_followed: todayRow?.diet_followed ?? false, ...patch }, { onConflict: "user_id,date" });
     if (error) toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["checkins"] });
   }
@@ -95,10 +100,12 @@ function Home() {
       </Link>
 
       <section className="grid gap-3 sm:grid-cols-3">
-        <div className="card-premium p-4"><Flame className="size-5 text-energy" /><p className="mt-2 text-2xl font-bold">{t.calories}</p><p className="text-xs text-muted-foreground">est. daily kcal target</p></div>
-        <div className="card-premium p-4"><Utensils className="size-5 text-protein" /><p className="mt-2 text-2xl font-bold">{t.proteinG} g</p><p className="text-xs text-muted-foreground">est. daily protein target</p></div>
+        <div className="card-premium p-4"><Flame className="size-5 text-energy" /><p className="mt-2 text-2xl font-bold">{Math.round(nutrition.calories)} <span className="text-sm text-muted-foreground">/ {t.calories}</span></p><p className="text-xs text-muted-foreground">kcal consumed / est. target</p></div>
+        <div className="card-premium p-4"><Utensils className="size-5 text-protein" /><p className="mt-2 text-2xl font-bold">{Math.round(nutrition.protein)} <span className="text-sm text-muted-foreground">/ {t.proteinG} g</span></p><p className="text-xs text-muted-foreground">protein consumed / est. target</p></div>
         <div className="card-premium p-4"><Droplets className="size-5 text-water" /><p className="mt-2 text-2xl font-bold">{t.waterMl} ml</p><p className="text-xs text-muted-foreground">daily water target</p></div>
       </section>
+
+      <Link to="/nutrition" className="flex items-center justify-between border-y border-border py-4"><span><span className="block font-semibold">Today's nutrition</span><span className="text-sm text-muted-foreground">{mealLogs.data?.length ?? 0} meals logged · View your diet plan</span></span><Utensils className="size-5 text-energy" /></Link>
 
       <section className="grid grid-cols-3 gap-3">
         <button onClick={() => update({ water_ml: Math.min(15000, water + 250) })} className="rounded-2xl bg-secondary p-4 text-sm font-medium"><Droplets className="mx-auto mb-1 size-5 text-water" />+250 ml</button>
