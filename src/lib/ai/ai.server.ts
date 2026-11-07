@@ -1,5 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { Output, streamText } from "ai";
+import type { z } from "zod";
 
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
 
@@ -10,32 +11,49 @@ Never diagnose diseases or prescribe medication. For injuries, medical condition
 Do not fabricate scientific references. Never promise guaranteed results; present predictions as estimates.
 Be encouraging and never judgmental or shame-based.`;
 
-/** Streams a single-turn completion and returns the final text (server-only). */
-export async function generateCoachText(prompt: string, instructions: string): Promise<string> {
+function provider() {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("AI is not configured");
   const runIdFetch = createLovableAiGatewayRunIdFetch();
-  const provider = createOpenAI({
+  return createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",
     apiKey,
     headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
     fetch: runIdFetch.fetch,
   });
+}
+
+const providerOptions = {
+  openai: {
+    forceReasoning: true,
+    reasoningEffort: "low",
+    reasoningSummary: "auto",
+    store: false,
+    include: ["reasoning.encrypted_content"],
+  },
+} as const;
+
+/** Streams a single-turn completion and returns the final text (server-only). */
+export async function generateCoachText(prompt: string, instructions: string): Promise<string> {
   const result = streamText({
-    model: provider.responses(COACH_MODEL),
+    model: provider().responses(COACH_MODEL),
     instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
     prompt,
-    providerOptions: {
-      openai: {
-        forceReasoning: true,
-        reasoningEffort: "low",
-        reasoningSummary: "auto",
-        store: false,
-        include: ["reasoning.encrypted_content"],
-      },
-    },
+    providerOptions,
   });
   return (await result.text).trim();
+}
+
+/** Streams a structured (strict JSON schema) completion and returns the parsed object. */
+export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>): Promise<T> {
+  const result = streamText({
+    model: provider().responses(COACH_MODEL),
+    instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
+    prompt,
+    output: Output.object({ schema }),
+    providerOptions,
+  });
+  return (await result.output) as T;
 }
 
 export function friendlyAiError(error: unknown): string {
@@ -43,5 +61,5 @@ export function friendlyAiError(error: unknown): string {
   if (status === 402) return "AI credits are used up for this workspace. Please try again later.";
   if (status === 429) return "The coach is busy right now. Please try again in a minute.";
   if (status === 403) return "AI access is currently unavailable for this app.";
-  return "We couldn't generate a recommendation right now.";
+  return "The AI coach couldn't complete this request right now.";
 }
