@@ -115,17 +115,17 @@ function Session() {
     const { data: auth } = await supabase.auth.getUser();
     const last = exSets.at(-1);
     const { data, error } = await supabase.from("workout_sets").insert({ session_id: sessionId, user_id: auth.user!.id, exercise_id: exId, set_index: (last?.set_index ?? -1) + 1, reps: last?.reps ?? null, weight_kg: last?.weight_kg ?? null }).select("id, exercise_id, set_index, reps, weight_kg, completed, skipped").single();
-    if (error) return toast.error("Couldn't add set — check your connection");
+    if (error) { toast.error("Couldn't add set — check your connection"); return; }
     setSets((c) => [...c, data as SetRow]);
   }
 
   async function finish(status: "completed" | "abandoned") {
     setFinishing(true);
     await flush();
-    if (readPending() && Object.keys(readPending()).length) { setFinishing(false); return toast.error("Some sets haven't synced yet. Check your connection and try again."); }
+    if (readPending() && Object.keys(readPending()).length) { setFinishing(false); toast.error("Some sets haven't synced yet. Check your connection and try again."); return; }
     const { data: auth } = await supabase.auth.getUser();
     const { error } = await supabase.from("workout_sessions").update({ status, finished_at: new Date().toISOString() }).eq("id", sessionId);
-    if (error) { setFinishing(false); return toast.error(error.message); }
+    if (error) { setFinishing(false); toast.error(error.message); return; }
     if (status === "completed" && auth.user) {
       const today = todayISO();
       const { data: row } = await supabase.from("daily_checkins").select("id").eq("date", today).maybeSingle();
