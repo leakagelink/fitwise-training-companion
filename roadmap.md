@@ -7,5 +7,6 @@
 Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid access is fabricated.
 
 # Active workout correction
-- [ ] Start countdown automatically and verify pause, restart, and rest countdown
-- [ ] Show available start/peak positions; real exercise animations require licensed media
+- [x] Start countdown automatically and verify pause, restart, and rest countdown
+- [x] Show available start/peak positions honestly as still illustrations
+- [ ] Real exercise animations — blocked on licensed demonstration media; RepDB free tier includes stills only
