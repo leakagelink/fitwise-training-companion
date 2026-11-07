@@ -25,6 +25,17 @@ function Home() {
   });
   const rec = useQuery({ queryKey: ["rec", today], queryFn: () => recFn({ data: { date: today } }), staleTime: Infinity, retry: false });
 
+  const plan = useQuery({
+    queryKey: ["plan-days-home"],
+    queryFn: async () => {
+      const { data } = await supabase.from("workout_plans").select("workout_days(day_index, title, focus)").eq("is_active", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      const { count } = await supabase.from("workout_sessions").select("id", { count: "exact", head: true }).eq("status", "completed").not("day_id", "is", null);
+      const days = [...(data?.workout_days ?? [])].sort((a, b) => a.day_index - b.day_index);
+      return days.length ? days[(count ?? 0) % days.length] : null;
+    },
+  });
+  const nextDay = plan.data;
+
   if (!p) return null;
   const t = dailyTargets({ weightKg: Number(p.weight_kg), heightCm: Number(p.height_cm), age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
   const todayRow = checkins.data?.find((c) => c.date === today);
@@ -73,6 +84,15 @@ function Home() {
           <p className="text-muted-foreground">🔥 {streak}-day workout streak</p>
         </div>
       </section>
+
+      <Link to="/workout" className="card-premium flex items-center justify-between p-5">
+        <span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Today's workout</span>
+          <span className="mt-1 block font-semibold">{nextDay ? nextDay.title : "Generate your AI workout plan"}</span>
+          {nextDay?.focus && <span className="block text-sm text-muted-foreground">{nextDay.focus}</span>}
+        </span>
+        <Dumbbell className="size-6 text-primary" />
+      </Link>
 
       <section className="grid gap-3 sm:grid-cols-3">
         <div className="card-premium p-4"><Flame className="size-5 text-energy" /><p className="mt-2 text-2xl font-bold">{t.calories}</p><p className="text-xs text-muted-foreground">est. daily kcal target</p></div>

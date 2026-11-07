@@ -34,3 +34,5 @@ use the editor.
 - Signed-in pages live under src/routes/_authenticated/_app (onboarding gate in its beforeLoad) — one place enforces auth + onboarding.
 - Fitness math (targets, trial, streak) lives in src/lib/fitness.ts with tests in src/test — single source for rules shown in UI and enforced on the server.
 - Account deletion must delete every user-owned table without FK cascade in features/account — keep its table list in sync with new tables.
+- Exercise catalog is the RepDB free-tier JSON bundled at src/data/exercises.json (lazy-loaded on client); plans store its text ids and the server validates AI-chosen ids against it — license forbids redistribution, needs visible "Exercise data by RepDB" attribution.
+- Active workout set edits are written to localStorage (fa-pending-sets) and flushed to the database with retry — survives flaky network.

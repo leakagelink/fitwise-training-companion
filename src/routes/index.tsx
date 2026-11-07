@@ -104,6 +104,7 @@ function Landing() {
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl flex-wrap gap-5 px-5 text-sm text-muted-foreground">
           <span>© 2026 Fitness AI</span>
+          <a href="https://repdb.co" rel="nofollow noreferrer" target="_blank" className="hover:text-foreground">Exercise data by RepDB (repdb.co)</a>
           <Link to="/legal/$doc" params={{ doc: "privacy" }} className="hover:text-foreground">Privacy</Link>
           <Link to="/legal/$doc" params={{ doc: "terms" }} className="hover:text-foreground">Terms</Link>
           <Link to="/legal/$doc" params={{ doc: "disclaimer" }} className="hover:text-foreground">Disclaimer</Link>
