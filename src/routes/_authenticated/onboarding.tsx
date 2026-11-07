@@ -142,7 +142,7 @@ function Onboarding() {
   async function finish() {
     setSaving(true);
     const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) return;
+    if (!auth.user) { setSaving(false); return; }
     const first = !profile?.onboarded_at;
     const { error } = await supabase
       .from("profiles")
@@ -172,7 +172,7 @@ function Onboarding() {
       await supabase.from("weight_logs").insert({ user_id: auth.user.id, weight_kg: num(f.weight_kg) });
     }
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await qc.invalidateQueries();
     toast.success(first ? "Your profile is ready" : "Profile updated");
     navigate({ to: "/home" });
