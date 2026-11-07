@@ -10,3 +10,8 @@ Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid a
 - [x] Start countdown automatically and verify pause, restart, and rest countdown
 - [x] Show available start/peak positions honestly as still illustrations
 - [ ] Real exercise animations — blocked on licensed demonstration media; RepDB free tier includes stills only
+
+# Phase 4
+- [ ] Account-saved chat threads, streaming AI coach, contextual history and safety
+- [ ] Human coach scheduling, callback requests, booking status and cancellation
+- [ ] Account cleanup, tests and signed-in verification
