@@ -48,7 +48,7 @@ STRICTLY exclude listed allergens, their derivatives and cross-contamination ris
         const targetDay = oldDays[data.day];
         const replacement = result.days[0]?.meals[0];
         if (!targetDay || !replacement) throw new Error("Replacement meal was incomplete");
-        targetDay.meals[data.meal] = replacement;
+        targetDay.meals[data.meal] = { ...replacement, type: oldMeal?.type ?? replacement.type, time: oldMeal?.time ?? replacement.time };
         const { error: updateError } = await supabase.from("nutrition_plans").update({ days: oldDays as unknown as Json }).eq("id", existing.id);
         if (updateError) throw new Error("Could not save replacement");
       } else {
