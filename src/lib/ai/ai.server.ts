@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { Output, streamText } from "ai";
+import { NoObjectGeneratedError, Output, streamText } from "ai";
 import type { z } from "zod";
 
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
@@ -53,12 +53,27 @@ export async function generateCoachObject<T>(prompt: string, instructions: strin
     output: Output.object({ schema }),
     providerOptions,
   });
-  return (await result.output) as T;
+  try {
+    return (await result.output) as T;
+  } catch (error) {
+    if (NoObjectGeneratedError.isInstance(error) && error.text) {
+      try { return schema.parse(JSON.parse(error.text)); } catch { throw new Error("The coach returned an incomplete plan. Nothing was saved."); }
+    }
+    throw error;
+  }
 }
 
 export function friendlyAiError(error: unknown): string {
+  const body = (error as { responseBody?: string })?.responseBody;
+  if (body) {
+    try {
+      const parsed = JSON.parse(body);
+      const message = parsed.message ?? parsed.error?.message;
+      if (typeof message === "string") return message;
+    } catch { /* Not a JSON gateway response. */ }
+  }
   const status = (error as { statusCode?: number })?.statusCode;
-  if (status === 402) return "AI credits are used up for this workspace. Please try again later.";
+  if (status === 402) return "Insufficient AI credits. The workspace owner can add credits in Settings → Plans & credits.";
   if (status === 429) return "The coach is busy right now. Please try again in a minute.";
   if (status === 403) return "AI access is currently unavailable for this app.";
   return "The AI coach couldn't complete this request right now.";
