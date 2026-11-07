@@ -36,4 +36,5 @@ use the editor.
 - Account deletion must delete every user-owned table without FK cascade in features/account — keep its table list in sync with new tables.
 - Exercise catalog is the RepDB free-tier JSON bundled at src/data/exercises.json (lazy-loaded on client); plans store its text ids and the server validates AI-chosen ids against it — license forbids redistribution, needs visible "Exercise data by RepDB" attribution.
 - Active workout set edits are written to localStorage (fa-pending-sets) and flushed to the database with retry — survives flaky network.
+- Active workout clocks use elapsed wall time in features/workout/timer.ts; start/peak illustrations remain labeled stills rather than fabricated motion — accurate timing and honest exercise guidance.
 - Nutrition plans store validated recipe days as JSON, while consumed meals keep independent nutrient snapshots and groceries keep independent editable rows — later plan edits must not rewrite past intake or purchased lists.
