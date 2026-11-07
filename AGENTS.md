@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Features live in src/features/<area>; server functions in *.functions.ts with requireSupabaseAuth, AI helpers in src/lib/ai/*.server.ts — keeps secrets and model calls server-side.
+- Signed-in pages live under src/routes/_authenticated/_app (onboarding gate in its beforeLoad) — one place enforces auth + onboarding.
+- Fitness math (targets, trial, streak) lives in src/lib/fitness.ts with tests in src/test — single source for rules shown in UI and enforced on the server.
+- Account deletion must delete every user-owned table without FK cascade in features/account — keep its table list in sync with new tables.
