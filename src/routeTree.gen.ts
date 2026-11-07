@@ -23,6 +23,7 @@ import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppWorkoutRouteImport } from './routes/_authenticated/_app/workout'
 import { Route as AuthenticatedSessionSessionIdRouteImport } from './routes/_authenticated/session.$sessionId'
 import { Route as ApiPublicCoachRouteImport } from './routes/api/public/coach'
+import { Route as AuthenticatedAppCoachThreadIdRouteImport } from './routes/_authenticated/_app/coach_.$threadId'
 import { Route as AuthenticatedAppExercisesIndexRouteImport } from './routes/_authenticated/_app/exercises.index'
 import { Route as AuthenticatedAppExercisesExerciseIdRouteImport } from './routes/_authenticated/_app/exercises.$exerciseId'
 
@@ -97,6 +98,12 @@ const ApiPublicCoachRoute = ApiPublicCoachRouteImport.update({
   path: '/api/public/coach',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppCoachThreadIdRoute =
+  AuthenticatedAppCoachThreadIdRouteImport.update({
+    id: '/coach_/$threadId',
+    path: '/coach/$threadId',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppExercisesIndexRoute =
   AuthenticatedAppExercisesIndexRouteImport.update({
     id: '/exercises/',
@@ -123,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/workout': typeof AuthenticatedAppWorkoutRoute
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
+  '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -139,6 +147,7 @@ export interface FileRoutesByTo {
   '/workout': typeof AuthenticatedAppWorkoutRoute
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
+  '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/exercises': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -158,6 +167,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/workout': typeof AuthenticatedAppWorkoutRoute
   '/_authenticated/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
+  '/_authenticated/_app/coach_/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/_authenticated/_app/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/_authenticated/_app/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/workout'
     | '/session/$sessionId'
     | '/api/public/coach'
+    | '/coach/$threadId'
     | '/exercises/$exerciseId'
     | '/exercises/'
   fileRoutesByTo: FileRoutesByTo
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/workout'
     | '/session/$sessionId'
     | '/api/public/coach'
+    | '/coach/$threadId'
     | '/exercises/$exerciseId'
     | '/exercises'
   id:
@@ -210,6 +222,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/workout'
     | '/_authenticated/session/$sessionId'
     | '/api/public/coach'
+    | '/_authenticated/_app/coach_/$threadId'
     | '/_authenticated/_app/exercises/$exerciseId'
     | '/_authenticated/_app/exercises/'
   fileRoutesById: FileRoutesById
@@ -322,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCoachRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/_app/coach_/$threadId': {
+      id: '/_authenticated/_app/coach_/$threadId'
+      path: '/coach/$threadId'
+      fullPath: '/coach/$threadId'
+      preLoaderRoute: typeof AuthenticatedAppCoachThreadIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/exercises/': {
       id: '/_authenticated/_app/exercises/'
       path: '/exercises'
@@ -346,6 +366,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppWorkoutRoute: typeof AuthenticatedAppWorkoutRoute
+  AuthenticatedAppCoachThreadIdRoute: typeof AuthenticatedAppCoachThreadIdRoute
   AuthenticatedAppExercisesExerciseIdRoute: typeof AuthenticatedAppExercisesExerciseIdRoute
   AuthenticatedAppExercisesIndexRoute: typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -357,6 +378,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppWorkoutRoute: AuthenticatedAppWorkoutRoute,
+  AuthenticatedAppCoachThreadIdRoute: AuthenticatedAppCoachThreadIdRoute,
   AuthenticatedAppExercisesExerciseIdRoute:
     AuthenticatedAppExercisesExerciseIdRoute,
   AuthenticatedAppExercisesIndexRoute: AuthenticatedAppExercisesIndexRoute,
