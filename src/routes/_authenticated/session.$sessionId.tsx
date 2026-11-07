@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
-import { Check, ChevronLeft, ChevronRight, CloudOff, Loader2, Plus, SkipForward, Timer, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, CloudOff, Loader2, Plus, SkipForward, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,10 @@ import { todayISO } from "@/lib/fitness";
 import { human } from "@/features/exercise-library/catalog";
 import { useExerciseMap } from "@/features/exercise-library/use-exercises";
 import { ExerciseImage } from "@/features/exercise-library/exercise-image";
+import { WorkoutTimer } from "@/features/workout/workout-timer";
 
 export const Route = createFileRoute("/_authenticated/session/$sessionId")({
-  head: () => ({ meta: [{ title: "Active workout — Fitness AI" }, { name: "description", content: "Track your sets and rest." }, { property: "og:title", content: "Active workout — Fitness AI" }, { property: "og:description", content: "Track your workout." }] }),
+  head: () => ({ meta: [{ title: "Active workout — Fitness AI" }, { name: "description", content: "Track your sets, preparation countdown and rest." }, { property: "og:title", content: "Active workout — Fitness AI" }, { property: "og:description", content: "Track your workout with preparation and rest timers." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Session,
 });
 
@@ -31,7 +32,7 @@ function Session() {
   const { data: map } = useExerciseMap();
   const [sets, setSets] = useState<SetRow[]>([]);
   const [idx, setIdx] = useState(0);
-  const [rest, setRest] = useState(0);
+  const [restRequest, setRestRequest] = useState<{ seconds: number; token: number } | null>(null);
   const [offline, setOffline] = useState(false);
   const [finishing, setFinishing] = useState(false);
 
@@ -90,12 +91,6 @@ function Session() {
     return () => { clearInterval(t); window.removeEventListener("online", flush); };
   }, [flush]);
 
-  useEffect(() => {
-    if (rest <= 0) return;
-    const t = setTimeout(() => setRest((r) => r - 1), 1000);
-    return () => clearTimeout(t);
-  }, [rest]);
-
   function patch(id: string, p: Partial<SetRow>) {
     setSets((cur) => cur.map((s) => (s.id === id ? { ...s, ...p } : s)));
     const pending = readPending();
@@ -113,8 +108,9 @@ function Session() {
   async function addSet() {
     if (!exId) return;
     const { data: auth } = await supabase.auth.getUser();
+    if (!auth.user) { toast.error("Please sign in again"); return; }
     const last = exSets.at(-1);
-    const { data, error } = await supabase.from("workout_sets").insert({ session_id: sessionId, user_id: auth.user!.id, exercise_id: exId, set_index: (last?.set_index ?? -1) + 1, reps: last?.reps ?? null, weight_kg: last?.weight_kg ?? null }).select("id, exercise_id, set_index, reps, weight_kg, completed, skipped").single();
+    const { data, error } = await supabase.from("workout_sets").insert({ session_id: sessionId, user_id: auth.user.id, exercise_id: exId, set_index: (last?.set_index ?? -1) + 1, reps: last?.reps ?? null, weight_kg: last?.weight_kg ?? null }).select("id, exercise_id, set_index, reps, weight_kg, completed, skipped").single();
     if (error) { toast.error("Couldn't add set — check your connection"); return; }
     setSets((c) => [...c, data as SetRow]);
   }
@@ -144,7 +140,7 @@ function Session() {
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background px-5 pb-32 pt-5">
       <div className="flex items-center justify-between">
-        <button onClick={() => finish("abandoned")} aria-label="Exit workout" className="grid size-10 place-items-center rounded-full bg-secondary"><X className="size-5" /></button>
+        <Button variant="secondary" size="icon" onClick={() => finish("abandoned")} aria-label="Exit workout" className="size-10 rounded-full"><X className="size-5" /></Button>
         <div className="text-center">
           <p className="text-sm font-semibold">{q.data.session.title}</p>
           <p className="text-xs text-muted-foreground">Exercise {idx + 1} of {exerciseIds.length}</p>
@@ -157,10 +153,15 @@ function Session() {
 
       <AnimatePresence mode="wait">
         <motion.div key={exId} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="mt-6">
-          {ex && <ExerciseImage file={ex.peak ?? ex.start} alt={ex.name} className="mx-auto max-w-xs" />}
+          {ex && <div className="grid grid-cols-2 gap-2">
+            <figure className={cn(!ex.peak && "col-span-2 mx-auto w-full max-w-xs")}><ExerciseImage file={ex.start} alt={`${ex.name} — start position`} /><figcaption className="mt-1 text-center text-xs text-muted-foreground">Start position</figcaption></figure>
+            {ex.peak && <figure><ExerciseImage file={ex.peak} alt={`${ex.name} — peak position`} /><figcaption className="mt-1 text-center text-xs text-muted-foreground">Peak position</figcaption></figure>}
+          </div>}
           <h1 className="mt-4 text-2xl font-bold">{ex?.name}</h1>
           <p className="text-sm text-muted-foreground">{ex?.primary.map(human).join(", ")}</p>
-          {prev.data?.get(exId ?? "") && <p className="mt-1 text-xs text-muted-foreground">Last time: {prev.data.get(exId!)}</p>}
+          {prev.data?.get(exId ?? "") && <p className="mt-1 text-xs text-muted-foreground">Last time: {prev.data.get(exId ?? "")}</p>}
+
+          {exId && <WorkoutTimer key={exId} restRequest={restRequest?.token === idx ? restRequest : null} />}
 
           <div className="mt-5 space-y-2">
             <div className="grid grid-cols-[2rem_1fr_1fr_3rem] gap-2 px-1 text-xs text-muted-foreground"><span>Set</span><span>Reps</span><span>kg</span><span /></div>
@@ -169,7 +170,7 @@ function Session() {
                 <span className="text-center font-semibold">{i + 1}</span>
                 <input type="number" inputMode="numeric" min={0} max={500} value={s.reps ?? ""} onChange={(e) => patch(s.id, { reps: e.target.value === "" ? null : Math.min(500, Math.max(0, Number(e.target.value))) })} className="h-10 rounded-xl bg-background px-3" aria-label={`Set ${i + 1} reps`} />
                 <input type="number" inputMode="decimal" step="0.5" min={0} max={1000} value={s.weight_kg ?? ""} onChange={(e) => patch(s.id, { weight_kg: e.target.value === "" ? null : Math.min(1000, Math.max(0, Number(e.target.value))) })} className="h-10 rounded-xl bg-background px-3" aria-label={`Set ${i + 1} weight`} />
-                <button onClick={() => { const c = !s.completed; patch(s.id, { completed: c, skipped: false }); if (c) setRest(restSec); }} aria-label="Complete set" className={cn("grid size-10 place-items-center rounded-xl", s.completed ? "bg-primary text-primary-foreground" : "bg-background")}><Check className="size-5" /></button>
+                <Button variant={s.completed ? "default" : "secondary"} size="icon" onClick={() => { const c = !s.completed; patch(s.id, { completed: c, skipped: false }); if (c) setRestRequest({ seconds: restSec, token: idx }); }} aria-label={s.completed ? `Undo set ${i + 1}` : `Complete set ${i + 1}`} className="size-10 rounded-xl"><Check className="size-5" /></Button>
               </div>
             ))}
           </div>
@@ -179,16 +180,6 @@ function Session() {
           </div>
         </motion.div>
       </AnimatePresence>
-
-      {rest > 0 && (
-        <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed inset-x-5 bottom-24 mx-auto flex max-w-md items-center justify-between rounded-2xl bg-primary p-4 text-primary-foreground shadow-glow">
-          <span className="flex items-center gap-2 font-semibold"><Timer className="size-5" /> Rest {Math.floor(rest / 60)}:{String(rest % 60).padStart(2, "0")}</span>
-          <span className="flex gap-2">
-            <button onClick={() => setRest(rest + 15)} className="rounded-full bg-primary-foreground/15 px-3 py-1 text-sm">+15s</button>
-            <button onClick={() => setRest(0)} className="rounded-full bg-primary-foreground/15 px-3 py-1 text-sm">Skip</button>
-          </span>
-        </motion.div>
-      )}
 
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 p-4 backdrop-blur" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
         <div className="mx-auto flex max-w-lg gap-2">
