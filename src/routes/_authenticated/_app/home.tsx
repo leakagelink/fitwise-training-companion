@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Droplets, Dumbbell, Flame, Sparkles as _s, UserRound, Utensils } from "lucide-react";
+import { Droplets, Dumbbell, Flame, UserRound, Utensils } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
