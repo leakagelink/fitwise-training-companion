@@ -80,6 +80,128 @@ export type Database = {
         }
         Relationships: []
       }
+      grocery_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          ingredient: string
+          per_meal: string
+          period_days: number
+          plan_id: string | null
+          purchased: boolean
+          quantity: number
+          unit: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          ingredient: string
+          per_meal?: string
+          period_days?: number
+          plan_id?: string | null
+          purchased?: boolean
+          quantity?: number
+          unit?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          ingredient?: string
+          per_meal?: string
+          period_days?: number
+          plan_id?: string | null
+          purchased?: boolean
+          quantity?: number
+          unit?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grocery_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "nutrition_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_logs: {
+        Row: {
+          created_at: string
+          id: string
+          logged_on: string
+          meal_key: string | null
+          meal_type: string
+          name: string
+          nutrition: Json
+          servings: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logged_on: string
+          meal_key?: string | null
+          meal_type: string
+          name: string
+          nutrition: Json
+          servings?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logged_on?: string
+          meal_key?: string | null
+          meal_type?: string
+          name?: string
+          nutrition?: Json
+          servings?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      nutrition_plans: {
+        Row: {
+          created_at: string
+          days: Json
+          duration_days: number
+          id: string
+          is_active: boolean
+          name: string
+          preferences: string
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days?: Json
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          preferences?: string
+          start_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: Json
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          preferences?: string
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           activity_level: string | null

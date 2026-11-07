@@ -1,0 +1,18 @@
+CREATE TABLE public.nutrition_plans (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL, name text NOT NULL DEFAULT 'Personal diet plan', start_date date NOT NULL, duration_days integer NOT NULL DEFAULT 3, preferences text NOT NULL DEFAULT '', days jsonb NOT NULL DEFAULT '[]'::jsonb, is_active boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.nutrition_plans TO authenticated;
+GRANT ALL ON public.nutrition_plans TO service_role;
+ALTER TABLE public.nutrition_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY nutrition_owner ON public.nutrition_plans FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE TABLE public.meal_logs (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL, logged_on date NOT NULL, meal_key text, name text NOT NULL, meal_type text NOT NULL, servings numeric NOT NULL DEFAULT 1, nutrition jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(user_id, logged_on, meal_key));
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.meal_logs TO authenticated;
+GRANT ALL ON public.meal_logs TO service_role;
+ALTER TABLE public.meal_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY meal_log_owner ON public.meal_logs FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE TABLE public.grocery_items (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL, plan_id uuid REFERENCES public.nutrition_plans(id) ON DELETE CASCADE, ingredient text NOT NULL, quantity numeric NOT NULL DEFAULT 1, unit text NOT NULL DEFAULT 'g', category text NOT NULL DEFAULT 'Other', per_meal text NOT NULL DEFAULT '', purchased boolean NOT NULL DEFAULT false, period_days integer NOT NULL DEFAULT 7, created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.grocery_items TO authenticated;
+GRANT ALL ON public.grocery_items TO service_role;
+ALTER TABLE public.grocery_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY grocery_owner ON public.grocery_items FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE INDEX nutrition_user ON public.nutrition_plans(user_id, created_at DESC);
+CREATE INDEX meal_logs_date ON public.meal_logs(user_id, logged_on);
+CREATE INDEX grocery_user ON public.grocery_items(user_id);

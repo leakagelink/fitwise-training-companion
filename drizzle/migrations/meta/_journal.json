@@ -15,6 +15,13 @@
       "when": 1794026375953,
       "tag": "0001_workouts",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794029174407,
+      "tag": "0002_nutrition_plans_logs_groceries",
+      "breakpoints": true
     }
   ]
 }
