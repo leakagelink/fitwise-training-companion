@@ -41,6 +41,172 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_bookings: {
+        Row: {
+          contact: string
+          created_at: string
+          id: string
+          kind: string
+          notes: string
+          slot_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          contact: string
+          created_at?: string
+          id?: string
+          kind: string
+          notes?: string
+          slot_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          contact?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          notes?: string
+          slot_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "coach_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coach_messages: {
+        Row: {
+          created_at: string
+          id: string
+          parts: Json
+          role: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parts: Json
+          role: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parts?: Json
+          role?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_messages_thread_id_user_id_fkey"
+            columns: ["thread_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "coach_threads"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      coach_profiles: {
+        Row: {
+          bio: string
+          experience_years: number
+          is_active: boolean
+          name: string
+          photo_url: string
+          specialization: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string
+          experience_years?: number
+          is_active?: boolean
+          name: string
+          photo_url?: string
+          specialization?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string
+          experience_years?: number
+          is_active?: boolean
+          name?: string
+          photo_url?: string
+          specialization?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      coach_slots: {
+        Row: {
+          coach_name: string
+          coach_user_id: string
+          duration_min: number
+          id: string
+          is_available: boolean
+          kind: string
+          starts_at: string
+        }
+        Insert: {
+          coach_name: string
+          coach_user_id: string
+          duration_min?: number
+          id?: string
+          is_available?: boolean
+          kind: string
+          starts_at: string
+        }
+        Update: {
+          coach_name?: string
+          coach_user_id?: string
+          duration_min?: number
+          id?: string
+          is_available?: boolean
+          kind?: string
+          starts_at?: string
+        }
+        Relationships: []
+      }
+      coach_threads: {
+        Row: {
+          created_at: string
+          generation_id: string | null
+          generation_started_at: string | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          generation_id?: string | null
+          generation_started_at?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          generation_id?: string | null
+          generation_started_at?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_checkins: {
         Row: {
           created_at: string
