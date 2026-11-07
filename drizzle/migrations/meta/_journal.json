@@ -29,6 +29,13 @@
       "when": 1794030320270,
       "tag": "0003_coach_threads_and_bookings",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794030356108,
+      "tag": "0004_coach_profiles",
+      "breakpoints": true
     }
   ]
 }

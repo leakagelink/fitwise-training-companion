@@ -1,0 +1,5 @@
+CREATE TABLE public.coach_profiles (user_id uuid PRIMARY KEY, name text NOT NULL, photo_url text NOT NULL DEFAULT '', specialization text NOT NULL DEFAULT '', experience_years integer NOT NULL DEFAULT 0 CHECK(experience_years BETWEEN 0 AND 70), bio text NOT NULL DEFAULT '', is_active boolean NOT NULL DEFAULT true);
+GRANT SELECT,INSERT,UPDATE,DELETE ON public.coach_profiles TO authenticated; GRANT ALL ON public.coach_profiles TO service_role;
+ALTER TABLE public.coach_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Read coach profiles" ON public.coach_profiles FOR SELECT TO authenticated USING(is_active OR user_id=auth.uid() OR public.has_role(auth.uid(),'admin'));
+CREATE POLICY "Manage coach profiles" ON public.coach_profiles FOR ALL TO authenticated USING(public.has_role(auth.uid(),'admin') OR (user_id=auth.uid() AND public.has_role(auth.uid(),'coach'))) WITH CHECK(public.has_role(auth.uid(),'admin') OR (user_id=auth.uid() AND public.has_role(auth.uid(),'coach')));

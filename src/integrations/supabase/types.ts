@@ -117,6 +117,36 @@ export type Database = {
           },
         ]
       }
+      coach_profiles: {
+        Row: {
+          bio: string
+          experience_years: number
+          is_active: boolean
+          name: string
+          photo_url: string
+          specialization: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string
+          experience_years?: number
+          is_active?: boolean
+          name: string
+          photo_url?: string
+          specialization?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string
+          experience_years?: number
+          is_active?: boolean
+          name?: string
+          photo_url?: string
+          specialization?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coach_slots: {
         Row: {
           coach_name: string
