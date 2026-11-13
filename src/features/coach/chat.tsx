@@ -143,7 +143,7 @@ export function CoachChat({
     }
   }
   return (
-    <div className="flex min-w-0 flex-col">
+    <div data-thread-id={threadId} className="flex min-w-0 flex-col">
       <Conversation className="h-[42dvh] min-h-64 flex-none lg:h-[50dvh]">
         <ConversationContent className="gap-6 px-0">
           {!messages.length && (

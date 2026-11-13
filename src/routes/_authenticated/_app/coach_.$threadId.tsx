@@ -5,6 +5,7 @@ import { CoachChat } from "@/features/coach/chat";
 import { coachQuery, threadQuery } from "@/features/coach/queries";
 import { toMessage } from "@/features/coach/model";
 export const Route = createFileRoute("/_authenticated/_app/coach_/$threadId")({
+  remountDeps: ({ params }) => params.threadId,
   head: () => ({
     meta: [
       { title: "Coach conversation — Fitness AI" },
@@ -30,7 +31,7 @@ function Thread() {
   const { threadId } = Route.useParams();
   const { data } = useSuspenseQuery(threadQuery(threadId));
   return (
-    <CoachShell threadId={threadId}>
+    <CoachShell key={threadId} threadId={threadId}>
       <CoachChat
         key={threadId}
         threadId={threadId}

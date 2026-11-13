@@ -27,8 +27,9 @@ export function CoachShell({
     setBusy(true);
     try {
       const row = await create();
-      await qc.invalidateQueries({ queryKey: ["coach"] });
+      if (threadId) await navigate({ to: "/coach" });
       await navigate({ to: "/coach/$threadId", params: { threadId: row.id } });
+      await qc.invalidateQueries({ queryKey: ["coach"] });
     } catch {
       toast.error("Could not create conversation");
     } finally {

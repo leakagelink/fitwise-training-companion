@@ -12,6 +12,7 @@ Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid a
 - [ ] Real exercise animations — blocked on licensed demonstration media; RepDB free tier includes stills only
 
 # Phase 4
-- [ ] Account-saved chat threads, streaming AI coach, contextual history and safety
-- [ ] Human coach scheduling, callback requests, booking status and cancellation
-- [ ] Account cleanup, tests and signed-in verification
+- [x] Account-saved chat threads, streaming AI coach, contextual history and safety
+- [x] Human coach scheduling, callback requests, booking status and cancellation
+- [x] Account cleanup, tests and signed-in chat/callback verification
+- [ ] Live coach appointment confirmation verification — needs an authorized coach/admin and real availability; management page is implemented

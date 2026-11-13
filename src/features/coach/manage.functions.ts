@@ -63,15 +63,13 @@ export const addCoachSlot = createServerFn({ method: "POST" })
       .eq("user_id", context.userId)
       .single();
     if (profile.error) throw new Error("Save your coach profile first");
-    const { error } = await context.supabase
-      .from("coach_slots")
-      .insert({
-        coach_user_id: context.userId,
-        coach_name: profile.data.name,
-        kind: data.kind,
-        starts_at: data.startsAt,
-        duration_min: data.duration,
-      });
+    const { error } = await context.supabase.from("coach_slots").insert({
+      coach_user_id: context.userId,
+      coach_name: profile.data.name,
+      kind: data.kind,
+      starts_at: data.startsAt,
+      duration_min: data.duration,
+    });
     if (error) throw new Error("Could not add appointment availability");
     return { ok: true };
   });
