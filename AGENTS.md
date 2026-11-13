@@ -38,3 +38,5 @@ use the editor.
 - Active workout set edits are written to localStorage (fa-pending-sets) and flushed to the database with retry — survives flaky network.
 - Active workout clocks use elapsed wall time in features/workout/timer.ts; start/peak illustrations remain labeled stills rather than fabricated motion — accurate timing and honest exercise guidance.
 - Nutrition plans store validated recipe days as JSON, while consumed meals keep independent nutrient snapshots and groceries keep independent editable rows — later plan edits must not rewrite past intake or purchased lists.
+- Coach threads use route-derived IDs and persisted UIMessage parts; authenticated raw streaming runs through the Gateway SDK with one durable generation lock per thread — prevents cross-thread history and duplicate simultaneous answers.
+- Human-coach booking status is backend-controlled with protected role checks and unique active slots; requests remain pending until staff confirm — prevents false confirmations and double booking.

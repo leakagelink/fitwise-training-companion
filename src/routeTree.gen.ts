@@ -24,6 +24,7 @@ import { Route as AuthenticatedAppWorkoutRouteImport } from './routes/_authentic
 import { Route as AuthenticatedSessionSessionIdRouteImport } from './routes/_authenticated/session.$sessionId'
 import { Route as ApiPublicCoachRouteImport } from './routes/api/public/coach'
 import { Route as AuthenticatedAppCoachThreadIdRouteImport } from './routes/_authenticated/_app/coach_.$threadId'
+import { Route as AuthenticatedAppCoachManageRouteImport } from './routes/_authenticated/_app/coach_.manage'
 import { Route as AuthenticatedAppExercisesIndexRouteImport } from './routes/_authenticated/_app/exercises.index'
 import { Route as AuthenticatedAppExercisesExerciseIdRouteImport } from './routes/_authenticated/_app/exercises.$exerciseId'
 
@@ -104,6 +105,12 @@ const AuthenticatedAppCoachThreadIdRoute =
     path: '/coach/$threadId',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppCoachManageRoute =
+  AuthenticatedAppCoachManageRouteImport.update({
+    id: '/coach_/manage',
+    path: '/coach/manage',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppExercisesIndexRoute =
   AuthenticatedAppExercisesIndexRouteImport.update({
     id: '/exercises/',
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
   '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
+  '/coach/manage': typeof AuthenticatedAppCoachManageRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -148,6 +156,7 @@ export interface FileRoutesByTo {
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
   '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
+  '/coach/manage': typeof AuthenticatedAppCoachManageRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/exercises': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -168,6 +177,7 @@ export interface FileRoutesById {
   '/_authenticated/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
   '/_authenticated/_app/coach_/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
+  '/_authenticated/_app/coach_/manage': typeof AuthenticatedAppCoachManageRoute
   '/_authenticated/_app/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
   '/_authenticated/_app/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/session/$sessionId'
     | '/api/public/coach'
     | '/coach/$threadId'
+    | '/coach/manage'
     | '/exercises/$exerciseId'
     | '/exercises/'
   fileRoutesByTo: FileRoutesByTo
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/session/$sessionId'
     | '/api/public/coach'
     | '/coach/$threadId'
+    | '/coach/manage'
     | '/exercises/$exerciseId'
     | '/exercises'
   id:
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
     | '/_authenticated/session/$sessionId'
     | '/api/public/coach'
     | '/_authenticated/_app/coach_/$threadId'
+    | '/_authenticated/_app/coach_/manage'
     | '/_authenticated/_app/exercises/$exerciseId'
     | '/_authenticated/_app/exercises/'
   fileRoutesById: FileRoutesById
@@ -342,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCoachThreadIdRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/coach_/manage': {
+      id: '/_authenticated/_app/coach_/manage'
+      path: '/coach/manage'
+      fullPath: '/coach/manage'
+      preLoaderRoute: typeof AuthenticatedAppCoachManageRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/exercises/': {
       id: '/_authenticated/_app/exercises/'
       path: '/exercises'
@@ -367,6 +387,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppWorkoutRoute: typeof AuthenticatedAppWorkoutRoute
   AuthenticatedAppCoachThreadIdRoute: typeof AuthenticatedAppCoachThreadIdRoute
+  AuthenticatedAppCoachManageRoute: typeof AuthenticatedAppCoachManageRoute
   AuthenticatedAppExercisesExerciseIdRoute: typeof AuthenticatedAppExercisesExerciseIdRoute
   AuthenticatedAppExercisesIndexRoute: typeof AuthenticatedAppExercisesIndexRoute
 }
@@ -379,6 +400,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppWorkoutRoute: AuthenticatedAppWorkoutRoute,
   AuthenticatedAppCoachThreadIdRoute: AuthenticatedAppCoachThreadIdRoute,
+  AuthenticatedAppCoachManageRoute: AuthenticatedAppCoachManageRoute,
   AuthenticatedAppExercisesExerciseIdRoute:
     AuthenticatedAppExercisesExerciseIdRoute,
   AuthenticatedAppExercisesIndexRoute: AuthenticatedAppExercisesIndexRoute,

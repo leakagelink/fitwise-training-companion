@@ -18,11 +18,20 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       "meal_logs",
       "grocery_items",
       "nutrition_plans",
+      "coach_bookings",
+      "coach_threads",
+      "coach_profiles",
     ] as const;
     for (const table of ownedTables) {
       const { error } = await supabaseAdmin.from(table).delete().eq("user_id", userId);
       if (error) throw new Error(`Could not delete ${table}: ${error.message}`);
     }
+    // Coach slots with existing bookings retain only the minimum historical reference.
+    const { error: slotError } = await supabaseAdmin
+      .from("coach_slots")
+      .update({ is_available: false, coach_name: "Former coach" })
+      .eq("coach_user_id", userId);
+    if (slotError) throw new Error("Could not remove coach availability");
     // profiles and user_roles cascade from auth.users.
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
     if (error) throw new Error(error.message);
