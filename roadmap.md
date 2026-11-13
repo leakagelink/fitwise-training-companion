@@ -18,7 +18,8 @@ Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid a
 - [ ] Live coach appointment confirmation verification — needs an authorized coach/admin and real availability; management page is implemented
 
 # Phase 6
-- [ ] Digital subscription payments — awaiting user confirmation to enable Paddle test payments; prices collected after enabling
+- [x] Enable built-in test payments with user confirmation
+- [ ] Create digital subscription products and checkout — awaiting plan prices and currency from user; live payments require seller verification
 - [ ] Server-enforced paid access and weekly/monthly AI nutrition plans
 - [ ] Protected admin area for users, subscriptions, coaches/bookings, content and AI settings
 - [ ] Analytics based on actual app records
