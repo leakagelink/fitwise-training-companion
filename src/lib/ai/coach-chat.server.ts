@@ -93,9 +93,9 @@ export async function handleCoachChat(request: Request): Promise<Response> {
       .limit(20),
     supabase
       .from("meal_logs")
-      .select("name,date,nutrition")
+      .select("name,logged_on,nutrition")
       .eq("user_id", userId)
-      .order("date", { ascending: false })
+      .order("logged_on", { ascending: false })
       .limit(28),
     supabase
       .from("daily_checkins")
