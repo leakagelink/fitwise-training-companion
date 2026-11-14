@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/_app")({
   beforeLoad: async ({ context }) => {
-    const profile = await context.queryClient.ensureQueryData({ ...profileQuery, revalidateIfStale: true });
+    const profile = await context.queryClient.ensureQueryData({
+      ...profileQuery,
+      revalidateIfStale: true,
+    });
     if (!profile.onboarded_at) throw redirect({ to: "/onboarding" });
   },
   component: AppShell,
@@ -65,7 +68,12 @@ function AppShell() {
             >
               {({ isActive }) => (
                 <>
-                  <span className={cn("grid h-8 w-12 place-items-center rounded-full transition-colors", isActive && "bg-accent")}>
+                  <span
+                    className={cn(
+                      "grid h-8 w-12 place-items-center rounded-full transition-colors",
+                      isActive && "bg-accent",
+                    )}
+                  >
                     <n.icon className="size-5" />
                   </span>
                   {n.label}

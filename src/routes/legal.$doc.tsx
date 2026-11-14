@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 const DOCS: Record<string, { title: string; body: string[] }> = {
   privacy: {
@@ -41,6 +42,7 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
 };
 
 export const Route = createFileRoute("/legal/$doc")({
+  staleTime: Infinity,
   loader: ({ params }) => {
     const doc = DOCS[params.doc];
     if (!doc) throw notFound();
@@ -57,13 +59,18 @@ export const Route = createFileRoute("/legal/$doc")({
     ],
   }),
   component: LegalPage,
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 function LegalPage() {
   const doc = Route.useLoaderData();
   return (
     <div className="mx-auto max-w-2xl px-5 py-10">
-      <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+      <Link
+        to="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" /> Back
       </Link>
       <h1 className="mt-6 text-3xl font-bold">{doc.title}</h1>

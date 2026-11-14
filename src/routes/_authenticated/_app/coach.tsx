@@ -20,7 +20,8 @@ export const Route = createFileRoute("/_authenticated/_app/coach")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData({ ...coachQuery, revalidateIfStale: true }),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({ ...coachQuery, revalidateIfStale: true }),
   errorComponent: ScreenLoadError,
   notFoundComponent: ScreenNotFound,
   component: () => <CoachShell />,

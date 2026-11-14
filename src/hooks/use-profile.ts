@@ -6,7 +6,11 @@ export const profileQuery = queryOptions({
   queryFn: async () => {
     const { data: auth } = await supabase.auth.getSession();
     if (!auth.session?.user) throw new Error("Not signed in");
-    const { data, error } = await supabase.from("profiles").select("*").eq("id", auth.session.user.id).single();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", auth.session.user.id)
+      .single();
     if (error) throw error;
     return data;
   },

@@ -1,7 +1,7 @@
 # Screen loading and caching
-- [ ] Add shared in-memory screen caching, navigation preloading and background refresh
-- [ ] Keep saved data consistent across screens and clear private caches on account changes
-- [ ] Verify repeat signed-in navigation, refresh and cache safety tests
+- [x] Add shared in-memory screen caching, navigation preloading and background refresh
+- [x] Keep saved data consistent across screens and clear private caches on account changes
+- [x] Verify repeat signed-in navigation, refresh and cache safety tests
 
 # Phase 3
 - [x] Personalized daily/three-day diet plans and meal replacements respecting profile and trial

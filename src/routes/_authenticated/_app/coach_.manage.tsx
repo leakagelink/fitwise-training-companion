@@ -27,7 +27,8 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/manage")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData({ ...managementQuery, revalidateIfStale: true }),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({ ...managementQuery, revalidateIfStale: true }),
   errorComponent: ScreenLoadError,
   notFoundComponent: ScreenNotFound,
   component: Management,

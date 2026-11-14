@@ -23,7 +23,10 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/$threadId")({
   loader: async ({ context, params }) => {
     await Promise.all([
       context.queryClient.ensureQueryData({ ...coachQuery, revalidateIfStale: true }),
-      context.queryClient.ensureQueryData({ ...threadQuery(params.threadId), revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({
+        ...threadQuery(params.threadId),
+        revalidateIfStale: true,
+      }),
     ]);
   },
   component: Thread,
