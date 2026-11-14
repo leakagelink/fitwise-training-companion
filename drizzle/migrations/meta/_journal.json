@@ -43,6 +43,13 @@
       "when": 1794633655442,
       "tag": "0005_restrict_coach_slots_read",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794634329091,
+      "tag": "0006_body_measurements",
+      "breakpoints": true
     }
   ]
 }

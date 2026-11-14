@@ -41,6 +41,42 @@ export type Database = {
         }
         Relationships: []
       }
+      body_measurements: {
+        Row: {
+          arm_cm: number | null
+          body_fat_pct: number | null
+          chest_cm: number | null
+          created_at: string
+          hips_cm: number | null
+          id: string
+          measured_on: string
+          user_id: string
+          waist_cm: number | null
+        }
+        Insert: {
+          arm_cm?: number | null
+          body_fat_pct?: number | null
+          chest_cm?: number | null
+          created_at?: string
+          hips_cm?: number | null
+          id?: string
+          measured_on?: string
+          user_id: string
+          waist_cm?: number | null
+        }
+        Update: {
+          arm_cm?: number | null
+          body_fat_pct?: number | null
+          chest_cm?: number | null
+          created_at?: string
+          hips_cm?: number | null
+          id?: string
+          measured_on?: string
+          user_id?: string
+          waist_cm?: number | null
+        }
+        Relationships: []
+      }
       coach_bookings: {
         Row: {
           contact: string

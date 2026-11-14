@@ -11,6 +11,7 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     const ownedTables = [
       "daily_checkins",
       "weight_logs",
+      "body_measurements",
       "ai_recommendations",
       "user_favorites",
       "workout_sessions",

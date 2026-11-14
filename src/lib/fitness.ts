@@ -91,3 +91,27 @@ export function todayISO(date: Date = new Date()): string {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+/** Finished workouts per Monday-start week, oldest first, for the last `weeks` weeks ending with today's week. */
+export function weeklyWorkoutCounts(dates: string[], today: string, weeks = 8) {
+  const t = new Date(today + "T00:00:00Z");
+  const monday = new Date(t);
+  monday.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7));
+  const out: { weekStart: string; count: number }[] = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    const s = new Date(monday);
+    s.setUTCDate(monday.getUTCDate() - i * 7);
+    const e = new Date(s);
+    e.setUTCDate(s.getUTCDate() + 7);
+    const a = s.toISOString().slice(0, 10), b = e.toISOString().slice(0, 10);
+    out.push({ weekStart: a, count: dates.filter((d) => d >= a && d < b).length });
+  }
+  return out;
+}
+
+/** Change from the earliest to the latest logged weight (kg, 1 decimal); null with fewer than two logs. */
+export function weightChange(logs: { logged_on: string; weight_kg: number }[]): number | null {
+  if (logs.length < 2) return null;
+  const s = [...logs].sort((x, y) => x.logged_on.localeCompare(y.logged_on));
+  return Math.round((Number(s[s.length - 1]!.weight_kg) - Number(s[0]!.weight_kg)) * 10) / 10;
+}
