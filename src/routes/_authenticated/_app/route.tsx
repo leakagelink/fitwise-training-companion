@@ -1,13 +1,13 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { Apple, Bot, Dumbbell, Home, LineChart, UserRound } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { profileQuery } from "@/hooks/use-profile";
 import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/_app")({
   beforeLoad: async ({ context }) => {
-    const { data } = await supabase.from("profiles").select("onboarded_at").eq("id", context.user.id).maybeSingle();
-    if (!data?.onboarded_at) throw redirect({ to: "/onboarding" });
+    const profile = await context.queryClient.ensureQueryData({ ...profileQuery, revalidateIfStale: true });
+    if (!profile.onboarded_at) throw redirect({ to: "/onboarding" });
   },
   component: AppShell,
 });

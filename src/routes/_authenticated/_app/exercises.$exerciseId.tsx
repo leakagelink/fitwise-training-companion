@@ -4,13 +4,17 @@ import { toast } from "sonner";
 import { Loader2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { human } from "@/features/exercise-library/catalog";
-import { useExerciseMap } from "@/features/exercise-library/use-exercises";
+import { exerciseMapQuery, useExerciseMap } from "@/features/exercise-library/use-exercises";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 import { Attribution, ExerciseImage } from "@/features/exercise-library/exercise-image";
 import { startSession } from "@/features/workout/session";
 
 export const Route = createFileRoute("/_authenticated/_app/exercises/$exerciseId")({
   head: () => ({ meta: [{ title: "Exercise — Fitness AI" }, { name: "description", content: "Exercise instructions and form tips." }, { property: "og:title", content: "Exercise — Fitness AI" }, { property: "og:description", content: "Exercise instructions and form tips." }] }),
   component: Detail,
+  loader: ({ context }) => context.queryClient.ensureQueryData(exerciseMapQuery),
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 function Detail() {
@@ -25,9 +29,10 @@ function Detail() {
   const reps = x.category === "stretching" ? "30s" : x.difficulty === "beginner" ? "10-12" : "8-10";
 
   async function start() {
+    if (!x) return;
     setBusy(true);
     try {
-      const id = await startSession(x!.name, null, [{ exercise_id: x!.id, sets: 3, reps }]);
+      const id = await startSession(x.name, null, [{ exercise_id: x.id, sets: 3, reps }]);
       navigate({ to: "/session/$sessionId", params: { sessionId: id } });
     } catch (e) { toast.error(e instanceof Error ? e.message : "Could not start"); setBusy(false); }
   }

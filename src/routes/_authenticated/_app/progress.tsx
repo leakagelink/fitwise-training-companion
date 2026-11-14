@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { todayISO, weeklyWorkoutCounts, weightChange, workoutStreak } from "@/lib/fitness";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 const progressQuery = queryOptions({
   queryKey: ["progress"],
@@ -37,7 +38,9 @@ export const Route = createFileRoute("/_authenticated/_app/progress")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(progressQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData({ ...progressQuery, revalidateIfStale: true }),
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
   component: Progress,
 });
 
@@ -52,7 +55,7 @@ function Progress() {
   const today = todayISO();
   const todayRow = data.checkins.find((c) => c.date === today);
   const workoutDates = [
-    ...data.sessions.filter((s) => s.finished_at).map((s) => todayISO(new Date(s.finished_at!))),
+    ...data.sessions.flatMap((s) => s.finished_at ? [todayISO(new Date(s.finished_at))] : []),
     ...data.checkins.filter((c) => c.workout_done).map((c) => c.date),
   ];
   const weekly = weeklyWorkoutCounts([...new Set(workoutDates)], today, 8).map((w) => ({ ...w, label: short(w.weekStart) }));
@@ -67,8 +70,13 @@ function Progress() {
     if (error) { toast.error("Could not save"); return; }
     toast.success("Saved");
     await qc.invalidateQueries({ queryKey: ["progress"] });
+    await qc.invalidateQueries({ queryKey: ["checkins"] });
   }
-  async function uid() { return (await supabase.auth.getUser()).data.user!.id; }
+  async function uid() {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session?.user) throw new Error("Please sign in again");
+    return data.session.user.id;
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-5 px-5 py-6">

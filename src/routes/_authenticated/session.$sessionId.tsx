@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
@@ -9,13 +9,23 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { todayISO } from "@/lib/fitness";
 import { human } from "@/features/exercise-library/catalog";
-import { useExerciseMap } from "@/features/exercise-library/use-exercises";
+import { exerciseMapQuery, useExerciseMap } from "@/features/exercise-library/use-exercises";
 import { ExerciseImage } from "@/features/exercise-library/exercise-image";
 import { WorkoutTimer } from "@/features/workout/workout-timer";
+import { sessionQuery } from "@/features/workout/queries";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 export const Route = createFileRoute("/_authenticated/session/$sessionId")({
   head: () => ({ meta: [{ title: "Active workout — Fitness AI" }, { name: "description", content: "Track your sets, preparation countdown and rest." }, { property: "og:title", content: "Active workout — Fitness AI" }, { property: "og:description", content: "Track your workout with preparation and rest timers." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Session,
+  loader: async ({ context, params }) => {
+    await Promise.all([
+      context.queryClient.fetchQuery(sessionQuery(params.sessionId)),
+      context.queryClient.ensureQueryData(exerciseMapQuery),
+    ]);
+  },
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 type SetRow = { id: string; exercise_id: string; set_index: number; reps: number | null; weight_kg: number | null; completed: boolean; skipped: boolean };
@@ -36,16 +46,7 @@ function Session() {
   const [offline, setOffline] = useState(false);
   const [finishing, setFinishing] = useState(false);
 
-  const q = useQuery({
-    queryKey: ["session", sessionId],
-    queryFn: async () => {
-      const { data: s } = await supabase.from("workout_sessions").select("id, title, status, day_id").eq("id", sessionId).single();
-      const { data: rows } = await supabase.from("workout_sets").select("id, exercise_id, set_index, reps, weight_kg, completed, skipped").eq("session_id", sessionId);
-      let order: { exercise_id: string; rest_sec: number; position: number }[] = [];
-      if (s?.day_id) order = (await supabase.from("workout_day_exercises").select("exercise_id, rest_sec, position").eq("day_id", s.day_id)).data ?? [];
-      return { session: s, rows: rows ?? [], order };
-    },
-  });
+  const q = useSuspenseQuery({ ...sessionQuery(sessionId), refetchOnMount: false });
 
   // Merge server rows with any unsynced local edits.
   useEffect(() => {
@@ -62,7 +63,7 @@ function Session() {
   }, [sets, q.data]);
 
   const prev = useQuery({
-    queryKey: ["prev-perf", exerciseIds.join(",")],
+    queryKey: ["prev-perf", sessionId, exerciseIds.join(",")],
     enabled: exerciseIds.length > 0,
     queryFn: async () => {
       const { data } = await supabase.from("workout_sets").select("exercise_id, reps, weight_kg, session_id, updated_at").in("exercise_id", exerciseIds).eq("completed", true).neq("session_id", sessionId).order("updated_at", { ascending: false }).limit(100);
@@ -93,6 +94,7 @@ function Session() {
 
   function patch(id: string, p: Partial<SetRow>) {
     setSets((cur) => cur.map((s) => (s.id === id ? { ...s, ...p } : s)));
+    qc.setQueryData(sessionQuery(sessionId).queryKey, (current) => current ? { ...current, rows: current.rows.map((row) => row.id === id ? { ...row, ...p } : row) } : current);
     const pending = readPending();
     pending[id] = { ...(pending[id] ?? {}), ...p };
     localStorage.setItem(PENDING_KEY, JSON.stringify(pending));
@@ -113,6 +115,7 @@ function Session() {
     const { data, error } = await supabase.from("workout_sets").insert({ session_id: sessionId, user_id: auth.user.id, exercise_id: exId, set_index: (last?.set_index ?? -1) + 1, reps: last?.reps ?? null, weight_kg: last?.weight_kg ?? null }).select("id, exercise_id, set_index, reps, weight_kg, completed, skipped").single();
     if (error) { toast.error("Couldn't add set — check your connection"); return; }
     setSets((c) => [...c, data as SetRow]);
+    qc.setQueryData(sessionQuery(sessionId).queryKey, (current) => current ? { ...current, rows: [...current.rows, data as SetRow] } : current);
   }
 
   async function finish(status: "completed" | "abandoned") {

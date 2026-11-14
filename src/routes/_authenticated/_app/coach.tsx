@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CoachShell } from "@/features/coach/coach-shell";
 import { coachQuery } from "@/features/coach/queries";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 export const Route = createFileRoute("/_authenticated/_app/coach")({
   head: () => ({
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/_app/coach")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(coachQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData({ ...coachQuery, revalidateIfStale: true }),
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
   component: () => <CoachShell />,
 });

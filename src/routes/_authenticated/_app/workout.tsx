@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,14 +9,25 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useProfile } from "@/hooks/use-profile";
 import { allowedForUser, human, type Exercise } from "@/features/exercise-library/catalog";
-import { useExerciseMap, useExercises } from "@/features/exercise-library/use-exercises";
+import { exerciseMapQuery, useExerciseMap, useExercises } from "@/features/exercise-library/use-exercises";
 import { ExerciseImage } from "@/features/exercise-library/exercise-image";
 import { generateWorkoutPlan } from "@/features/workout/plan.functions";
 import { startSession } from "@/features/workout/session";
+import { workoutPlanQuery, workoutSessionsQuery } from "@/features/workout/queries";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 export const Route = createFileRoute("/_authenticated/_app/workout")({
   head: () => ({ meta: [{ title: "Workout — Fitness AI" }, { name: "description", content: "Your AI workout plan." }, { property: "og:title", content: "Workout — Fitness AI" }, { property: "og:description", content: "Your AI workout plan." }] }),
   component: Workout,
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData({ ...workoutPlanQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({ ...workoutSessionsQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData(exerciseMapQuery),
+    ]);
+  },
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 type DayEx = { id: string; exercise_id: string; position: number; sets: number; reps: string; rest_sec: number; notes: string | null };
@@ -29,29 +40,14 @@ function Workout() {
   const [generating, setGenerating] = useState(false);
   const [replacing, setReplacing] = useState<DayEx | null>(null);
 
-  const plan = useQuery({
-    queryKey: ["plan"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("workout_plans")
-        .select("id, name, summary, workout_days(id, day_index, title, focus, workout_day_exercises(id, exercise_id, position, sets, reps, rest_sec, notes))")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      return data;
-    },
-  });
-  const sessions = useQuery({
-    queryKey: ["sessions"],
-    queryFn: async () => (await supabase.from("workout_sessions").select("id, title, status, started_at").order("started_at", { ascending: false }).limit(8)).data ?? [],
-  });
+  const plan = useSuspenseQuery(workoutPlanQuery);
+  const sessions = useSuspenseQuery(workoutSessionsQuery);
 
   async function generate() {
     setGenerating(true);
     const r = await gen().catch(() => ({ status: "error" as const, message: "Request failed" }));
     setGenerating(false);
-    if (r.status === "ok") { toast.success("Your new plan is ready"); qc.invalidateQueries({ queryKey: ["plan"] }); }
+    if (r.status === "ok") { toast.success("Your new plan is ready"); qc.invalidateQueries({ queryKey: ["plan"] }); qc.invalidateQueries({ queryKey: ["plan-days-home"] }); }
     else if (r.status === "locked") toast.error("Your free trial has ended. Premium plans are coming soon.");
     else toast.error(r.message);
   }
@@ -66,6 +62,7 @@ function Workout() {
     try {
       const items = [...day.workout_day_exercises].sort((a, b) => a.position - b.position);
       const id = await startSession(day.title, day.id, items);
+      void qc.invalidateQueries({ queryKey: ["sessions"] });
       navigate({ to: "/session/$sessionId", params: { sessionId: id } });
     } catch (e) { toast.error(e instanceof Error ? e.message : "Could not start"); }
   }

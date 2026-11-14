@@ -40,3 +40,4 @@ use the editor.
 - Nutrition plans store validated recipe days as JSON, while consumed meals keep independent nutrient snapshots and groceries keep independent editable rows — later plan edits must not rewrite past intake or purchased lists.
 - Coach threads use route-derived IDs and persisted UIMessage parts; authenticated raw streaming runs through the Gateway SDK with one durable generation lock per thread — prevents cross-thread history and duplicate simultaneous answers.
 - Human-coach booking status is backend-controlled with protected role checks and unique active slots; requests remain pending until staff confirm — prevents false confirmations and double booking.
+- Screen queries share a per-router memory-only cache, intent preloading, stale background refresh and identity-change clearing; writes invalidate related views and active sessions disable focus refresh — speeds repeat navigation without persisting health data or overwriting live set edits.

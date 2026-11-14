@@ -4,6 +4,7 @@ import { CoachShell } from "@/features/coach/coach-shell";
 import { CoachChat } from "@/features/coach/chat";
 import { coachQuery, threadQuery } from "@/features/coach/queries";
 import { toMessage } from "@/features/coach/model";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 export const Route = createFileRoute("/_authenticated/_app/coach_/$threadId")({
   remountDeps: ({ params }) => params.threadId,
   head: () => ({
@@ -21,11 +22,13 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/$threadId")({
   }),
   loader: async ({ context, params }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(coachQuery),
-      context.queryClient.ensureQueryData(threadQuery(params.threadId)),
+      context.queryClient.ensureQueryData({ ...coachQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({ ...threadQuery(params.threadId), revalidateIfStale: true }),
     ]);
   },
   component: Thread,
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 function Thread() {
   const { threadId } = Route.useParams();

@@ -7,12 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { human } from "@/features/exercise-library/catalog";
-import { useExercises } from "@/features/exercise-library/use-exercises";
+import { exercisesQuery, useExercises } from "@/features/exercise-library/use-exercises";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 import { Attribution, ExerciseImage } from "@/features/exercise-library/exercise-image";
 
 export const Route = createFileRoute("/_authenticated/_app/exercises/")({
   head: () => ({ meta: [{ title: "Exercise Library — Fitness AI" }, { name: "description", content: "Search 700+ illustrated exercises." }, { property: "og:title", content: "Exercise Library — Fitness AI" }, { property: "og:description", content: "Search 700+ illustrated exercises." }] }),
   component: Library,
+  loader: ({ context }) => context.queryClient.ensureQueryData(exercisesQuery),
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 const ALL = "all";

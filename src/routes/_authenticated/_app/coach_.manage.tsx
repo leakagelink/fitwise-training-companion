@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 import {
   getCoachManagement,
   saveCoachProfile,
@@ -12,6 +13,7 @@ import {
 } from "@/features/coach/manage.functions";
 const managementQuery = queryOptions({
   queryKey: ["coach-management"],
+  staleTime: 15_000,
   queryFn: () => getCoachManagement(),
 });
 export const Route = createFileRoute("/_authenticated/_app/coach_/manage")({
@@ -25,7 +27,9 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/manage")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(managementQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData({ ...managementQuery, revalidateIfStale: true }),
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
   component: Management,
 });
 function Management() {

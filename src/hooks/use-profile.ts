@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const profileQuery = queryOptions({
   queryKey: ["profile"],
   queryFn: async () => {
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) throw new Error("Not signed in");
-    const { data, error } = await supabase.from("profiles").select("*").eq("id", auth.user.id).single();
+    const { data: auth } = await supabase.auth.getSession();
+    if (!auth.session?.user) throw new Error("Not signed in");
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", auth.session.user.id).single();
     if (error) throw error;
     return data;
   },

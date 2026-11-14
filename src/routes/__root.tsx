@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { createCacheIdentityGuard } from "@/lib/query-cache";
 
 function NotFoundComponent() {
   return (
@@ -123,11 +124,13 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      router.invalidate();
-      if (event === "SIGNED_OUT") queryClient.clear();
-      else queryClient.invalidateQueries();
+    const syncIdentity = createCacheIdentityGuard(queryClient);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      const changed = syncIdentity(session?.user.id ?? null);
+      if (event !== "SIGNED_OUT" && event !== "USER_UPDATED" && !changed) return;
+      // Clear old account data before any loaders for the new identity run.
+      void router.invalidate();
+      if (event === "USER_UPDATED") void queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);

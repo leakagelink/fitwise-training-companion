@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Droplets, Dumbbell, Flame, UserRound, Utensils } from "lucide-react";
 import { toast } from "sonner";
@@ -10,34 +10,35 @@ import { dailyTargets, GOAL_LABELS, todayISO, trialStatus, workoutStreak, type G
 import { getDailyRecommendation } from "@/features/dashboard/recommendation.functions";
 import { mealLogsQuery } from "@/features/nutrition/queries";
 import { nutrientsSchema, totalNutrition } from "@/features/nutrition/model";
+import { checkinsQuery, homeWorkoutQuery } from "@/features/dashboard/queries";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 export const Route = createFileRoute("/_authenticated/_app/home")({
   head: () => ({ meta: [{ title: "Home — Fitness AI" }, { name: "description", content: "Your daily Fitness AI dashboard." }, { property: "og:title", content: "Home — Fitness AI" }, { property: "og:description", content: "Your daily dashboard." }] }),
   component: Home,
+  loader: async ({ context }) => {
+    const today = todayISO();
+    await Promise.all([
+      context.queryClient.ensureQueryData({ ...checkinsQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({ ...homeWorkoutQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({ ...mealLogsQuery(today), revalidateIfStale: true }),
+    ]);
+  },
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
 });
 
 function Home() {
   const { data: p } = useProfile();
   const qc = useQueryClient();
   const today = todayISO();
-  const mealLogs = useQuery(mealLogsQuery(today));
+  const mealLogs = useSuspenseQuery(mealLogsQuery(today));
   const nutrition = totalNutrition((mealLogs.data ?? []).flatMap(l => { const n = nutrientsSchema.safeParse(l.nutrition); return n.success ? [n.data] : []; }));
   const recFn = useServerFn(getDailyRecommendation);
-  const checkins = useQuery({
-    queryKey: ["checkins"],
-    queryFn: async () => (await supabase.from("daily_checkins").select("*").order("date", { ascending: false }).limit(30)).data ?? [],
-  });
+  const checkins = useSuspenseQuery(checkinsQuery);
   const rec = useQuery({ queryKey: ["rec", today], queryFn: () => recFn({ data: { date: today } }), staleTime: Infinity, retry: false });
 
-  const plan = useQuery({
-    queryKey: ["plan-days-home"],
-    queryFn: async () => {
-      const { data } = await supabase.from("workout_plans").select("workout_days(day_index, title, focus)").eq("is_active", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
-      const { count } = await supabase.from("workout_sessions").select("id", { count: "exact", head: true }).eq("status", "completed").not("day_id", "is", null);
-      const days = [...(data?.workout_days ?? [])].sort((a, b) => a.day_index - b.day_index);
-      return days.length ? days[(count ?? 0) % days.length] : null;
-    },
-  });
+  const plan = useSuspenseQuery(homeWorkoutQuery);
   const nextDay = plan.data;
 
   if (!p) return null;
@@ -52,6 +53,7 @@ function Home() {
     const { error } = await supabase.from("daily_checkins").upsert({ user_id: p.id, date: today, water_ml: water, workout_done: todayRow?.workout_done ?? false, diet_followed: todayRow?.diet_followed ?? false, ...patch }, { onConflict: "user_id,date" });
     if (error) toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["checkins"] });
+    qc.invalidateQueries({ queryKey: ["progress"] });
   }
 
   return (

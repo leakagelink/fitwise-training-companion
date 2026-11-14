@@ -18,10 +18,18 @@ import { RecipeDialog } from "@/features/nutrition/recipe-dialog";
 import { MealLogDialog } from "@/features/nutrition/meal-log-dialog";
 import { GroceryList } from "@/features/grocery/grocery-list";
 import bowl from "@/assets/nutrition-bowl.jpg";
+import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
 export const Route = createFileRoute("/_authenticated/_app/nutrition")({
   head: () => ({ meta: [{ title: "Nutrition & Recipes — Fitness AI" }, { name: "description", content: "Personal diet plans, recipes, grocery lists and your daily meal diary." }, { property: "og:title", content: "Nutrition & Recipes — Fitness AI" }, { property: "og:description", content: "Personalized meals and real nutrition tracking." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(nutritionQuery),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData({ ...nutritionQuery, revalidateIfStale: true }),
+      context.queryClient.ensureQueryData({ ...mealLogsQuery(todayISO()), revalidateIfStale: true }),
+    ]);
+  },
+  errorComponent: ScreenLoadError,
+  notFoundComponent: ScreenNotFound,
   component: Nutrition,
 });
 
@@ -49,7 +57,7 @@ function Nutrition() {
   const targets = dailyTargets({ weightKg: p.weight_kg ?? 70, heightCm: p.height_cm ?? 170, age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
   const active = trialStatus(p.trial_started_at).active;
 
-  async function refresh() { await Promise.all([qc.invalidateQueries({ queryKey: ["nutrition-plan"] }), qc.invalidateQueries({ queryKey: ["meal-logs"] }), qc.invalidateQueries({ queryKey: ["checkins"] })]); }
+  async function refresh() { await Promise.all([qc.invalidateQueries({ queryKey: ["nutrition-plan"] }), qc.invalidateQueries({ queryKey: ["meal-logs"] }), qc.invalidateQueries({ queryKey: ["checkins"] }), qc.invalidateQueries({ queryKey: ["progress"] })]); }
   async function removeLog(id: string, plannedMeal: boolean) {
     const { error } = await supabase.from("meal_logs").delete().eq("id", id);
     if (error) { toast.error("Could not delete meal"); return; }
