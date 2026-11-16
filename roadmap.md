@@ -30,4 +30,11 @@ Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid a
 - [ ] Analytics based on actual app records
 - [ ] Compliance/security audit, account cleanup and end-to-end permission/payment checks
 
-Phase 5 is not implemented; Phase 6 must not imply progress reports, lifestyle tracking or background reminders already work.
+Phase 5 progress charts and check-ins are implemented; progress photos and background reminders are not.
+
+# Complete app administration
+- [ ] Protected admin workspace, user search/details and validated record management
+- [ ] Plan catalog, manual activation/revocation and immutable purchase/access history
+- [ ] Coaches, booking management, operational settings and real-record analytics
+- [ ] Account cleanup, permission tests and signed-in desktop/mobile verification
+- [ ] Assign the first administrator — needs the owner's chosen account
