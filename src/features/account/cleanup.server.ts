@@ -1,6 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 export async function eraseAccount(db: SupabaseClient<Database>, userId: string) {
+  for (const table of ["staff_notes", "support_replies"] as const) {
+    const result = await db.from(table).update({ author_id: null }).eq("author_id", userId);
+    if (result.error) throw new Error("Could not anonymize staff history");
+  }
+  const staffGrants = await db.from("staff_permissions").update({ granted_by: null }).eq("granted_by", userId);
+  if (staffGrants.error) throw new Error("Could not anonymize staff permission history");
   // Preserve financial/access history without retaining the removed account identifier.
   for (const table of ["membership_access", "purchase_history"] as const) {
     const result = await db.from(table).update({ user_id: null }).eq("user_id", userId);

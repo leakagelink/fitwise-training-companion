@@ -45,3 +45,7 @@ use the editor.
 - Membership access uses dated, revocable permission snapshots shared by generation endpoints; manual grants never write purchase rows — keeps authorization consistent and financial history honest.
 - Admin data mutations and membership/role changes record activity in transactional database functions; account cleanup anonymizes financial/access history through a shared server helper — preserves history without keeping deleted user identifiers.
 - Onboarding body validation uses one client-safe helper for both field errors and continuation eligibility — keeps visible feedback consistent with the button state.
+- Staff capabilities live in a protected permission table and are checked before privileged operations; the staff workspace never reuses full-admin endpoints — limits staff to assigned duties.
+- Support notes are staff-only, private reads/exports are audited, and account-owned support/inbox data cascades from profiles — protects support privacy and account cleanup.
+- Notification reminders use a managed authenticated job and unique membership deduplication keys with preferences — avoids duplicate or unwanted in-app reminders.
+- Generation telemetry records outcomes and latency without prompts, photos or responses; unknown token costs remain null — reports usage without inventing billing data.

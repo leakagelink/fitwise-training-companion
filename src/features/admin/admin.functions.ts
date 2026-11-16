@@ -63,6 +63,8 @@ export const getAdminUser = createServerFn({ method: "GET" }).middleware([requir
     db.from("purchase_history").select("*").eq("user_id", data.id).order("purchased_at", { ascending: false }),
   ]);
   if (profile.error || account.error || roles.error || access.error || purchases.error) throw new Error("Could not load user details");
+  const { auditRead } = await import("./operations.server");
+  await auditRead(db, context.userId, data.id, "user_profile", "Administrator account review");
   return { profile: profile.data, email: account.data.user.email ?? "", bannedUntil: account.data.user.banned_until ?? null, roles: roles.data?.map(r => r.role) ?? [], access: access.data ?? [], purchases: purchases.data ?? [] };
 });
 export const listAdminRecords = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ resource: z.enum(resourceNames), userId: z.string().uuid().nullable(), page: z.number().int().min(1) })).handler(async ({ context, data }) => {
@@ -73,6 +75,8 @@ export const listAdminRecords = createServerFn({ method: "GET" }).middleware([re
   if (data.userId && (config.owner || data.resource === "profiles")) query = query.eq(config.owner ?? "id", data.userId);
   const result = await query.range((data.page - 1) * 25, data.page * 25 - 1);
   if (result.error) throw new Error("Could not load records");
+  const { auditRead } = await import("./operations.server");
+  await auditRead(db, context.userId, data.userId, data.resource, "Administrator record review");
   return { rows: result.data as unknown as Record<string, Json>[], total: result.count ?? 0 };
 });
 export const saveAdminRecord = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ resource: z.enum(resourceNames), id: z.string().nullable(), values: z.record(z.unknown()), remove: z.boolean(), reason: z.string().trim().min(3).max(500) })).handler(async ({ context, data }) => {

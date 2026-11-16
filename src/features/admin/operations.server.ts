@@ -14,7 +14,7 @@ export async function auditRead(db: SupabaseClient<Database>, actor: string, tar
 export async function exportUserData(db: SupabaseClient<Database>, userId: string) {
   const output: Record<string, unknown> = {};
   for (const table of ["profiles", "daily_checkins", "weight_logs", "body_measurements", "meal_logs", "grocery_items", "nutrition_plans", "workout_plans", "workout_days", "workout_day_exercises", "workout_sessions", "workout_sets", "user_favorites", "coach_bookings", "coach_threads", "coach_messages", "membership_access", "purchase_history", "support_tickets", "user_notifications", "notification_preferences", "privacy_requests"] as const) {
-    const result = await db.from(table).select("*").eq(table === "profiles" ? "id" : "user_id", userId).limit(10001);
+    const result = table === "profiles" ? await db.from("profiles").select("*").eq("id", userId).limit(10001) : await db.from(table).select("*").eq("user_id", userId).limit(10001);
     if (result.error || (result.data?.length ?? 0) > 10000) throw new Error("Export is too large or unavailable. Please contact support.");
     output[table] = result.data ?? [];
   }

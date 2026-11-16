@@ -1,0 +1,3 @@
+REVOKE ALL ON public.staff_permissions,public.support_tickets,public.support_replies,public.staff_notes,public.notification_preferences,public.user_notifications,public.privacy_requests,public.private_data_access,public.generation_events FROM anon,authenticated;
+GRANT SELECT ON public.staff_permissions,public.support_tickets,public.support_replies,public.notification_preferences,public.user_notifications,public.privacy_requests TO authenticated;
+GRANT ALL ON public.staff_permissions,public.support_tickets,public.support_replies,public.staff_notes,public.notification_preferences,public.user_notifications,public.privacy_requests,public.private_data_access,public.generation_events TO service_role;

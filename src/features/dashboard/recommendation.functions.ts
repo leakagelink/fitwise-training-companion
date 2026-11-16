@@ -66,8 +66,9 @@ Last 7 days check-ins (newest first): ${JSON.stringify(checkins ?? [])}
 Write today's recommendation: 2-3 short, specific, actionable sentences (max 60 words). No headings, no lists, no markdown.`;
 
     const { generateCoachText, friendlyAiError } = await import("@/lib/ai/ai.server");
+    const { trackedGeneration } = await import("@/features/admin/generation.server");
     try {
-      const content = await generateCoachText(prompt, "You write the user's daily coaching tip.");
+      const content = await trackedGeneration(userId, "daily_tip", "openai/gpt-6-astra", () => generateCoachText(prompt, "You write the user's daily coaching tip."));
       if (!content) return { status: "error", message: "The coach returned an empty response." };
       await supabase
         .from("ai_recommendations")

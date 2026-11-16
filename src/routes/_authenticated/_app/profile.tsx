@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { deleteMyAccount } from "@/features/account/account.functions";
 import { useQuery } from "@tanstack/react-query";
 import { getAdminIdentity } from "@/features/admin/admin.functions";
+import { AccountServices } from "@/features/account/service-panel";
+import { getOperationsIdentity } from "@/features/admin/operations.functions";
 
 export const Route = createFileRoute("/_authenticated/_app/profile")({
   head: () => ({
@@ -29,6 +31,8 @@ function Profile() {
   const del = useServerFn(deleteMyAccount);
   const identify = useServerFn(getAdminIdentity);
   const admin = useQuery({ queryKey: ["admin-identity"], queryFn: () => identify() });
+  const staffIdentity = useServerFn(getOperationsIdentity);
+  const staff = useQuery({ queryKey: ["staff-identity"], queryFn: () => staffIdentity() });
   const [busy, setBusy] = useState(false);
   const toggleTheme = () => {
     const light = document.documentElement.classList.toggle("light");
@@ -52,6 +56,7 @@ function Profile() {
       <h1 className="text-3xl font-bold">{p?.full_name}</h1>
       <div className="card-premium divide-y divide-border">
         {admin.data?.isAdmin && <Link to="/admin" className="block p-4">Administration</Link>}
+        {!!staff.data?.capabilities.length && <Link to="/staff" className="block p-4">Staff workspace</Link>}
         <Link to="/onboarding" className="block p-4">
           Edit fitness profile
         </Link>
@@ -71,6 +76,7 @@ function Profile() {
           Sign out
         </button>
       </div>
+      <AccountServices />
       <Button
         variant="destructive"
         disabled={busy}

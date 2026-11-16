@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import { COACH_GUIDANCE, messageText, toMessage } from "@/features/coach/model";
 import { readAccess } from "@/features/admin/access.server";
+import { recordGeneration } from "@/features/admin/generation.server";
 
 function failure(message: string, status: number) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -136,6 +137,8 @@ export async function handleCoachChat(request: Request): Promise<Response> {
   const encoder = new TextEncoder();
   const body = new ReadableStream<Uint8Array>({
     async start(controller) {
+      const generationStarted = Date.now();
+      let generationStatus: "success" | "failed" | "cancelled" = "failed";
       const send = (event: object) => {
         if (!abort.signal.aborted) controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
       };
@@ -165,6 +168,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           if (event.type === "response.incomplete") throw new Error("Incomplete answer");
         }
         if (!completed || !answer.trim()) throw new Error("No completed answer");
+        generationStatus = "success";
         if (abort.signal.aborted) return;
         const result = await supabase
           .from("coach_messages")
@@ -203,6 +207,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           send({ type: "error", message });
         }
       } finally {
+        await recordGeneration(userId, "coach_chat", abort.signal.aborted ? "cancelled" : generationStatus, generationStarted, "openai/gpt-6-astra");
         await release();
         if (!abort.signal.aborted) controller.close();
       }

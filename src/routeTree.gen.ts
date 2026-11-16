@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/_app/coach'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
@@ -28,6 +29,7 @@ import { Route as AuthenticatedAppCoachThreadIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppCoachManageRouteImport } from './routes/_authenticated/_app/coach_.manage'
 import { Route as AuthenticatedAppExercisesIndexRouteImport } from './routes/_authenticated/_app/exercises.index'
 import { Route as AuthenticatedAppExercisesExerciseIdRouteImport } from './routes/_authenticated/_app/exercises.$exerciseId'
+import { Route as ApiPublicJobsMembershipRemindersRouteImport } from './routes/api/public/jobs/membership-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -55,6 +57,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const LegalDocRoute = LegalDocRouteImport.update({
@@ -129,12 +136,19 @@ const AuthenticatedAppExercisesExerciseIdRoute =
     path: '/exercises/$exerciseId',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const ApiPublicJobsMembershipRemindersRoute =
+  ApiPublicJobsMembershipRemindersRouteImport.update({
+    id: '/api/public/jobs/membership-reminders',
+    path: '/api/public/jobs/membership-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/staff': typeof AuthenticatedStaffRoute
   '/legal/$doc': typeof LegalDocRoute
   '/coach': typeof AuthenticatedAppCoachRoute
   '/home': typeof AuthenticatedAppHomeRoute
@@ -147,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/coach/manage': typeof AuthenticatedAppCoachManageRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/api/public/jobs/membership-reminders': typeof ApiPublicJobsMembershipRemindersRoute
   '/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -154,6 +169,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/staff': typeof AuthenticatedStaffRoute
   '/legal/$doc': typeof LegalDocRoute
   '/coach': typeof AuthenticatedAppCoachRoute
   '/home': typeof AuthenticatedAppHomeRoute
@@ -166,6 +182,7 @@ export interface FileRoutesByTo {
   '/coach/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/coach/manage': typeof AuthenticatedAppCoachManageRoute
   '/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/api/public/jobs/membership-reminders': typeof ApiPublicJobsMembershipRemindersRoute
   '/exercises': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRoutesById {
@@ -176,6 +193,7 @@ export interface FileRoutesById {
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/legal/$doc': typeof LegalDocRoute
   '/_authenticated/_app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
@@ -188,6 +206,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/coach_/$threadId': typeof AuthenticatedAppCoachThreadIdRoute
   '/_authenticated/_app/coach_/manage': typeof AuthenticatedAppCoachManageRoute
   '/_authenticated/_app/exercises/$exerciseId': typeof AuthenticatedAppExercisesExerciseIdRoute
+  '/api/public/jobs/membership-reminders': typeof ApiPublicJobsMembershipRemindersRoute
   '/_authenticated/_app/exercises/': typeof AuthenticatedAppExercisesIndexRoute
 }
 export interface FileRouteTypes {
@@ -197,6 +216,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/onboarding'
+    | '/staff'
     | '/legal/$doc'
     | '/coach'
     | '/home'
@@ -209,6 +229,7 @@ export interface FileRouteTypes {
     | '/coach/$threadId'
     | '/coach/manage'
     | '/exercises/$exerciseId'
+    | '/api/public/jobs/membership-reminders'
     | '/exercises/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -216,6 +237,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/onboarding'
+    | '/staff'
     | '/legal/$doc'
     | '/coach'
     | '/home'
@@ -228,6 +250,7 @@ export interface FileRouteTypes {
     | '/coach/$threadId'
     | '/coach/manage'
     | '/exercises/$exerciseId'
+    | '/api/public/jobs/membership-reminders'
     | '/exercises'
   id:
     | '__root__'
@@ -237,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app'
     | '/_authenticated/admin'
     | '/_authenticated/onboarding'
+    | '/_authenticated/staff'
     | '/legal/$doc'
     | '/_authenticated/_app/coach'
     | '/_authenticated/_app/home'
@@ -249,6 +273,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/coach_/$threadId'
     | '/_authenticated/_app/coach_/manage'
     | '/_authenticated/_app/exercises/$exerciseId'
+    | '/api/public/jobs/membership-reminders'
     | '/_authenticated/_app/exercises/'
   fileRoutesById: FileRoutesById
 }
@@ -258,6 +283,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   LegalDocRoute: typeof LegalDocRoute
   ApiPublicCoachRoute: typeof ApiPublicCoachRoute
+  ApiPublicJobsMembershipRemindersRoute: typeof ApiPublicJobsMembershipRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -302,6 +328,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/legal/$doc': {
@@ -395,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppExercisesExerciseIdRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/api/public/jobs/membership-reminders': {
+      id: '/api/public/jobs/membership-reminders'
+      path: '/api/public/jobs/membership-reminders'
+      fullPath: '/api/public/jobs/membership-reminders'
+      preLoaderRoute: typeof ApiPublicJobsMembershipRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -434,6 +474,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRouteRoute: typeof AuthenticatedAppRouteRouteWithChildren
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedSessionSessionIdRoute: typeof AuthenticatedSessionSessionIdRoute
 }
 
@@ -441,6 +482,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRouteRoute: AuthenticatedAppRouteRouteWithChildren,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedSessionSessionIdRoute: AuthenticatedSessionSessionIdRoute,
 }
 
@@ -453,6 +495,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   LegalDocRoute: LegalDocRoute,
   ApiPublicCoachRoute: ApiPublicCoachRoute,
+  ApiPublicJobsMembershipRemindersRoute: ApiPublicJobsMembershipRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
