@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Activity, Apple, Dumbbell, LineChart, MessageCircle, ShieldCheck } from "lucide-react";
+import { Activity, Apple, Camera, Dumbbell, LineChart, MessageCircle, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 
 export const Route = createFileRoute("/")({
@@ -22,6 +22,7 @@ const features = [
   { icon: Dumbbell, title: "Smart workouts", body: "Home or gym programs that match your equipment and level." },
   { icon: MessageCircle, title: "24/7 personal Coach", body: "Ask anything about training, food, sleep, recovery and lifestyle." },
   { icon: LineChart, title: "Track your progress", body: "Weight, measurements and weekly scores from your own logs." },
+  { icon: Camera, title: "Track your food", body: "Add a photo or name of your food and get its macro and micro nutrient details by quantity." },
 ];
 
 function Landing() {
