@@ -42,9 +42,11 @@ Phase 5 progress charts and check-ins are implemented; progress photos and backg
 Payments, refunds, email delivery, production coach confirmation and full security/compliance audit remain unverified; no payment records are fabricated.
 
 # Administration expansion
-- [ ] Granular staff workspace, private support notes and tickets with replies
-- [ ] In-app announcements, preferences and scheduled expiry reminders
-- [ ] Audited private-data export, deletion requests and date-filtered CSV reports
-- [ ] Persist generation outcomes and latency; show unavailable billing costs honestly
-- [ ] Permission tests and signed-in admin/user verification
-- [ ] Payment integration and invoices/refunds — waiting on reconnection approval, prices and currency
+- [x] Granular staff workspace, private support notes and tickets with replies
+- [x] In-app announcements, preferences and scheduled expiry reminders
+- [x] Audited private-data export, deletion requests and date-filtered CSV reports
+- [x] Persist generation outcomes and latency; show unavailable billing costs honestly
+- [x] Permission tests and signed-in admin/user verification
+- [ ] Payment integration and invoices/refunds — deferred by user; provider, prices and currency needed later
+
+Email/push delivery and verified model billing costs are unavailable. Staff billing/coaching views are read-only; full management stays administrator-only. Scheduled reminders require publishing the new callback; live generation telemetry and scheduled delivery have not been independently exercised.

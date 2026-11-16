@@ -46,6 +46,8 @@ export const listAdminUsers = createServerFn({ method: "GET" }).middleware([requ
     if (ids) query = query.in("id", ids);
     const result = await query.range((data.page - 1) * 25, data.page * 25 - 1);
     if (result.error) throw new Error("Could not load users");
+    const { auditRead } = await import("./operations.server");
+    await auditRead(db, context.userId, null, "user_list", "Administrator user search");
     const users = await Promise.all((result.data ?? []).map(async p => {
       const [account, roles] = await Promise.all([db.auth.admin.getUserById(p.id), db.from("user_roles").select("role").eq("user_id", p.id)]);
       if (account.error || roles.error) throw new Error("Could not load account details");

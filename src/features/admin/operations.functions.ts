@@ -54,8 +54,9 @@ export const exportPrivateData = createServerFn({ method: "POST" }).middleware([
   const { requireCapability, auditRead, exportUserData } = await import("./operations.server");
   await requireCapability(context.supabase, context.userId, "privacy");
   const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+  const json = await exportUserData(db, data.userId);
   await auditRead(db, context.userId, data.userId, "user_export", data.reason);
-  return { json: await exportUserData(db, data.userId) };
+  return { json };
 });
 export const exportReport = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(dateFilter.extend({ report: z.enum(["purchases", "memberships", "bookings"]), reason: z.string().trim().min(3).max(500) })).handler(async ({ context, data }) => {
   const { requireCapability, auditRead } = await import("./operations.server");
