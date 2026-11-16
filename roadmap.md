@@ -54,7 +54,7 @@ Email/push delivery and verified model billing costs are unavailable. Staff bill
 # Mobile login and panel verification
 - [x] Add mobile OTP signup/login with validation and resend states
 - [ ] Verify SMS provider setup and live delivery — requires configured SMS service and a real recipient
-- [ ] Check signed-in user, staff and admin flows on desktop/mobile; user onboarding/support/check-in and major screens verified, remaining checks blocked by unavailable auth session
+- [ ] Complete all signed-in user, staff and admin write flows; navigation and all admin sections checked, user onboarding/support/check-in verified; full generation and external delivery remain unverified
 - [x] Run regression tests and record remaining external-service limitations — 51 tests passed
 
-Coach reads reproduced a recursive slot/booking permission error; migration 0014 removes the recursion. Fresh signed-in coach verification and current staff/admin end-to-end checks need a preview sign-in. SMS provider enablement/delivery cannot be verified or configured with available tools; configure Phone under More → Users → Auth settings. Live payments remain deferred, and real AI generation/media/scheduled delivery are not fully verified.
+Coach reads reproduced a recursive slot/booking permission error; migration 0014 removes the recursion. Fresh signed-in verification confirmed the coach screen and callback dialog load; all 12 admin sections opened without alerts and staff permissions loaded. Mobile signup/signin validation, email switching and coach layout were checked at phone/desktop sizes in light/dark themes. SMS provider enablement/delivery cannot be verified or configured with available tools; configure Phone under More → Users → Auth settings. Live payments remain deferred, and real AI generation/media/scheduled delivery and every write flow are not fully verified.
