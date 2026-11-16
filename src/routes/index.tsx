@@ -21,7 +21,7 @@ const features = [
   { icon: Apple, title: "Customised diet plan", body: "Meals built around your goal, preferences and allergies." },
   { icon: Dumbbell, title: "Smart workouts", body: "Home or gym programs that match your equipment and level." },
   { icon: MessageCircle, title: "24/7 personal Coach", body: "Ask anything about training, food, sleep, recovery and lifestyle." },
-  { icon: LineChart, title: "Real progress", body: "Weight, measurements and weekly scores from your own logs." },
+  { icon: LineChart, title: "Track your progress", body: "Weight, measurements and weekly scores from your own logs." },
 ];
 
 function Landing() {
