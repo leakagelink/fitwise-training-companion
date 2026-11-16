@@ -50,6 +50,13 @@
       "when": 1794634329091,
       "tag": "0006_body_measurements",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794830530192,
+      "tag": "0007_administration_plans_access_history",
+      "breakpoints": true
     }
   ]
 }

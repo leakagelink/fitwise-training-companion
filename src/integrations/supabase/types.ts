@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_activity: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          reason: string
+          record_id: string | null
+          resource: string
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          record_id?: string | null
+          resource: string
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          record_id?: string | null
+          resource?: string
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_recommendations: {
         Row: {
           content: string
@@ -38,6 +71,33 @@ export type Database = {
           id?: string
           kind?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      app_controls: {
+        Row: {
+          announcement: string
+          coach_enabled: boolean
+          diet_enabled: boolean
+          id: number
+          updated_at: string
+          workouts_enabled: boolean
+        }
+        Insert: {
+          announcement?: string
+          coach_enabled?: boolean
+          diet_enabled?: boolean
+          id?: number
+          updated_at?: string
+          workouts_enabled?: boolean
+        }
+        Update: {
+          announcement?: string
+          coach_enabled?: boolean
+          diet_enabled?: boolean
+          id?: number
+          updated_at?: string
+          workouts_enabled?: boolean
         }
         Relationships: []
       }
@@ -368,6 +428,107 @@ export type Database = {
         }
         Relationships: []
       }
+      membership_access: {
+        Row: {
+          coach_access: boolean
+          created_at: string
+          diet_days: number
+          ends_at: string
+          granted_by: string | null
+          id: string
+          plan_id: string | null
+          plan_name: string
+          reason: string
+          revoked_at: string | null
+          source: string
+          starts_at: string
+          user_id: string | null
+          workout_access: boolean
+        }
+        Insert: {
+          coach_access: boolean
+          created_at?: string
+          diet_days: number
+          ends_at: string
+          granted_by?: string | null
+          id?: string
+          plan_id?: string | null
+          plan_name: string
+          reason: string
+          revoked_at?: string | null
+          source?: string
+          starts_at?: string
+          user_id?: string | null
+          workout_access: boolean
+        }
+        Update: {
+          coach_access?: boolean
+          created_at?: string
+          diet_days?: number
+          ends_at?: string
+          granted_by?: string | null
+          id?: string
+          plan_id?: string | null
+          plan_name?: string
+          reason?: string
+          revoked_at?: string | null
+          source?: string
+          starts_at?: string
+          user_id?: string | null
+          workout_access?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_access_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "membership_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      membership_plans: {
+        Row: {
+          coach_access: boolean
+          created_at: string
+          currency: string
+          description: string
+          diet_days: number
+          duration_days: number
+          id: string
+          is_active: boolean
+          name: string
+          price_minor: number
+          workout_access: boolean
+        }
+        Insert: {
+          coach_access?: boolean
+          created_at?: string
+          currency?: string
+          description?: string
+          diet_days?: number
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_minor?: number
+          workout_access?: boolean
+        }
+        Update: {
+          coach_access?: boolean
+          created_at?: string
+          currency?: string
+          description?: string
+          diet_days?: number
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_minor?: number
+          workout_access?: boolean
+        }
+        Relationships: []
+      }
       nutrition_plans: {
         Row: {
           created_at: string
@@ -479,6 +640,42 @@ export type Database = {
           workout_duration_min?: number | null
           workout_frequency?: number | null
           workout_location?: string | null
+        }
+        Relationships: []
+      }
+      purchase_history: {
+        Row: {
+          amount_minor: number
+          currency: string
+          id: string
+          plan_name: string
+          provider: string
+          provider_reference: string
+          purchased_at: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_minor: number
+          currency: string
+          id?: string
+          plan_name: string
+          provider: string
+          provider_reference: string
+          purchased_at?: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_minor?: number
+          currency?: string
+          id?: string
+          plan_name?: string
+          provider?: string
+          provider_reference?: string
+          purchased_at?: string
+          status?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -738,6 +935,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_membership: {
+        Args: {
+          _actor: string
+          _ends: string
+          _plan: string
+          _reason: string
+          _revoke?: string
+          _user: string
+        }
+        Returns: string
+      }
+      admin_save_record: {
+        Args: {
+          _actor: string
+          _data: Json
+          _delete?: boolean
+          _id: string
+          _reason?: string
+          _table: string
+        }
+        Returns: string
+      }
+      admin_set_role: {
+        Args: {
+          _actor: string
+          _remove: boolean
+          _role: Database["public"]["Enums"]["app_role"]
+          _user: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
