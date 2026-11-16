@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { GOAL_LABELS, trialStatus, type Goal } from "@/lib/fitness";
+import { GOAL_LABELS, type Goal } from "@/lib/fitness";
 import { allowedForUser, difficultyAllowed, type Exercise } from "@/features/exercise-library/catalog";
 
 const planSchema = z.object({
@@ -32,7 +32,8 @@ export const generateWorkoutPlan = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: p } = await supabase.from("profiles").select("*").eq("id", userId).single();
     if (!p) return { status: "error", message: "Profile not found" };
-    if (!trialStatus(p.trial_started_at).active) return { status: "locked" };
+    const { readAccess } = await import("@/features/admin/access.server");
+    if (!(await readAccess(supabase, userId, p.trial_started_at)).workouts) return { status: "locked" };
 
     const all = (await import("@/data/exercises.json")).default as Exercise[];
     const pool = all.filter(

@@ -26,7 +26,7 @@ export function RecordManager({ resource, userId }: { resource: ResourceName; us
   const key = config.key ?? "id";
   function open(row: Record<string, unknown>) {
     setEditing(row); setReason(""); setError("");
-    setValues(Object.fromEntries(fields.map(([name, field]) => [name, row[name] ?? (name === config.owner && userId ? userId : field.initial ?? "")])));
+    setValues(Object.fromEntries(fields.map(([name, field]) => [name, name in row ? row[name] : name === config.owner && userId ? userId : field.initial === null ? null : field.initial ?? ""])));
   }
   async function refresh() { await qc.invalidateQueries(); }
   async function submit() {

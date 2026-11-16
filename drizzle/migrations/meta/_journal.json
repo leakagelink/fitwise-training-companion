@@ -64,6 +64,20 @@
       "when": 1794831091100,
       "tag": "0008_admin_account_search_record_wrapper",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794831332689,
+      "tag": "0009_admin_record_transaction_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794831776508,
+      "tag": "0010_admin_read_only_data_grants",
+      "breakpoints": true
     }
   ]
 }

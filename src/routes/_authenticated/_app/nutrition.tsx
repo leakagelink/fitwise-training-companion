@@ -20,7 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { useProfile } from "@/hooks/use-profile";
-import { dailyTargets, todayISO, trialStatus } from "@/lib/fitness";
+import { dailyTargets, todayISO } from "@/lib/fitness";
+import { accessQuery } from "@/features/admin/queries";
 import {
   dietSchema,
   nutrientsSchema,
@@ -73,6 +74,7 @@ function dateOffset(date: string, offset: number) {
 
 function Nutrition() {
   const { data: plan } = useSuspenseQuery(nutritionQuery);
+  const access = useQuery(accessQuery);
   const { data: p } = useProfile();
   const qc = useQueryClient();
   const gen = useServerFn(generateDiet);
@@ -109,7 +111,7 @@ function Nutrition() {
     activityLevel: p.activity_level,
     goal: p.goal,
   });
-  const active = trialStatus(p.trial_started_at).active;
+  const active = (access.data?.dietDays ?? 0) > 0;
 
   async function refresh() {
     await Promise.all([
@@ -434,8 +436,8 @@ function Nutrition() {
             </div>
             {!active && (
               <p role="status" className="text-sm text-muted-foreground">
-                Your three-day trial has ended. Premium access arrives in Phase 6; your saved meals
-                and diary remain available.
+                Diet generation access is not active. Contact the administrator for plan access;
+                your saved meals and diary remain available.
               </p>
             )}
           </div>

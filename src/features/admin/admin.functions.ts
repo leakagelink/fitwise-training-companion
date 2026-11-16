@@ -73,7 +73,7 @@ export const listAdminRecords = createServerFn({ method: "GET" }).middleware([re
   if (data.userId && (config.owner || data.resource === "profiles")) query = query.eq(config.owner ?? "id", data.userId);
   const result = await query.range((data.page - 1) * 25, data.page * 25 - 1);
   if (result.error) throw new Error("Could not load records");
-  return { rows: result.data as unknown as Record<string, unknown>[], total: result.count ?? 0 };
+  return { rows: result.data as unknown as Record<string, Json>[], total: result.count ?? 0 };
 });
 export const saveAdminRecord = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ resource: z.enum(resourceNames), id: z.string().nullable(), values: z.record(z.unknown()), remove: z.boolean(), reason: z.string().trim().min(3).max(500) })).handler(async ({ context, data }) => {
   await requireAdmin(context.supabase, context.userId);
@@ -82,28 +82,36 @@ export const saveAdminRecord = createServerFn({ method: "POST" }).middleware([re
   const values = data.remove ? {} : validateRecord(data.resource, data.values, !data.id);
   if (data.id && config.owner && config.owner in values) throw new Error("Record ownership cannot be changed");
   const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
-  if (!data.remove && values.exercise_id) {
+  if (!data.remove && values["exercise_id"]) {
     const catalog = (await import("@/data/exercises.json")).default;
-    if (!catalog.some(e => e.id === values.exercise_id)) throw new Error("Choose an exercise from the catalog");
+    if (!catalog.some(e => e.id === values["exercise_id"])) throw new Error("Choose an exercise from the catalog");
+  }
+  if (data.resource === "nutrition_plans" && values["days"]) {
+    const { dietSchema, mealFitsDiet } = await import("@/features/nutrition/model");
+    const old = data.id ? await db.from("nutrition_plans").select("user_id,duration_days").eq("id", data.id).single() : null;
+    const owner = String(values["user_id"] ?? old?.data?.user_id ?? "");
+    const profile = await db.from("profiles").select("diet_type,allergies").eq("id", owner).single();
+    const days = dietSchema.shape.days.parse(values["days"]);
+    if (profile.error || days.length !== Number(values["duration_days"] ?? old?.data?.duration_days) || days.some(d => d.meals.reduce((sum, m) => sum + m.nutrition.calories, 0) < 1200 || d.meals.some(m => !mealFitsDiet(m, profile.data.diet_type, profile.data.allergies) || Object.values(m.nutrition).some(n => n < 0)))) throw new Error("Recipe days must match duration and respect dietary restrictions and calorie safety");
   }
   for (const [field, table] of [["plan_id", "workout_plans"], ["day_id", "workout_days"]] as const) {
-    if (values[field] && values.user_id) {
+    if (values[field] && values["user_id"]) {
       const parent = await db.from(table).select("user_id").eq("id", String(values[field])).single();
-      if (parent.error || parent.data.user_id !== values.user_id) throw new Error("Parent belongs to another user");
+      if (parent.error || parent.data.user_id !== values["user_id"]) throw new Error("Parent belongs to another user");
     }
   }
   if (data.resource === "coach_profiles" || data.resource === "coach_slots") {
-    const owner = values.user_id ?? values.coach_user_id ?? data.id;
+    const owner = values["user_id"] ?? values["coach_user_id"] ?? (data.resource === "coach_profiles" ? data.id : null);
     if (owner && !data.remove) {
       const roles = await db.from("user_roles").select("role").eq("user_id", String(owner));
       if (!roles.data?.some(r => r.role === "coach" || r.role === "admin")) throw new Error("Assign the coach role first");
     }
   }
-  const result = await db.rpc("admin_save_record", { _actor: context.userId, _table: data.resource, _id: data.id ?? "", _data: values as Json, _delete: data.remove, _reason: data.reason });
+  const result = await db.rpc("admin_upsert_record", { _actor: context.userId, _table: data.resource, _id: data.id ?? "", _data: values as Json, _delete: data.remove, _reason: data.reason });
   if (result.error) throw new Error("Could not save record. Check related records and required values.");
   return { id: result.data };
 });
-export const manageMembership = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ userId: z.string().uuid(), planId: z.string().uuid().nullable(), endsAt: z.string().datetime(), reason: z.string().trim().min(3).max(500), revokeId: z.string().uuid().nullable() })).handler(async ({ context, data }) => {
+export const manageMembership = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator(z.object({ userId: z.string().uuid(), planId: z.string().uuid().nullable(), endsAt: z.string().datetime({ offset: true }), reason: z.string().trim().min(3).max(500), revokeId: z.string().uuid().nullable() })).handler(async ({ context, data }) => {
   await requireAdmin(context.supabase, context.userId);
   const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
   const result = await db.rpc("admin_membership", { _actor: context.userId, _user: data.userId, _plan: data.planId ?? "00000000-0000-0000-0000-000000000000", _ends: data.endsAt, _reason: data.reason, ...data.revokeId ? { _revoke: data.revokeId } : {} });

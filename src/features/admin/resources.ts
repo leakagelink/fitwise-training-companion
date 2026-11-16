@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { dietSchema } from "@/features/nutrition/model";
 
 type Field = { label: string; type: "text" | "number" | "boolean" | "date" | "datetime" | "json"; schema: z.ZodTypeAny; initial?: unknown };
 const text = (label: string, max = 1000): Field => ({ label, type: "text", schema: z.string().trim().max(max), initial: "" });
@@ -18,7 +19,7 @@ export const resources = {
   body_measurements: { label: "Body measurements", owner: "user_id", fields: { user_id: uuid("User ID"), measured_on: date("Date"), waist_cm: nullable(num("Waist (cm)", 1, 400)), chest_cm: nullable(num("Chest (cm)", 1, 400)), hips_cm: nullable(num("Hips (cm)", 1, 400)), arm_cm: nullable(num("Arm (cm)", 1, 150)), body_fat_pct: nullable(num("Body fat (%)", 1, 80)) } },
   meal_logs: { label: "Meal diary", owner: "user_id", fields: { user_id: uuid("User ID"), logged_on: date("Date"), name: text("Meal name", 200), meal_type: choices("Meal type", ["breakfast", "lunch", "snack", "dinner"]), servings: num("Servings", 0.1, 100, 1), nutrition: json("Nutrition", nutrients, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }) } },
   grocery_items: { label: "Groceries", owner: "user_id", fields: { user_id: uuid("User ID"), ingredient: text("Ingredient", 200), quantity: num("Quantity", 0.01, 100000, 1), unit: text("Unit", 20), category: text("Category", 100), per_meal: text("For meal", 200), purchased: bool("Purchased", false), period_days: num("Period (days)", 1, 366, 7) } },
-  nutrition_plans: { label: "Diet plans", owner: "user_id", fields: { user_id: uuid("User ID"), name: text("Plan name", 120), start_date: date("Starts on"), duration_days: num("Duration (days)", 1, 30, 3), preferences: text("Preferences"), is_active: bool("Active") } },
+  nutrition_plans: { label: "Diet plans", owner: "user_id", fields: { user_id: uuid("User ID"), name: text("Plan name", 120), start_date: date("Starts on"), duration_days: num("Duration (days)", 1, 30, 3), preferences: text("Preferences"), days: json("Recipe days", dietSchema.shape.days.min(1).max(30), []), is_active: bool("Active") } },
   workout_plans: { label: "Workout plans", owner: "user_id", fields: { user_id: uuid("User ID"), name: text("Plan name", 120), summary: nullable(text("Summary", 600)), is_active: bool("Active") } },
   workout_days: { label: "Workout days", owner: "user_id", fields: { user_id: uuid("User ID"), plan_id: uuid("Workout plan ID"), day_index: num("Day index", 0, 29, 0), title: text("Title", 80), focus: nullable(text("Focus", 160)) } },
   workout_day_exercises: { label: "Workout exercises", owner: "user_id", fields: { user_id: uuid("User ID"), day_id: uuid("Workout day ID"), exercise_id: text("Exercise catalog ID", 100), position: num("Position", 0, 100, 0), sets: num("Sets", 1, 10, 3), reps: text("Reps", 20), rest_sec: num("Rest seconds", 0, 600, 60), notes: nullable(text("Notes", 200)) } },

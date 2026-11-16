@@ -73,7 +73,7 @@ function Workout() {
       qc.invalidateQueries({ queryKey: ["plan"] });
       qc.invalidateQueries({ queryKey: ["plan-days-home"] });
     } else if (r.status === "locked")
-      toast.error("Your free trial has ended. Premium plans are coming soon.");
+      toast.error("Workout generation access is not active. Contact the administrator for plan access.");
     else toast.error(r.message);
   }
 

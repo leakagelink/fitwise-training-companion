@@ -9,7 +9,7 @@
 - [x] Editable weekly/monthly grocery lists and export
 - [x] Home nutrition totals, account cleanup, tests, and signed-in verification
 
-Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid access is fabricated.
+Weekly/monthly diet generation supports dated administrator-granted access; payment checkout is not connected.
 
 # Active workout correction
 - [x] Start countdown automatically and verify pause, restart, and rest countdown
@@ -25,16 +25,18 @@ Weekly/monthly AI diet access awaits Phase 6 subscription entitlement; no paid a
 # Phase 6
 - [ ] Payments — Paddle was disconnected by the user; awaiting decision on payment provider
 - [ ] Create digital subscription products and checkout — awaiting plan prices and currency from user; live payments require seller verification
-- [ ] Server-enforced paid access and weekly/monthly AI nutrition plans
-- [ ] Protected admin area for users, subscriptions, coaches/bookings, content and AI settings
-- [ ] Analytics based on actual app records
+- [x] Server-enforced membership access and weekly/monthly AI nutrition entitlement
+- [x] Protected admin area for users, manual memberships, coaches/bookings, app records and generation controls
+- [x] Operational counts based on actual app records
 - [ ] Compliance/security audit, account cleanup and end-to-end permission/payment checks
 
 Phase 5 progress charts and check-ins are implemented; progress photos and background reminders are not.
 
 # Complete app administration
-- [ ] Protected admin workspace, user search/details and validated record management
-- [ ] Plan catalog, manual activation/revocation and immutable purchase/access history
-- [ ] Coaches, booking management, operational settings and real-record analytics
-- [ ] Account cleanup, permission tests and signed-in desktop/mobile verification
-- [ ] Assign the first administrator — needs the owner's chosen account
+- [x] Protected admin workspace, user search/details and validated record management
+- [x] Plan catalog, manual activation/revocation and protected purchase/access history
+- [x] Coaches, booking management, operational settings and real-record analytics
+- [x] Account cleanup, permission tests and signed-in desktop/mobile verification of user edit, record add/delete, plan activation/revocation
+- [ ] Assign the first administrator — hello@socilet.com must register first
+
+Payments, refunds, email delivery, production coach confirmation and full security/compliance audit remain unverified; no payment records are fabricated.

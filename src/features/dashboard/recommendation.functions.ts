@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { dailyTargets, GOAL_LABELS, trialStatus, type Goal } from "@/lib/fitness";
+import { dailyTargets, GOAL_LABELS, type Goal } from "@/lib/fitness";
 
 type Result =
   | { status: "ok"; content: string }
@@ -32,8 +32,8 @@ export const getDailyRecommendation = createServerFn({ method: "POST" })
       .single();
     if (pErr || !profile) return { status: "error", message: "Profile not found" };
 
-    // Server-side access control: AI features require an active trial (subscriptions arrive in Phase 6).
-    if (!trialStatus(profile.trial_started_at).active) return { status: "locked" };
+    const { readAccess } = await import("@/features/admin/access.server");
+    if (!(await readAccess(supabase, userId, profile.trial_started_at)).coach) return { status: "locked" };
 
     const { data: checkins } = await supabase
       .from("daily_checkins")

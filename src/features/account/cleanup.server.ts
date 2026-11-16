@@ -7,7 +7,7 @@ export async function eraseAccount(db: SupabaseClient<Database>, userId: string)
     if (result.error) throw new Error("Could not anonymize account history");
   }
   for (const field of ["actor_id", "target_user_id"] as const) {
-    const result = await db.from("admin_activity").update({ [field]: null }).eq(field, userId);
+    const result = await db.from("admin_activity").update(field === "actor_id" ? { actor_id: null } : { target_user_id: null }).eq(field, userId);
     if (result.error) throw new Error("Could not anonymize activity history");
   }
   const grants = await db.from("membership_access").update({ granted_by: null }).eq("granted_by", userId);

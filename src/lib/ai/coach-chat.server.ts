@@ -3,7 +3,7 @@ import { GatewayError, streamResponse, type ResponsesInputItem } from "@lovable.
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import { COACH_GUIDANCE, messageText, toMessage } from "@/features/coach/model";
-import { trialStatus } from "@/lib/fitness";
+import { readAccess } from "@/features/admin/access.server";
 
 function failure(message: string, status: number) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -42,9 +42,9 @@ export async function handleCoachChat(request: Request): Promise<Response> {
   if (profileError || !profile) return failure("Could not load your fitness profile", 400);
   if (!profile.health_consent_at)
     return failure("Health-data consent is needed before personalized coaching", 403);
-  if (!trialStatus(profile.trial_started_at).active)
+  if (!(await readAccess(supabase, userId, profile.trial_started_at)).coach)
     return failure(
-      "Your three-day AI trial has ended. Premium access will be available with subscriptions.",
+      "Personal coach access is not active. Contact the administrator for plan access.",
       403,
     );
   const runId = crypto.randomUUID();

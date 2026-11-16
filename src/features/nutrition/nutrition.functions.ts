@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { dailyTargets, trialStatus } from "@/lib/fitness";
+import { dailyTargets } from "@/lib/fitness";
 import { dietSchema, mealFitsDiet, mealSchema } from "./model";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -18,7 +18,9 @@ export const generateDiet = createServerFn({ method: "POST" }).middleware([requi
     const { data: p, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
     if (error || !p) return { status: "error" as const, message: "Profile not found" };
     if (!p.health_consent_at) return { status: "error" as const, message: "Health data consent is needed in your profile." };
-    if (!trialStatus(p.trial_started_at).active || data.duration > 3) return { status: "locked" as const, message: "The free trial includes a three-day diet plan. Weekly and monthly plans require premium, available in Phase 6." };
+    const { readAccess } = await import("@/features/admin/access.server");
+    const access = await readAccess(supabase, userId, p.trial_started_at);
+    if (data.duration > access.dietDays) return { status: "locked" as const, message: "Your membership does not include this diet duration. Contact the administrator for plan access." };
     const targets = dailyTargets({ weightKg: p.weight_kg ?? 70, heightCm: p.height_cm ?? 170, age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
     let existing: Awaited<ReturnType<typeof getNutrition>> = null;
     if (data.planId) {

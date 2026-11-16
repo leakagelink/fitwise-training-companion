@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
 import { deleteMyAccount } from "@/features/account/account.functions";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminIdentity } from "@/features/admin/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/_app/profile")({
   head: () => ({
@@ -25,6 +27,8 @@ function Profile() {
   const { data: p } = useProfile();
   const navigate = useNavigate();
   const del = useServerFn(deleteMyAccount);
+  const identify = useServerFn(getAdminIdentity);
+  const admin = useQuery({ queryKey: ["admin-identity"], queryFn: () => identify() });
   const [busy, setBusy] = useState(false);
   const toggleTheme = () => {
     const light = document.documentElement.classList.toggle("light");
@@ -47,6 +51,7 @@ function Profile() {
     <div className="mx-auto max-w-xl space-y-4 px-5 py-8">
       <h1 className="text-3xl font-bold">{p?.full_name}</h1>
       <div className="card-premium divide-y divide-border">
+        {admin.data?.isAdmin && <Link to="/admin" className="block p-4">Administration</Link>}
         <Link to="/onboarding" className="block p-4">
           Edit fitness profile
         </Link>

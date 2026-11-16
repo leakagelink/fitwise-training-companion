@@ -19,6 +19,7 @@ import { mealLogsQuery } from "@/features/nutrition/queries";
 import { nutrientsSchema, totalNutrition } from "@/features/nutrition/model";
 import { checkinsQuery, homeWorkoutQuery } from "@/features/dashboard/queries";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
+import { accessQuery } from "@/features/admin/queries";
 
 export const Route = createFileRoute("/_authenticated/_app/home")({
   head: () => ({
@@ -46,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/_app/home")({
 
 function Home() {
   const { data: p } = useProfile();
+  const access = useQuery(accessQuery);
   const qc = useQueryClient();
   const today = todayISO();
   const mealLogs = useSuspenseQuery(mealLogsQuery(today));
@@ -128,13 +130,14 @@ function Home() {
           {GOAL_LABELS[p.goal as Goal]}
         </span>
         <span className="rounded-full bg-secondary px-3 py-1">
-          {trial.active ? `Free trial · ${trial.daysLeft} day(s) left` : "Trial ended"}
+          {access.data?.plans.length ? access.data.plans.join(" · ") : trial.active ? `Free trial · ${trial.daysLeft} day(s) left` : "Trial ended"}
         </span>
         <span className="rounded-full bg-secondary px-3 py-1">
           {p.weight_kg} kg → {p.target_weight_kg} kg
         </span>
       </div>
 
+      {access.data?.announcement && <p role="status" className="border-y border-border py-3 text-sm">{access.data.announcement}</p>}
       <section className="card-premium bg-hero p-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">
           Coach tip for today
@@ -145,7 +148,7 @@ function Home() {
             : rec.data?.status === "ok"
               ? rec.data.content
               : rec.data?.status === "locked"
-                ? "Your trial has ended — premium plans arrive soon."
+                ? "Personal coach access is not active. Contact the administrator for plan access."
                 : rec.data?.status === "error"
                   ? rec.data.message
                   : "Unavailable right now."}

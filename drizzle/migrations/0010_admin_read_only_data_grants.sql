@@ -1,0 +1,3 @@
+REVOKE INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER ON public.membership_access,public.purchase_history,public.membership_plans,public.app_controls,public.admin_activity FROM authenticated,anon;
+REVOKE ALL ON public.membership_access,public.purchase_history,public.membership_plans,public.app_controls,public.admin_activity FROM anon;
+GRANT SELECT ON public.membership_access,public.purchase_history,public.membership_plans,public.app_controls,public.admin_activity TO authenticated;
