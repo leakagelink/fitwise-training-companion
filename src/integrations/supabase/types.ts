@@ -342,6 +342,53 @@ export type Database = {
         }
         Relationships: []
       }
+      generation_events: {
+        Row: {
+          cost_usd: number | null
+          created_at: string
+          id: string
+          input_tokens: number | null
+          latency_ms: number
+          model: string
+          operation: string
+          output_tokens: number | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string
+          id?: string
+          input_tokens?: number | null
+          latency_ms: number
+          model: string
+          operation: string
+          output_tokens?: number | null
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number
+          model?: string
+          operation?: string
+          output_tokens?: number | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generation_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       grocery_items: {
         Row: {
           category: string
@@ -529,6 +576,32 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          announcements: boolean
+          expiry_reminders: boolean
+          user_id: string
+        }
+        Insert: {
+          announcements?: boolean
+          expiry_reminders?: boolean
+          user_id: string
+        }
+        Update: {
+          announcements?: boolean
+          expiry_reminders?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nutrition_plans: {
         Row: {
           created_at: string
@@ -564,6 +637,86 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      privacy_requests: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          reason: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          reason?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          reason?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "privacy_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      private_data_access: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          reason: string
+          resource: string
+          target_user_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          reason: string
+          resource: string
+          target_user_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          resource?: string
+          target_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "private_data_access_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "private_data_access_target_user_id_fkey"
+            columns: ["target_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -679,6 +832,140 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_notes: {
+        Row: {
+          author_id: string | null
+          body: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_permissions: {
+        Row: {
+          capability: string
+          created_at: string
+          granted_by: string | null
+          user_id: string
+        }
+        Insert: {
+          capability: string
+          created_at?: string
+          granted_by?: string | null
+          user_id: string
+        }
+        Update: {
+          capability?: string
+          created_at?: string
+          granted_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_replies: {
+        Row: {
+          author_id: string | null
+          body: string
+          created_at: string
+          from_staff: boolean
+          id: string
+          ticket_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          created_at?: string
+          from_staff?: boolean
+          id?: string
+          ticket_id: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          created_at?: string
+          from_staff?: boolean
+          id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_replies_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_favorites: {
         Row: {
           created_at: string
@@ -696,6 +983,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_notifications: {
+        Row: {
+          body: string
+          created_at: string
+          dedupe_key: string | null
+          id: string
+          kind: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          dedupe_key?: string | null
+          id?: string
+          kind: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          dedupe_key?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -989,6 +1317,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      has_staff_permission: {
+        Args: { _capability: string; _user: string }
+        Returns: boolean
+      }
+      send_expiry_notifications: { Args: never; Returns: number }
+      staff_operation: {
+        Args: { _action: string; _actor: string; _payload: Json }
+        Returns: undefined
       }
     }
     Enums: {

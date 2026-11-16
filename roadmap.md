@@ -40,3 +40,11 @@ Phase 5 progress charts and check-ins are implemented; progress photos and backg
 - [x] Assign the first administrator — hello@socilet.com has administrator access
 
 Payments, refunds, email delivery, production coach confirmation and full security/compliance audit remain unverified; no payment records are fabricated.
+
+# Administration expansion
+- [ ] Granular staff workspace, private support notes and tickets with replies
+- [ ] In-app announcements, preferences and scheduled expiry reminders
+- [ ] Audited private-data export, deletion requests and date-filtered CSV reports
+- [ ] Persist generation outcomes and latency; show unavailable billing costs honestly
+- [ ] Permission tests and signed-in admin/user verification
+- [ ] Payment integration and invoices/refunds — waiting on reconnection approval, prices and currency
