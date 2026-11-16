@@ -37,6 +37,6 @@ Phase 5 progress charts and check-ins are implemented; progress photos and backg
 - [x] Plan catalog, manual activation/revocation and protected purchase/access history
 - [x] Coaches, booking management, operational settings and real-record analytics
 - [x] Account cleanup, permission tests and signed-in desktop/mobile verification of user edit, record add/delete, plan activation/revocation
-- [ ] Assign the first administrator — hello@socilet.com must register first
+- [x] Assign the first administrator — hello@socilet.com has administrator access
 
 Payments, refunds, email delivery, production coach confirmation and full security/compliance audit remain unverified; no payment records are fabricated.
