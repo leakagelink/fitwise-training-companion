@@ -52,7 +52,9 @@ Payments, refunds, email delivery, production coach confirmation and full securi
 Email/push delivery and verified model billing costs are unavailable. Staff billing/coaching views are read-only; full management stays administrator-only. Scheduled reminders require publishing the new callback; live generation telemetry and scheduled delivery have not been independently exercised.
 
 # Mobile login and panel verification
-- [ ] Add mobile OTP signup/login with validation and resend states
+- [x] Add mobile OTP signup/login with validation and resend states
 - [ ] Verify SMS provider setup and live delivery — requires configured SMS service and a real recipient
-- [ ] Check signed-in user, staff and admin flows on desktop/mobile; fix confirmed errors
-- [ ] Run regression tests and record remaining external-service limitations
+- [ ] Check signed-in user, staff and admin flows on desktop/mobile; user onboarding/support/check-in and major screens verified, remaining checks blocked by unavailable auth session
+- [x] Run regression tests and record remaining external-service limitations — 51 tests passed
+
+Coach reads reproduced a recursive slot/booking permission error; migration 0014 removes the recursion. Fresh signed-in coach verification and current staff/admin end-to-end checks need a preview sign-in. SMS provider enablement/delivery cannot be verified or configured with available tools; configure Phone under More → Users → Auth settings. Live payments remain deferred, and real AI generation/media/scheduled delivery are not fully verified.

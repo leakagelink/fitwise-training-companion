@@ -50,3 +50,4 @@ use the editor.
 - Notification reminders use a managed authenticated job and unique membership deduplication keys with preferences — avoids duplicate or unwanted in-app reminders.
 - Generation telemetry records outcomes and latency without prompts, photos or responses; unknown token costs remain null — reports usage without inventing billing data.
 - Mobile authentication uses hosted SMS OTP verification with explicit signup versus existing-user intent and international phone normalization — no custom OTP storage or bypasses.
+- Booked-slot visibility uses a current-user security-definer existence check rather than querying booking policies from slot policies — prevents circular RLS evaluation without broadening visibility.
