@@ -44,3 +44,4 @@ use the editor.
 - Administration lives outside the onboarding shell under the authenticated gate; every admin server handler verifies roles before privileged imports, and editable resources use a strict field allowlist — prevents client permission or ownership escalation.
 - Membership access uses dated, revocable permission snapshots shared by generation endpoints; manual grants never write purchase rows — keeps authorization consistent and financial history honest.
 - Admin data mutations and membership/role changes record activity in transactional database functions; account cleanup anonymizes financial/access history through a shared server helper — preserves history without keeping deleted user identifiers.
+- Onboarding body validation uses one client-safe helper for both field errors and continuation eligibility — keeps visible feedback consistent with the button state.

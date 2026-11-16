@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { ACTIVITY, ALLERGIES, DIETS, EQUIPMENT, EXPERIENCE, GENDERS, GOALS } from "@/features/onboarding/options";
+import { bodyErrors } from "@/features/onboarding/body-validation";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -129,10 +130,11 @@ function Onboarding() {
     setF((c) => ({ ...c, [k]: c[k].includes(v) ? c[k].filter((x) => x !== v) : [...c[k], v] }));
 
   const num = (s: string) => Number(s);
+  const bodyValidation = bodyErrors(f);
   const valid = [
     f.consent,
     f.full_name.trim().length > 0 && num(f.age) >= 13 && num(f.age) <= 100 && !!f.gender,
-    num(f.height_cm) >= 100 && num(f.height_cm) <= 250 && num(f.weight_kg) >= 30 && num(f.weight_kg) <= 300 && num(f.target_weight_kg) >= 30 && num(f.target_weight_kg) <= 300,
+    Object.values(bodyValidation).every(error => error === null),
     !!f.goal,
     !!f.diet_type,
     !!f.activity_level,
@@ -238,9 +240,9 @@ function Onboarding() {
             {step === 2 && (
               <>
                 <h1 className="text-3xl font-bold">Your body today</h1>
-                <div className="space-y-1.5"><Label htmlFor="h">Height (cm)</Label><Input id="h" type="number" inputMode="decimal" value={f.height_cm} onChange={(e) => set("height_cm", e.target.value)} /></div>
-                <div className="space-y-1.5"><Label htmlFor="w">Current weight (kg)</Label><Input id="w" type="number" inputMode="decimal" step="0.1" value={f.weight_kg} onChange={(e) => set("weight_kg", e.target.value)} /></div>
-                <div className="space-y-1.5"><Label htmlFor="t">Target weight (kg)</Label><Input id="t" type="number" inputMode="decimal" step="0.1" value={f.target_weight_kg} onChange={(e) => set("target_weight_kg", e.target.value)} /></div>
+                <div className="space-y-1.5"><Label htmlFor="h">Height (cm)</Label><Input id="h" type="number" inputMode="decimal" min={100} max={250} aria-invalid={!!bodyValidation.height_cm} aria-describedby="height-error" value={f.height_cm} onChange={(e) => set("height_cm", e.target.value)} />{bodyValidation.height_cm && <p id="height-error" className="text-sm text-destructive">{bodyValidation.height_cm}</p>}</div>
+                <div className="space-y-1.5"><Label htmlFor="w">Current weight (kg)</Label><Input id="w" type="number" inputMode="decimal" min={30} max={300} step="0.1" aria-invalid={!!bodyValidation.weight_kg} aria-describedby="weight-error" value={f.weight_kg} onChange={(e) => set("weight_kg", e.target.value)} />{bodyValidation.weight_kg && <p id="weight-error" className="text-sm text-destructive">{bodyValidation.weight_kg}</p>}</div>
+                <div className="space-y-1.5"><Label htmlFor="t">Target weight (kg)</Label><Input id="t" type="number" inputMode="decimal" min={30} max={300} step="0.1" aria-invalid={!!bodyValidation.target_weight_kg} aria-describedby="target-error" value={f.target_weight_kg} onChange={(e) => set("target_weight_kg", e.target.value)} />{bodyValidation.target_weight_kg && <p id="target-error" className="text-sm text-destructive">{bodyValidation.target_weight_kg}</p>}</div>
               </>
             )}
 
