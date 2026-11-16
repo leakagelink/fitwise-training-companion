@@ -99,6 +99,13 @@
       "when": 1794833930080,
       "tag": "0013_restrict_staff_operations_direct_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794838825266,
+      "tag": "0014_fix_recursive_coach_slot_visibility",
+      "breakpoints": true
     }
   ]
 }

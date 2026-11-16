@@ -7,6 +7,7 @@ import { Logo } from "@/components/brand/logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { PhoneLogin } from "@/features/account/phone-login";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -30,6 +31,7 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
+  const [method, setMethod] = useState<"email" | "phone">("email");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -83,7 +85,11 @@ function AuthPage() {
               {mode === "signup" ? "Start your 3-day free trial." : "Sign in to continue your journey."}
             </p>
 
-            <form onSubmit={submit} className="mt-6 space-y-4">
+            <div className="mt-5 grid grid-cols-2 gap-1 rounded-md bg-secondary p-1" aria-label="Login method">
+              <Button type="button" variant={method === "email" ? "default" : "ghost"} onClick={() => setMethod("email")}>Email</Button>
+              <Button type="button" variant={method === "phone" ? "default" : "ghost"} onClick={() => setMethod("phone")}>Mobile number</Button>
+            </div>
+            {method === "phone" ? <PhoneLogin key={mode} mode={mode} /> : <form onSubmit={submit} className="mt-6 space-y-4">
               {mode === "signup" && (
                 <div className="space-y-1.5">
                   <Label htmlFor="name">Name</Label>
@@ -110,7 +116,7 @@ function AuthPage() {
                 {busy && <Loader2 className="size-4 animate-spin" />}
                 {mode === "signup" ? "Create account" : "Sign in"}
               </Button>
-            </form>
+            </form>}
 
             <p className="mt-5 text-center text-sm text-muted-foreground">
               {mode === "signup" ? "Already have an account?" : "New to Fitness AI?"}{" "}

@@ -50,3 +50,9 @@ Payments, refunds, email delivery, production coach confirmation and full securi
 - [ ] Payment integration and invoices/refunds — deferred by user; provider, prices and currency needed later
 
 Email/push delivery and verified model billing costs are unavailable. Staff billing/coaching views are read-only; full management stays administrator-only. Scheduled reminders require publishing the new callback; live generation telemetry and scheduled delivery have not been independently exercised.
+
+# Mobile login and panel verification
+- [ ] Add mobile OTP signup/login with validation and resend states
+- [ ] Verify SMS provider setup and live delivery — requires configured SMS service and a real recipient
+- [ ] Check signed-in user, staff and admin flows on desktop/mobile; fix confirmed errors
+- [ ] Run regression tests and record remaining external-service limitations

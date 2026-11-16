@@ -1311,6 +1311,10 @@ export type Database = {
         }
         Returns: string
       }
+      current_user_has_slot_booking: {
+        Args: { _slot: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

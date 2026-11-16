@@ -49,3 +49,4 @@ use the editor.
 - Support notes are staff-only, private reads/exports are audited, and account-owned support/inbox data cascades from profiles — protects support privacy and account cleanup.
 - Notification reminders use a managed authenticated job and unique membership deduplication keys with preferences — avoids duplicate or unwanted in-app reminders.
 - Generation telemetry records outcomes and latency without prompts, photos or responses; unknown token costs remain null — reports usage without inventing billing data.
+- Mobile authentication uses hosted SMS OTP verification with explicit signup versus existing-user intent and international phone normalization — no custom OTP storage or bypasses.

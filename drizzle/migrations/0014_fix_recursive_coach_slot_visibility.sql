@@ -1,0 +1,3 @@
+CREATE FUNCTION public.current_user_has_slot_booking(_slot uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT EXISTS(SELECT 1 FROM public.coach_bookings WHERE slot_id=_slot AND user_id=auth.uid()) $$;
+REVOKE ALL ON FUNCTION public.current_user_has_slot_booking(uuid) FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.current_user_has_slot_booking(uuid) TO authenticated,service_role;
+ALTER POLICY "Read coach slots" ON public.coach_slots USING ((is_available AND starts_at>now()) OR coach_user_id=auth.uid() OR public.has_role(auth.uid(),'admin') OR public.current_user_has_slot_booking(id));
