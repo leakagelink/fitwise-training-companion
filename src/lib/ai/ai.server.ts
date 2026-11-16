@@ -78,3 +78,15 @@ export function friendlyAiError(error: unknown): string {
   if (status === 403) return "AI access is currently unavailable for this app.";
   return "The AI coach couldn't complete this request right now.";
 }
+
+/** Structured completion with an optional photo (data URL) attached. */
+export async function generateVisionObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, imageDataUrl?: string): Promise<T> {
+  const result = streamText({
+    model: provider().responses(COACH_MODEL),
+    instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
+    messages: [{ role: "user", content: [{ type: "text", text: prompt }, ...(imageDataUrl ? [{ type: "image" as const, image: imageDataUrl }] : [])] }],
+    output: Output.object({ schema }),
+    providerOptions,
+  });
+  return (await result.output) as T;
+}
