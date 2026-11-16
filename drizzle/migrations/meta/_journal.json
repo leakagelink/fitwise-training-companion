@@ -57,6 +57,13 @@
       "when": 1794830530192,
       "tag": "0007_administration_plans_access_history",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794831091100,
+      "tag": "0008_admin_account_search_record_wrapper",
+      "breakpoints": true
     }
   ]
 }

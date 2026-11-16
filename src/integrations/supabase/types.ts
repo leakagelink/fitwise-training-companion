@@ -935,6 +935,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_find_users: {
+        Args: { _search: string }
+        Returns: {
+          id: string
+        }[]
+      }
       admin_membership: {
         Args: {
           _actor: string
@@ -965,6 +971,17 @@ export type Database = {
           _user: string
         }
         Returns: undefined
+      }
+      admin_upsert_record: {
+        Args: {
+          _actor: string
+          _data: Json
+          _delete: boolean
+          _id: string
+          _reason: string
+          _table: string
+        }
+        Returns: string
       }
       has_role: {
         Args: {
