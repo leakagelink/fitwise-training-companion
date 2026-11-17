@@ -29,7 +29,7 @@ const NAV = [
 function AppShell() {
   return (
     <div className="min-h-screen bg-background md:flex">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-sidebar p-5 md:flex">
+      <aside className="app-safe-sidebar sticky hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar p-5 md:flex">
         <Logo className="text-lg" />
         <nav className="mt-10 flex flex-1 flex-col gap-1">
           {NAV.map((n) => (

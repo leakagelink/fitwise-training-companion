@@ -55,3 +55,4 @@ use the editor.
 - Admin screens use a drawer below desktop width and record summaries below tablet width; scoped touch-target and form sizing applies to admin dialogs too — keeps every management section usable on small screens without changing access rules.
 - Login destinations and user-surface redirects share an authenticated server-verified workspace query; role lookup failures stop routing — prevents administrators entering user onboarding or workout screens.
 - Admin overview presentation stays in a browser-safe component with real overview counts; workspace-scoped styling leaves the user app unchanged.
+- The root app viewport owns safe-area padding; sticky headers/sidebars and portalled admin navigation use shared safe-area tokens — prevents device status-bar overlap without adding duplicate screen padding.

@@ -59,6 +59,10 @@
 }
 
 :root {
+  --app-safe-top: env(safe-area-inset-top, 0px);
+  --app-safe-right: env(safe-area-inset-right, 0px);
+  --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --app-safe-left: env(safe-area-inset-left, 0px);
   --radius: 1rem;
   --background: oklch(0.155 0.006 250);
   --foreground: oklch(0.97 0.004 250);
@@ -165,6 +169,22 @@
 @utility shadow-glow {
   box-shadow: var(--shadow-glow);
 }
+
+/* One safe-area owner for every screen; sticky and portalled surfaces stay clear too. */
+.app-viewport {
+  min-height: 100dvh;
+  padding-top: var(--app-safe-top);
+  padding-left: var(--app-safe-left);
+  padding-right: var(--app-safe-right);
+}
+.app-safe-sticky { top: var(--app-safe-top); }
+.app-safe-sidebar { top: var(--app-safe-top); height: calc(100dvh - var(--app-safe-top)); }
+.app-safe-sheet {
+  padding-top: calc(1rem + var(--app-safe-top));
+  padding-bottom: calc(1rem + var(--app-safe-bottom));
+  padding-left: calc(1rem + var(--app-safe-left));
+}
+.app-safe-sheet > button { top: calc(1rem + var(--app-safe-top)); }
 
 /* Admin controls retain touch targets and prevent intrinsic form overflow. */
 .admin-workspace {

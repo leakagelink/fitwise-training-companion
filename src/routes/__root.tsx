@@ -142,7 +142,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="app-viewport"><Outlet /></div>
       <Toaster position="top-center" />
     </QueryClientProvider>
   );

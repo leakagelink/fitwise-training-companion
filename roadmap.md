@@ -3,6 +3,13 @@
 - [x] Keep saved data consistent across screens and clear private caches on account changes
 - [x] Verify repeat signed-in navigation, refresh and cache safety tests
 
+# Mobile header and Android rebuild
+- [x] Apply shared device safe-area spacing to screens, sticky headers and admin menu
+- [x] Verify mobile safe-area layout and provide PowerShell APK rebuild commands
+- [ ] Verify installed Android status bar and browser redirect — Android project/configuration and device are not available here
+
+Public landing/login checked at 393px in both themes with simulated 0px/32px device insets; desktop unchanged and three routing tests passed. Signed-in admin verification is unavailable because session minting found no matching requester account. Actual Android insets and navigation require the local Android project; publishing is needed for the HTTPS wrapper to receive this update.
+
 # Phase 3
 - [x] Personalized daily/three-day diet plans and meal replacements respecting profile and trial
 - [x] Recipes, serving adjustments, and meal logging
