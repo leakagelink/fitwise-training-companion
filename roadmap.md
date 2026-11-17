@@ -1,3 +1,7 @@
+# Current panel verification
+- [ ] Check user, admin and staff screens in both themes on phone/desktop and exercise saved actions
+- [ ] Run regression tests and report external-service/device checks separately
+
 # Android Back navigation
 - [x] Improve shared cache freshness and avoid repeated account checks on rapid screen navigation
 - [x] Add splash, screen-entry and control animations with reduced-motion support
