@@ -51,3 +51,5 @@ use the editor.
 - Generation telemetry records outcomes and latency without prompts, photos or responses; unknown token costs remain null — reports usage without inventing billing data.
 - Mobile authentication uses hosted SMS OTP verification with explicit signup versus existing-user intent and international phone normalization — no custom OTP storage or bypasses.
 - Booked-slot visibility uses a current-user security-definer existence check rather than querying booking policies from slot policies — prevents circular RLS evaluation without broadening visibility.
+
+- Admin screens use a drawer below desktop width and record summaries below tablet width; scoped touch-target and form sizing applies to admin dialogs too — keeps every management section usable on small screens without changing access rules.
