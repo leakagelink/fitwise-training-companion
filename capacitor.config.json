@@ -1,0 +1,16 @@
+{
+  "appId": "com.fitnessai.app",
+  "appName": "FitnessAI",
+  "webDir": "public",
+  "server": {
+    "url": "https://fitness.100businessideas.in",
+    "cleartext": false,
+    "allowNavigation": [
+      "fitness.100businessideas.in",
+      "fitwise-training-companion.lovable.app"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
