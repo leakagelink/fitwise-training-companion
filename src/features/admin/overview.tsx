@@ -6,7 +6,7 @@ type OverviewData = {
   purchases: unknown[];
 };
 
-export function AdminOverview({ data, pending, selectSection, children }: { data?: OverviewData; pending: boolean; selectSection: (id: string) => void; children: React.ReactNode }) {
+export function AdminOverview({ data, pending, selectSection, children }: { data: OverviewData | undefined; pending: boolean; selectSection: (id: string) => void; children: React.ReactNode }) {
   const metrics = [
     { label: "Registered users", value: data?.users, icon: Users, tone: "primary", section: "users" },
     { label: "Active members", value: data?.members, icon: UserCheck, tone: "water", section: "plans" },

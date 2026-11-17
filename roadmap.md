@@ -59,7 +59,9 @@ Email/push delivery and verified model billing costs are unavailable. Staff bill
 
 Coach reads reproduced a recursive slot/booking permission error; migration 0014 removes the recursion. Fresh signed-in verification confirmed the coach screen and callback dialog load; all 12 admin sections opened without alerts and staff permissions loaded. Mobile signup/signin validation, email switching and coach layout were checked at phone/desktop sizes in light/dark themes. SMS provider enablement/delivery cannot be verified or configured with available tools; configure Phone under More → Users → Auth settings. Live payments remain deferred, and real AI generation/media/scheduled delivery and every write flow are not fully verified.
 # Mobile admin optimization
-- [ ] Modernize admin navigation, overview and management screens; verify both themes and mobile/desktop interactions
+- [x] Modernize admin navigation, overview and management screens; verify both themes and mobile/desktop interactions
+
+Modern admin overview uses real metric tiles, activity distribution and quick access; grouped navigation, theme control, record styling and user avatars stay scoped to administration. All 13 sections checked at 320px, 393px and 1280px in both themes without overflow or runtime errors; quick access, user details and plan add/cancel verified. All 15 selected regression tests passed; build OK. No data or permission rules changed.
 - [x] Add admin bottom navigation and send admin logins only to administration
 - [x] Check role redirects and bottom navigation in both themes on phone/desktop
 
