@@ -8,7 +8,7 @@
 - [x] Verify mobile safe-area layout and provide PowerShell APK rebuild commands
 - [ ] Verify installed Android status bar and browser redirect — Android project/configuration and device are not available here
 
-Public landing/login checked at 393px in both themes with simulated 0px/32px device insets; desktop unchanged and three routing tests passed. Signed-in admin verification is unavailable because session minting found no matching requester account. Actual Android insets and navigation require the local Android project; publishing is needed for the HTTPS wrapper to receive this update.
+Public landing/login and 13 signed-in user/staff/legal screens checked at phone/desktop widths in both themes with simulated device insets; all 13 admin sections, opened menu and sticky header after scrolling also passed using a temporary test account. Screenshots reviewed, no horizontal overflow or runtime errors; three routing tests passed. Temporary admin access removed. Actual Android insets and browser navigation require the local Android project/device; publishing is needed for the HTTPS wrapper to receive this update. Coach management and active workout session headers still require authorized/populated flows for verification.
 
 # Phase 3
 - [x] Personalized daily/three-day diet plans and meal replacements respecting profile and trial
