@@ -3,8 +3,10 @@
 - [x] Verify saved check-in, weight, measurement, meal totals, support ticket, user/staff reply, own-data download, privacy export request, conversation creation and callback persistence
 - [x] Verify admin test-profile edit/readback, eight admin-only redirects, sign-out and signed-out access blocking
 - [x] Run all 60 regression tests; no page errors, section alerts or horizontal overflow observed in completed checks
-- [ ] Active workout start/set/reload/finish — browser session and temporary files expired before this check; temporary workout removed
-- [ ] Live AI generation/food analysis, actual SMS delivery, confirmed coach appointments and scheduled delivery — not exercised in this run; payments remain disconnected and native Android checks need device/project
+- [x] Active workout countdown change, pause/resume, set save/readback after reload and finish-to-workout navigation at 393px/1280px in both themes; no page errors or overflow
+- [x] Live name/quantity food analysis returned estimated micronutrients and saved macros; grocery purchase/quantity persisted; live coach response persisted after reload
+- [ ] Diet generation — two real vegetarian requests rejected by dietary validation; no invalid plan saved. Exact triggering content remains undiagnosed because full request log files and browser session expired mid-check. Safety validation must remain enabled.
+- [ ] Actual SMS delivery, confirmed coach appointments and scheduled delivery — not exercised; payments remain disconnected and native Android checks need device/project
 
 Test data and temporary elevated access were removed after verification. Checks were against the local preview with the live backend, not an installed APK; passing navigation and selected writes does not certify every action or external service.
 
