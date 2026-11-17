@@ -1,6 +1,12 @@
 # Current panel verification
-- [ ] Check user, admin and staff screens in both themes on phone/desktop and exercise saved actions
-- [ ] Run regression tests and report external-service/device checks separately
+- [x] Check user screens, all 13 admin sections and all 5 staff sections in light/dark themes at 393px and 1280px
+- [x] Verify saved check-in, weight, measurement, meal totals, support ticket, user/staff reply, own-data download, privacy export request, conversation creation and callback persistence
+- [x] Verify admin test-profile edit/readback, eight admin-only redirects, sign-out and signed-out access blocking
+- [x] Run all 60 regression tests; no page errors, section alerts or horizontal overflow observed in completed checks
+- [ ] Active workout start/set/reload/finish — browser session and temporary files expired before this check; temporary workout removed
+- [ ] Live AI generation/food analysis, actual SMS delivery, confirmed coach appointments and scheduled delivery — not exercised in this run; payments remain disconnected and native Android checks need device/project
+
+Test data and temporary elevated access were removed after verification. Checks were against the local preview with the live backend, not an installed APK; passing navigation and selected writes does not certify every action or external service.
 
 # Android Back navigation
 - [x] Improve shared cache freshness and avoid repeated account checks on rapid screen navigation
