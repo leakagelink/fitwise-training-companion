@@ -11,8 +11,13 @@ export function SplashScreen({ startup = false }: { startup?: boolean }) {
     let active = true;
     let frame = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const ready = image.current?.decode() ?? Promise.resolve();
+    let imageTimeout: ReturnType<typeof setTimeout> | undefined;
+    const ready = Promise.race([
+      image.current?.decode().catch(() => undefined) ?? Promise.resolve(),
+      new Promise<void>((resolve) => { imageTimeout = setTimeout(resolve, 800); }),
+    ]);
     void ready.catch(() => undefined).then(() => {
+      clearTimeout(imageTimeout);
       if (!active) return;
       frame = requestAnimationFrame(() => {
         frame = requestAnimationFrame(() => {
@@ -25,7 +30,7 @@ export function SplashScreen({ startup = false }: { startup?: boolean }) {
         });
       });
     });
-    return () => { active = false; cancelAnimationFrame(frame); clearTimeout(timer); };
+    return () => { active = false; cancelAnimationFrame(frame); clearTimeout(timer); clearTimeout(imageTimeout); };
   }, [startup]);
 
   if (!visible) return null;
