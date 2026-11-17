@@ -59,3 +59,4 @@ use the editor.
 - Shared Logo and splash components use one CDN asset pointer; startup fades out after hydration and image decoding, immediately under reduced motion — keeps branding consistent without blocking page readiness.
 - Screen motion fades the existing viewport on pathname changes without remounting layouts; shared control and card effects respect reduced motion — preserves live form/workout state and fixed navigation.
 - Android Back is registered once after hydration through the Capacitor App plugin and only traverses router-owned history; the first entry consumes Back without exiting — protects the native app boundary while preserving router blockers.
+- Navigation-only account checks share a short memory cache cleared by the root identity guard; role and membership queries retain immediate verification — removes duplicate network round trips without caching authorization decisions.

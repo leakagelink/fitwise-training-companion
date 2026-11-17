@@ -2,6 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 import { createAppQueryClient, createCacheIdentityGuard } from "@/lib/query-cache";
 
 describe("Screen cache", () => {
+  it("keeps normal screen reads fresh for two minutes and cached for one hour", () => {
+    const client = createAppQueryClient();
+    expect(client.getDefaultOptions().queries?.staleTime).toBe(120_000);
+    expect(client.getDefaultOptions().queries?.gcTime).toBe(3_600_000);
+    client.clear();
+  });
   it("reuses a fresh screen read across repeat visits", async () => {
     const client = createAppQueryClient();
     const read = vi.fn(async () => ({ water: 250 }));

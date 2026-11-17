@@ -13,6 +13,7 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     defaultPreload: "intent",
     defaultPendingComponent: SplashScreen,
+    defaultPendingMinMs: 150,
   });
 
   return router;

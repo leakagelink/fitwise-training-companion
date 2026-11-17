@@ -5,8 +5,8 @@ export function createAppQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60_000,
-        gcTime: typeof window === "undefined" ? Infinity : 30 * 60_000,
+        staleTime: 2 * 60_000,
+        gcTime: typeof window === "undefined" ? Infinity : 60 * 60_000,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
         retry: 1,

@@ -1,4 +1,5 @@
 # Android Back navigation
+- [x] Improve shared cache freshness and avoid repeated account checks on rapid screen navigation
 - [x] Add splash, screen-entry and control animations with reduced-motion support
 - [x] Handle native Back through app-owned navigation and stay open at the first screen
 - [x] Add regression tests for previous-screen and first-screen behavior
