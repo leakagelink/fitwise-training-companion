@@ -167,6 +167,33 @@
 }
 
 /* Admin controls retain touch targets and prevent intrinsic form overflow. */
+.admin-workspace {
+  --radius: .5rem;
+  --admin-shadow: 0 3px 16px oklch(0 0 0 / 8%);
+}
+.admin-sidebar { background: var(--sidebar); }
+.admin-nav-item { position: relative; border: 1px solid transparent; font-size: 13px; }
+.admin-nav-item[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); border-color: color-mix(in oklch, var(--primary) 25%, transparent); }
+.admin-nav-item[aria-current="page"]::before { content: ""; position: absolute; left: -9px; height: 20px; width: 3px; border-radius: 2px; background: var(--primary); }
+.admin-group-title { margin: 22px 12px 9px; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--muted-foreground); }
+.admin-stat { padding: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--admin-shadow); }
+.admin-tone-primary { --stat-tone: var(--primary); }
+.admin-tone-water { --stat-tone: var(--water); }
+.admin-tone-energy { --stat-tone: var(--energy); }
+.admin-stat-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 8px; color: var(--stat-tone); background: color-mix(in oklch, var(--stat-tone) 12%, transparent); }
+.admin-workspace table thead { background: var(--muted); }
+.admin-workspace table th:first-child, .admin-workspace table td:first-child { padding-left: 16px; }
+.admin-workspace table th:last-child, .admin-workspace table td:last-child { padding-right: 16px; }
+.admin-workspace table tbody tr:hover { background: color-mix(in oklch, var(--muted) 45%, transparent); }
+.admin-record-table { border: 1px solid var(--border); border-radius: 8px; }
+.admin-record-list { display: grid; gap: 12px; }
+.admin-record-list > article { border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--card); }
+.admin-bottom-nav { box-shadow: 0 -4px 20px oklch(0 0 0 / 8%); }
+@media (prefers-reduced-motion: no-preference) {
+  .admin-stat { transition: border-color .2s, transform .2s; }
+  .admin-stat:hover { border-color: color-mix(in oklch, var(--stat-tone) 35%, var(--border)); transform: translateY(-2px); }
+}
+@media (max-width: 400px) { .admin-stat { padding: 13px; } }
 .admin-workspace :is(input:not([type="checkbox"]), textarea, select) {
   min-width: 0;
   max-width: 100%;
