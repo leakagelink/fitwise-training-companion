@@ -56,5 +56,6 @@ use the editor.
 - Login destinations and user-surface redirects share an authenticated server-verified workspace query; role lookup failures stop routing — prevents administrators entering user onboarding or workout screens.
 - Admin overview presentation stays in a browser-safe component with real overview counts; workspace-scoped styling leaves the user app unchanged.
 - The root app viewport owns safe-area padding; sticky headers/sidebars and portalled admin navigation use shared safe-area tokens — prevents device status-bar overlap without adding duplicate screen padding.
-- Shared Logo and splash components use one CDN asset pointer; the root shell dismisses its startup splash after hydration and image decoding without a forced delay — keeps branding consistent without slowing navigation.
+- Shared Logo and splash components use one CDN asset pointer; startup fades out after hydration and image decoding, immediately under reduced motion — keeps branding consistent without blocking page readiness.
+- Screen motion fades the existing viewport on pathname changes without remounting layouts; shared control and card effects respect reduced motion — preserves live form/workout state and fixed navigation.
 - Android Back is registered once after hydration through the Capacitor App plugin and only traverses router-owned history; the first entry consumes Back without exiting — protects the native app boundary while preserving router blockers.

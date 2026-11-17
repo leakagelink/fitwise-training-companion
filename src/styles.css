@@ -186,6 +186,38 @@
 }
 .app-safe-sheet > button { top: calc(1rem + var(--app-safe-top)); }
 
+/* Motion never changes layout or fabricates exercise movement. */
+@keyframes brand-arrive {
+  from { opacity: .4; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes surface-arrive {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .brand-splash { transition: opacity 320ms ease-out; }
+  .brand-splash[data-leaving="true"] { opacity: 0; pointer-events: none; }
+  .brand-splash-logo { animation: brand-arrive 600ms ease-out both; }
+  .app-viewport :is(button, a, input, textarea, select) {
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  }
+  .app-viewport button:active:not(:disabled) { opacity: .75; }
+  .app-viewport :is(.card-premium, .admin-stat, .admin-record-list > article) {
+    animation: surface-arrive 360ms ease-out both;
+  }
+  .app-viewport nav :is(a, button)[aria-current="page"],
+  .app-viewport nav a[data-status="active"] { animation: surface-arrive 260ms ease-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-viewport *, .brand-splash, .brand-splash-logo {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Admin controls retain touch targets and prevent intrinsic form overflow. */
 .admin-workspace {
   --radius: .5rem;

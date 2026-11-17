@@ -18,6 +18,7 @@ import { createCacheIdentityGuard } from "@/lib/query-cache";
 import { SplashScreen } from "@/components/brand/splash-screen";
 import logoAsset from "@/assets/fitnessai-logo.png.asset.json";
 import { NativeNavigation } from "@/components/native-navigation";
+import { ScreenEffects } from "@/components/screen-effects";
 
 function NotFoundComponent() {
   return (
@@ -148,6 +149,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <NativeNavigation />
+      <ScreenEffects />
       <div className="app-viewport"><Outlet /></div>
       <Toaster position="top-center" />
     </QueryClientProvider>
