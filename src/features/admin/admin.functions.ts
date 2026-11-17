@@ -11,7 +11,8 @@ async function requireAdmin(client: SupabaseClient<Database>, userId: string) {
 }
 export const getAdminIdentity = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   const result = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
-  return { isAdmin: !result.error && result.data === true };
+  if (result.error) throw new Error("Could not verify workspace access. Please try again.");
+  return { isAdmin: result.data === true };
 });
 export const getAdminOverview = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   await requireAdmin(context.supabase, context.userId);

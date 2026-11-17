@@ -3,9 +3,12 @@ import { Apple, Bot, Dumbbell, Home, LineChart, UserRound } from "lucide-react";
 import { profileQuery } from "@/hooks/use-profile";
 import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
+import { workspaceQuery } from "@/features/account/workspace";
 
 export const Route = createFileRoute("/_authenticated/_app")({
   beforeLoad: async ({ context }) => {
+    const identity = await context.queryClient.fetchQuery(workspaceQuery);
+    if (identity.isAdmin) throw redirect({ to: "/admin", replace: true });
     const profile = await context.queryClient.ensureQueryData({
       ...profileQuery,
       revalidateIfStale: true,

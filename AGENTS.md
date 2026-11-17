@@ -53,3 +53,4 @@ use the editor.
 - Booked-slot visibility uses a current-user security-definer existence check rather than querying booking policies from slot policies — prevents circular RLS evaluation without broadening visibility.
 
 - Admin screens use a drawer below desktop width and record summaries below tablet width; scoped touch-target and form sizing applies to admin dialogs too — keeps every management section usable on small screens without changing access rules.
+- Login destinations and user-surface redirects share an authenticated server-verified workspace query; role lookup failures stop routing — prevents administrators entering user onboarding or workout screens.

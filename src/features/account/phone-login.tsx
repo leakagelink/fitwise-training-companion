@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { normalizePhone, validSmsCode } from "./phone-auth";
-export function PhoneLogin({ mode }: { mode: "signin" | "signup" }) {
-  const navigate = useNavigate();
+export function PhoneLogin({ mode, onVerified }: { mode: "signin" | "signup"; onVerified: () => Promise<void> }) {
   const [country, setCountry] = useState("+91"); const [number, setNumber] = useState(""); const [name, setName] = useState("");
   const [sentPhone, setSentPhone] = useState<string | null>(null); const [code, setCode] = useState(""); const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [cooldown, setCooldown] = useState(0);
   useEffect(() => { if (!cooldown) return; const timer = setTimeout(() => setCooldown(v => Math.max(0, v - 1)), 1000); return () => clearTimeout(timer); }, [cooldown]);
@@ -32,7 +30,7 @@ export function PhoneLogin({ mode }: { mode: "signin" | "signup" }) {
       const result = await supabase.auth.verifyOtp({ phone: sentPhone, token: code, type: "sms" });
       if (result.error) throw result.error;
       if (!result.data.session) throw new Error("Verification did not complete. Please try again.");
-      await navigate({ to: "/home" });
+      await onVerified();
     } catch(e) { setError(e instanceof Error ? e.message : "Code could not be verified"); } finally { setBusy(false); }
   }
   return <form className="mt-6 space-y-4" onSubmit={e => { e.preventDefault(); void (sentPhone ? verify() : send()); }}>

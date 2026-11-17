@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,8 +15,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { ACTIVITY, ALLERGIES, DIETS, EQUIPMENT, EXPERIENCE, GENDERS, GOALS } from "@/features/onboarding/options";
 import { bodyErrors } from "@/features/onboarding/body-validation";
+import { workspaceQuery } from "@/features/account/workspace";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
+  beforeLoad: async ({ context }) => {
+    const identity = await context.queryClient.fetchQuery(workspaceQuery);
+    if (identity.isAdmin) throw redirect({ to: "/admin", replace: true });
+  },
   head: () => ({
     meta: [
       { title: "Set up your profile — Fitness AI" },

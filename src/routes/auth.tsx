@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { PhoneLogin } from "@/features/account/phone-login";
+import { useQueryClient } from "@tanstack/react-query";
+import { workspaceQuery, workspaceDestination } from "@/features/account/workspace";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [mode, setMode] = useState<"signin" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,14 +37,19 @@ function AuthPage() {
   const [method, setMethod] = useState<"email" | "phone">("email");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/home" });
-    });
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) navigate({ to: "/home" });
-    });
-    return () => data.subscription.unsubscribe();
-  }, [navigate]);
+    let active = true;
+    void supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      const identity = await qc.fetchQuery(workspaceQuery);
+      if (active) await navigate({ to: workspaceDestination(identity.isAdmin), replace: true });
+    }).catch(err => toast.error(err instanceof Error ? err.message : "Could not open workspace"));
+    return () => { active = false; };
+  }, [navigate, qc]);
+
+  async function openWorkspace() {
+    const identity = await qc.fetchQuery(workspaceQuery);
+    await navigate({ to: workspaceDestination(identity.isAdmin), replace: true });
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,13 +59,15 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/home", data: { full_name: name } },
+          options: { emailRedirectTo: window.location.origin + "/auth", data: { full_name: name } },
         });
         if (error) throw error;
         if (!data.session) setSent(true);
+        else await openWorkspace();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        await openWorkspace();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -89,7 +99,7 @@ function AuthPage() {
               <Button type="button" variant={method === "email" ? "default" : "ghost"} onClick={() => setMethod("email")}>Email</Button>
               <Button type="button" variant={method === "phone" ? "default" : "ghost"} onClick={() => setMethod("phone")}>Mobile number</Button>
             </div>
-            {method === "phone" ? <PhoneLogin key={mode} mode={mode} /> : <form onSubmit={submit} className="mt-6 space-y-4">
+            {method === "phone" ? <PhoneLogin key={mode} mode={mode} onVerified={openWorkspace} /> : <form onSubmit={submit} className="mt-6 space-y-4">
               {mode === "signup" && (
                 <div className="space-y-1.5">
                   <Label htmlFor="name">Name</Label>

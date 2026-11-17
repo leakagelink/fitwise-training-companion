@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -23,8 +23,13 @@ import { ExerciseImage } from "@/features/exercise-library/exercise-image";
 import { WorkoutTimer } from "@/features/workout/workout-timer";
 import { sessionQuery } from "@/features/workout/queries";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
+import { workspaceQuery } from "@/features/account/workspace";
 
 export const Route = createFileRoute("/_authenticated/session/$sessionId")({
+  beforeLoad: async ({ context }) => {
+    const identity = await context.queryClient.fetchQuery(workspaceQuery);
+    if (identity.isAdmin) throw redirect({ to: "/admin", replace: true });
+  },
   head: () => ({
     meta: [
       { title: "Active workout — Fitness AI" },
