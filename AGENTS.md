@@ -57,3 +57,4 @@ use the editor.
 - Admin overview presentation stays in a browser-safe component with real overview counts; workspace-scoped styling leaves the user app unchanged.
 - The root app viewport owns safe-area padding; sticky headers/sidebars and portalled admin navigation use shared safe-area tokens — prevents device status-bar overlap without adding duplicate screen padding.
 - Shared Logo and splash components use one CDN asset pointer; the root shell dismisses its startup splash after hydration and image decoding without a forced delay — keeps branding consistent without slowing navigation.
+- Android Back is registered once after hydration through the Capacitor App plugin and only traverses router-owned history; the first entry consumes Back without exiting — protects the native app boundary while preserving router blockers.

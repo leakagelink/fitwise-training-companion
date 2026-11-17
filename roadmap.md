@@ -1,3 +1,8 @@
+# Android Back navigation
+- [x] Handle native Back through app-owned navigation and stay open at the first screen
+- [x] Add regression tests for previous-screen and first-screen behavior
+- [ ] Verify on installed Android APK — local Android project/device unavailable; App plugin needs native sync and APK rebuild
+
 # Uploaded logo
 - [x] Use the supplied logo across shared app branding, administration and the favicon
 - [x] Add the supplied logo to the web opening screen
