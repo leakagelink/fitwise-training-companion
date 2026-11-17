@@ -1,3 +1,8 @@
+# Uploaded logo
+- [x] Use the supplied logo across shared app branding, administration and the favicon
+- [x] Add the supplied logo to the web opening screen
+- [ ] Verify native Android splash — local Android project is not available here
+
 # Screen loading and caching
 - [x] Add shared in-memory screen caching, navigation preloading and background refresh
 - [x] Keep saved data consistent across screens and clear private caches on account changes

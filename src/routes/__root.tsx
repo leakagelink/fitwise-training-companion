@@ -15,6 +15,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { createCacheIdentityGuard } from "@/lib/query-cache";
+import { SplashScreen } from "@/components/brand/splash-screen";
+import logoAsset from "@/assets/fitnessai-logo.png.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -98,7 +100,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "preload", href: logoAsset.url, as: "image" },
     ],
   }),
   shellComponent: RootShell,
@@ -117,6 +120,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <SplashScreen startup />
         {children}
         <Scripts />
       </body>
