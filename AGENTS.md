@@ -36,7 +36,7 @@ use the editor.
 - Account deletion must delete every user-owned table without FK cascade in features/account — keep its table list in sync with new tables.
 - Exercise catalog is the RepDB free-tier JSON bundled at src/data/exercises.json (lazy-loaded on client); plans store its text ids and the server validates AI-chosen ids against it — license forbids redistribution, needs visible "Exercise data by RepDB" attribution.
 - Active workout set edits are written to localStorage (fa-pending-sets) and flushed to the database with retry — survives flaky network.
-- Workout clocks use wall time; only GIF-mapped exercises are listed or plannable (full catalog still resolves saved plans); demos prefer credited CC BY-SA clips, then pinned GIFs (near matches labeled similar) — keeps guidance honest.
+- Workout clocks use wall time; only GIF-mapped exercises are listable/plannable (full catalog resolves saved plans); demos: CC BY-SA clips, then pinned GIFs (near matches labeled).
 - Nutrition plans store validated recipe days as JSON, while consumed meals keep independent nutrient snapshots and groceries keep independent editable rows — later plan edits must not rewrite past intake or purchased lists.
 - Coach threads use route-derived IDs and persisted UIMessage parts; authenticated raw streaming runs through the Gateway SDK with one durable generation lock per thread — prevents cross-thread history and duplicate simultaneous answers.
 - Human-coach booking status is backend-controlled with protected role checks and unique active slots; requests remain pending until staff confirm — prevents false confirmations and double booking.
