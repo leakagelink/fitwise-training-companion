@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { human } from "@/features/exercise-library/catalog";
 import { exercisesQuery, useExercises } from "@/features/exercise-library/use-exercises";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
-import { Attribution, ExerciseImage } from "@/features/exercise-library/exercise-image";
+import { Attribution, ExerciseThumb } from "@/features/exercise-library/exercise-image";
 
 export const Route = createFileRoute("/_authenticated/_app/exercises/")({
   head: () => ({
@@ -130,7 +130,7 @@ function Library() {
             {list.slice(0, limit).map((x) => (
               <div key={x.id} className="card-premium relative overflow-hidden p-2">
                 <Link to="/exercises/$exerciseId" params={{ exerciseId: x.id }}>
-                  <ExerciseImage file={x.start} alt={x.name} />
+                  <ExerciseThumb exercise={x} />
                   <p className="mt-2 px-1 text-sm font-semibold leading-tight">{x.name}</p>
                   <p className="px-1 pb-1 text-xs text-muted-foreground">
                     {human(x.primary[0])} · {human(x.equipment)}

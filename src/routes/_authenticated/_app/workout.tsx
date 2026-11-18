@@ -14,7 +14,7 @@ import {
   useExerciseMap,
   useExercises,
 } from "@/features/exercise-library/use-exercises";
-import { ExerciseImage } from "@/features/exercise-library/exercise-image";
+import { ExerciseThumb } from "@/features/exercise-library/exercise-image";
 import { generateWorkoutPlan } from "@/features/workout/plan.functions";
 import { startSession } from "@/features/workout/session";
 import { workoutPlanQuery, workoutSessionsQuery } from "@/features/workout/queries";
@@ -181,7 +181,7 @@ function Workout() {
                           params={{ exerciseId: x.exercise_id }}
                           className="w-14 shrink-0"
                         >
-                          {ex && <ExerciseImage file={ex.start} alt={ex.name} />}
+                          {ex && <ExerciseThumb exercise={ex} />}
                         </Link>
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-medium">{ex?.name ?? x.exercise_id}</p>
@@ -326,7 +326,7 @@ function ReplaceDialog({
                   onClick={() => onPick(o.id)}
                   className="flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-secondary"
                 >
-                  <ExerciseImage file={o.start} alt={o.name} className="w-12" />
+                  <ExerciseThumb exercise={o} className="w-12" />
                   <span>
                     <span className="block text-sm font-medium">{o.name}</span>
                     <span className="text-xs text-muted-foreground">
