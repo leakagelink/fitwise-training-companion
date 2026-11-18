@@ -1,7 +1,7 @@
 # Free exercise demonstrations
 - [x] Import 27 exact-matched wger movement videos under CC BY-SA 4.0 with author/source/changes credits
 - [x] Add silent looping playback and play/pause to exercise details and active workouts, preserving still-image fallback
-- [x] Verify signed-in detail and active-workout playback at 393px/1280px, pause/play, still fallback and nine regression tests
+- [x] Verify all 27 signed-in detail and active-workout demonstrations at 393px/1280px in light/dark themes (108 combinations), pause/play, no horizontal overflow, still fallback and nine regression tests
 
 The previously suggested MIT repository explicitly disclaims knowledge of video provenance; it was not used. Unmatched catalog exercises retain stills. Native APK playback and a professional form review of every clip remain unverified.
 
