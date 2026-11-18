@@ -40,7 +40,7 @@ STRICTLY exclude listed allergens, their derivatives and cross-contamination ris
     const { generateCoachObject, friendlyAiError } = await import("@/lib/ai/ai.server");
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     try {
-      const result = await trackedGeneration(userId, existing ? "meal_replacement" : "diet_plan", "openai/gpt-6-astra", async () => existing ? { name: existing.name, days: [{ meals: [await generateCoachObject(prompt, "Design a safe personalized nutrition recipe with estimated values.", mealSchema)] }] } : await generateCoachObject(prompt, "Design a balanced personalized nutrition plan with estimated values.", dietSchema));
+      const result = await trackedGeneration(userId, existing ? "meal_replacement" : "diet_plan", "openai/gpt-5.6-luna", async () => existing ? { name: existing.name, days: [{ meals: [await generateCoachObject(prompt, "Design a safe personalized nutrition recipe with estimated values.", mealSchema)] }] } : await generateCoachObject(prompt, "Design a balanced personalized nutrition plan with estimated values.", dietSchema));
       if (!result.days.length || (!existing && (result.days.length !== data.duration || result.days.some(d => d.meals.length !== 4)))) throw new Error("The generated plan was incomplete. Please start a fresh request.");
       for (const day of result.days) for (const meal of day.meals) {
         if (!mealFitsDiet(meal, p.diet_type, p.allergies)) throw new Error("The generated meal did not pass the dietary restriction check. Nothing was saved.");

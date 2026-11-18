@@ -64,7 +64,7 @@ ${catalog}`;
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     let plan: z.infer<typeof planSchema>;
     try {
-      plan = await trackedGeneration(userId, "workout_plan", "openai/gpt-6-astra", () => generateCoachObject(prompt, "You are an expert strength & conditioning coach designing safe programs.", planSchema));
+      plan = await trackedGeneration(userId, "workout_plan", "openai/gpt-5.6-luna", () => generateCoachObject(prompt, "You are an expert strength & conditioning coach designing safe programs.", planSchema));
     } catch (error) {
       console.error("plan generation failed", error);
       return { status: "error", message: friendlyAiError(error) };

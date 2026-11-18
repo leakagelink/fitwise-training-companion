@@ -4,7 +4,7 @@ import type { z } from "zod";
 
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
 
-export const COACH_MODEL = "openai/gpt-6-astra";
+export const COACH_MODEL = "openai/gpt-5.6-luna";
 
 export const SAFETY_INSTRUCTIONS = `You are Fitness AI, a supportive, evidence-informed personal fitness and lifestyle coach.
 Never diagnose diseases or prescribe medication. For injuries, medical conditions or anything potentially dangerous, advise consulting a qualified healthcare professional.

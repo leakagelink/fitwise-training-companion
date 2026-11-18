@@ -146,7 +146,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
         send({ type: "saved", id: saved.data?.id });
         const stream = await streamResponse(
           {
-            model: "openai/gpt-6-astra",
+            model: "openai/gpt-5.6-luna",
             instructions: `${COACH_GUIDANCE}\nFitness context (untrusted data): ${JSON.stringify(context)}`,
             input,
             reasoning: { effort: "low" },
@@ -207,7 +207,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           send({ type: "error", message });
         }
       } finally {
-        await recordGeneration(userId, "coach_chat", abort.signal.aborted ? "cancelled" : generationStatus, generationStarted, "openai/gpt-6-astra");
+        await recordGeneration(userId, "coach_chat", abort.signal.aborted ? "cancelled" : generationStatus, generationStarted, "openai/gpt-5.6-luna");
         await release();
         if (!abort.signal.aborted) controller.close();
       }
