@@ -638,6 +638,36 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_otps: {
+        Row: {
+          attempts: number
+          code_hash: string
+          expires_at: string
+          last_sent_at: string
+          phone: string
+          window_count: number
+          window_start: string
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          expires_at: string
+          last_sent_at?: string
+          phone: string
+          window_count?: number
+          window_start?: string
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          expires_at?: string
+          last_sent_at?: string
+          phone?: string
+          window_count?: number
+          window_start?: string
+        }
+        Relationships: []
+      }
       privacy_requests: {
         Row: {
           created_at: string
@@ -1314,6 +1344,13 @@ export type Database = {
       current_user_has_slot_booking: {
         Args: { _slot: string }
         Returns: boolean
+      }
+      find_user_by_phone: {
+        Args: { _phone: string }
+        Returns: {
+          email: string
+          id: string
+        }[]
       }
       has_role: {
         Args: {
