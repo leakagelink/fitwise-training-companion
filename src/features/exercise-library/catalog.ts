@@ -20,6 +20,9 @@ export interface Exercise {
   peak: string | null;
 }
 
+import { exerciseGif } from "./gif-motion";
+export const hasGif = (id: string) => exerciseGif(id) !== undefined;
+
 const IMG_BASE = "https://raw.githubusercontent.com/RepDB/exercise-dataset/main/images/flat/";
 export const imageUrl = (file: string) => IMG_BASE + file;
 
@@ -27,13 +30,19 @@ export const human = (s: string | null | undefined) =>
   s ? s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Bodyweight";
 
 let cache: Promise<Exercise[]> | null = null;
-export function loadExercises(): Promise<Exercise[]> {
+function loadAll(): Promise<Exercise[]> {
   cache ??= import("@/data/exercises.json").then((m) => m.default as Exercise[]);
   return cache;
 }
 
+/** Exercises users can browse or pick: only those with a GIF animation. */
+export async function loadExercises(): Promise<Exercise[]> {
+  return (await loadAll()).filter((e) => hasGif(e.id));
+}
+
+/** Full map so older saved plans still resolve exercises that are now hidden. */
 export async function exerciseMap(): Promise<Map<string, Exercise>> {
-  return new Map((await loadExercises()).map((e) => [e.id, e]));
+  return new Map((await loadAll()).map((e) => [e.id, e]));
 }
 
 /** Maps onboarding equipment labels to RepDB equipment ids. `null` = bodyweight. */

@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { GOAL_LABELS, type Goal } from "@/lib/fitness";
-import { allowedForUser, difficultyAllowed, type Exercise } from "@/features/exercise-library/catalog";
+import { allowedForUser, hasGif, difficultyAllowed, type Exercise } from "@/features/exercise-library/catalog";
 
 const planSchema = z.object({
   name: z.string(),
@@ -38,6 +38,7 @@ export const generateWorkoutPlan = createServerFn({ method: "POST" })
     const all = (await import("@/data/exercises.json")).default as Exercise[];
     const pool = all.filter(
       (e) =>
+        hasGif(e.id) &&
         e.category !== "stretching" &&
         e.category !== "olympic" &&
         allowedForUser(e, p.workout_location, p.equipment) &&
