@@ -33,3 +33,6 @@ smith-machine-shrug: https://wger.de/media/exercise-video/575/a7d99f2b-86fc-433a
 seated-calf-raise: https://wger.de/media/exercise-video/590/a325ae2e-686b-4a1f-aff2-ba37fa3fa157.MOV
 standing-calf-raise: https://wger.de/media/exercise-video/622/461171e5-2b16-407d-bf27-27aeef43f105.MOV
 tricep-kickback: https://wger.de/media/exercise-video/655/2d88a05b-bde3-4026-bfbf-524c11068dc5.MOV
+Exercise animation GIFs
+Source: https://github.com/JahelCuadrado/ExerciseGymGifsDB (release v1.1.0, served from jsDelivr)
+The repository states the GIFs belong to their respective authors and grants no license; they are shown at the app owner's direction.

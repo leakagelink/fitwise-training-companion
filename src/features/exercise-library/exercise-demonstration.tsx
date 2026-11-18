@@ -3,16 +3,20 @@ import { Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ExerciseImage } from "./exercise-image";
 import { exerciseMotion } from "./motion";
+import { exerciseGif, GIF_SOURCE } from "./gif-motion";
 import type { Exercise } from "./catalog";
 
 export function ExerciseDemonstration({ exercise }: { exercise: Exercise }) {
   const media = exerciseMotion(exercise.id);
+  const gif = exerciseGif(exercise.id);
   const video = useRef<HTMLVideoElement>(null);
   const [failed, setFailed] = useState(false);
+  const [gifFailed, setGifFailed] = useState(false);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     setFailed(false);
+    setGifFailed(false);
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       void video.current?.play().catch(() => setPlaying(false));
     }
@@ -23,6 +27,20 @@ export function ExerciseDemonstration({ exercise }: { exercise: Exercise }) {
     if (element) observer.observe(element);
     return () => observer.disconnect();
   }, [exercise.id]);
+
+  if ((!media || failed) && gif && !gifFailed) {
+    return (
+      <figure className="space-y-2">
+        <img key={exercise.id} src={gif.url} alt={`${exercise.name} animated demonstration`}
+          decoding="async" onError={() => setGifFailed(true)}
+          className="mx-auto aspect-square max-h-96 w-full rounded-lg bg-surface object-contain" />
+        <figcaption className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+          {gif.similar && <span className="rounded-full border border-border px-2 py-0.5 font-medium text-foreground">Similar variation</span>}
+          <a className="underline" href={GIF_SOURCE} target="_blank" rel="noreferrer">Animation: ExerciseGymGifsDB</a>
+        </figcaption>
+      </figure>
+    );
+  }
 
   if (!media || failed) {
     return (

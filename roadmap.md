@@ -1,3 +1,7 @@
+# Exercise GIF animations
+- [x] Map 401 catalog exercises to reviewed ExerciseGymGifsDB v1.1.0 GIFs (exact or labeled similar) with still fallback and tests
+- [ ] Map remaining ~300 exercises (no reliable GIF match; AI matching stopped when AI credits ran out)
+
 # Free exercise demonstrations
 - [x] Import 27 exact-matched wger movement videos under CC BY-SA 4.0 with author/source/changes credits
 - [x] Add silent looping playback and play/pause to exercise details and active workouts, preserving still-image fallback

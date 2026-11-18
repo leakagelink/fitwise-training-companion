@@ -20,7 +20,7 @@ export function Attribution() {
       <a href="https://repdb.co" rel="nofollow noreferrer" target="_blank" className="underline">
         RepDB (repdb.co)
       </a>
-      . Video demonstrations: Goulart / wger, CC BY-SA 4.0.
+      . Video demonstrations: Goulart / wger, CC BY-SA 4.0. Animations: ExerciseGymGifsDB.
       {" "}<a href="/exercise-media-credits.txt" className="underline" target="_blank" rel="noreferrer">Media credits</a>
     </p>
   );
