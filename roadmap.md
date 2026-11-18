@@ -1,3 +1,8 @@
+# Free exercise demonstrations
+- [ ] Import freely licensed movement videos with exact exercise matching and retained author/license credits
+- [ ] Add looping playback to exercise details and active workouts, preserving still-image fallback
+- [ ] Verify media playback and exercise mapping tests on phone and desktop
+
 # Current panel verification
 - [x] Check user screens, all 13 admin sections and all 5 staff sections in light/dark themes at 393px and 1280px
 - [x] Verify saved check-in, weight, measurement, meal totals, support ticket, user/staff reply, own-data download, privacy export request, conversation creation and callback persistence
