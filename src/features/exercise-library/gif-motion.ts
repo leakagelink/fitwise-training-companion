@@ -10,10 +10,10 @@ export interface ExerciseGif {
   similar: boolean;
 }
 
-const map = gifs as Record<string, [string, "e" | "c"]>;
+const map: Record<string, string[]> = gifs;
 
 export function exerciseGif(id: string): ExerciseGif | undefined {
   const entry = map[id];
-  if (!entry) return undefined;
+  if (!entry?.[0]) return undefined;
   return { url: `${GIF_BASE}${entry[0]}.gif`, similar: entry[1] === "c" };
 }
