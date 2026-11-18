@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { todayISO } from "@/lib/fitness";
 import { human } from "@/features/exercise-library/catalog";
 import { exerciseMapQuery, useExerciseMap } from "@/features/exercise-library/use-exercises";
-import { ExerciseImage } from "@/features/exercise-library/exercise-image";
+import { ExerciseDemonstration } from "@/features/exercise-library/exercise-demonstration";
 import { WorkoutTimer } from "@/features/workout/workout-timer";
 import { sessionQuery } from "@/features/workout/queries";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
@@ -295,24 +295,7 @@ function Session() {
           exit={{ opacity: 0, y: -12 }}
           className="mt-6"
         >
-          {ex && (
-            <div className="grid grid-cols-2 gap-2">
-              <figure className={cn(!ex.peak && "col-span-2 mx-auto w-full max-w-xs")}>
-                <ExerciseImage file={ex.start} alt={`${ex.name} — start position`} />
-                <figcaption className="mt-1 text-center text-xs text-muted-foreground">
-                  Start position
-                </figcaption>
-              </figure>
-              {ex.peak && (
-                <figure>
-                  <ExerciseImage file={ex.peak} alt={`${ex.name} — peak position`} />
-                  <figcaption className="mt-1 text-center text-xs text-muted-foreground">
-                    Peak position
-                  </figcaption>
-                </figure>
-              )}
-            </div>
-          )}
+          {ex && <ExerciseDemonstration key={ex.id} exercise={ex} />}
           <h1 className="mt-4 text-2xl font-bold">{ex?.name}</h1>
           <p className="text-sm text-muted-foreground">{ex?.primary.map(human).join(", ")}</p>
           {prev.data?.get(exId ?? "") && (

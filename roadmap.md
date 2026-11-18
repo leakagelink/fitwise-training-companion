@@ -1,7 +1,9 @@
 # Free exercise demonstrations
-- [ ] Import freely licensed movement videos with exact exercise matching and retained author/license credits
-- [ ] Add looping playback to exercise details and active workouts, preserving still-image fallback
-- [ ] Verify media playback and exercise mapping tests on phone and desktop
+- [x] Import 27 exact-matched wger movement videos under CC BY-SA 4.0 with author/source/changes credits
+- [x] Add silent looping playback and play/pause to exercise details and active workouts, preserving still-image fallback
+- [x] Verify signed-in detail and active-workout playback at 393px/1280px, pause/play, still fallback and nine regression tests
+
+The previously suggested MIT repository explicitly disclaims knowledge of video provenance; it was not used. Unmatched catalog exercises retain stills. Native APK playback and a professional form review of every clip remain unverified.
 
 # Current panel verification
 - [x] Check user screens, all 13 admin sections and all 5 staff sections in light/dark themes at 393px and 1280px
@@ -50,7 +52,7 @@ Weekly/monthly diet generation supports dated administrator-granted access; paym
 # Active workout correction
 - [x] Start countdown automatically and verify pause, restart, and rest countdown
 - [x] Show available start/peak positions honestly as still illustrations
-- [ ] Real exercise animations — blocked on licensed demonstration media; RepDB free tier includes stills only
+- [x] Add freely licensed real movement clips for 27 matched exercises; other exercises retain RepDB stills
 
 # Phase 4
 - [x] Account-saved chat threads, streaming AI coach, contextual history and safety

@@ -8,7 +8,7 @@ export function ExerciseImage({ file, alt, className }: { file: string; alt: str
       alt={alt}
       loading="lazy"
       decoding="async"
-      className={cn("aspect-square w-full rounded-xl bg-[oklch(0.97_0_0)] object-contain", className)}
+      className={cn("aspect-square w-full rounded-xl bg-surface object-contain", className)}
     />
   );
 }
@@ -20,7 +20,8 @@ export function Attribution() {
       <a href="https://repdb.co" rel="nofollow noreferrer" target="_blank" className="underline">
         RepDB (repdb.co)
       </a>
-      . Illustrations are static images, not animated demonstrations.
+      . Video demonstrations: Goulart / wger, CC BY-SA 4.0.
+      {" "}<a href="/exercise-media-credits.txt" className="underline" target="_blank" rel="noreferrer">Media credits</a>
     </p>
   );
 }

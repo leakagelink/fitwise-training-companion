@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { human } from "@/features/exercise-library/catalog";
 import { exerciseMapQuery, useExerciseMap } from "@/features/exercise-library/use-exercises";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
-import { Attribution, ExerciseImage } from "@/features/exercise-library/exercise-image";
+import { Attribution } from "@/features/exercise-library/exercise-image";
+import { ExerciseDemonstration } from "@/features/exercise-library/exercise-demonstration";
 import { startSession } from "@/features/workout/session";
 
 export const Route = createFileRoute("/_authenticated/_app/exercises/$exerciseId")({
@@ -54,10 +55,7 @@ function Detail() {
       <Link to="/exercises" className="text-sm text-muted-foreground hover:text-foreground">
         ← Library
       </Link>
-      <div className={x.peak ? "grid grid-cols-2 gap-3" : ""}>
-        <ExerciseImage file={x.start} alt={`${x.name} start position`} />
-        {x.peak && <ExerciseImage file={x.peak} alt={`${x.name} end position`} />}
-      </div>
+      <ExerciseDemonstration key={x.id} exercise={x} />
       <div>
         <h1 className="text-3xl font-bold">{x.name}</h1>
         <p className="mt-2 text-muted-foreground">{x.description}</p>

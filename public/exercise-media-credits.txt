@@ -1,0 +1,35 @@
+Exercise demonstration videos
+Source: https://wger.de
+Author: Goulart
+License: Creative Commons Attribution-ShareAlike 4.0
+https://creativecommons.org/licenses/by-sa/4.0/
+Changes: resized to 640px and transcoded to silent H.264 MP4; thumbnail extracted.
+Derived video files retain CC BY-SA 4.0. This license applies to the media, not application code.
+
+bench-press: https://wger.de/media/exercise-video/73/2bdb390c-312c-4497-a722-5eed2c823e5a.MOV
+db-bench-press: https://wger.de/media/exercise-video/75/080c799b-8afd-4130-8d72-9cef0cd79f54.MOV
+barbell-curl: https://wger.de/media/exercise-video/91/483f4bff-e108-41f1-8e7b-0caf24952552.MOV
+bicep-curl: https://wger.de/media/exercise-video/92/8bfb917c-3d0d-49b9-8073-5d7e01c1b894.MOV
+cable-curl: https://wger.de/media/exercise-video/95/ab770931-47d3-44fd-aef0-ac7a64c3b794.MOV
+barbell-lunge: https://wger.de/media/exercise-video/46/d45df7af-586b-42d0-bc56-d1e028812f12.MOV
+db-lunge: https://wger.de/media/exercise-video/205/c167ac34-ddbc-4e1b-8edf-1192e9d00e22.MOV
+face-pull: https://wger.de/media/exercise-video/222/eea93fcc-6a3c-4783-8f70-0234c791a001.MOV
+lying-tricep-extension: https://wger.de/media/exercise-video/245/c253303e-9160-4f1f-b4fe-daf1e6c8661d.MOV
+ez-bar-lying-tricep-extension: https://wger.de/media/exercise-video/246/2a194d11-ff5d-4bdf-849e-1c441cf7b0b1.MOV
+front-squat: https://wger.de/media/exercise-video/257/93145935-29db-4e52-9d2d-174b1c30c098.MOV
+hammer-curl: https://wger.de/media/exercise-video/272/df069052-2173-4f24-855f-a0eebe729f24.MOV
+cable-hammer-curl: https://wger.de/media/exercise-video/275/af1fff93-eb58-4ba7-97a4-b38ee67853b4.MOV
+hip-thrust: https://wger.de/media/exercise-video/294/45bacf4b-1bb6-4d47-8bd1-9f00eddd4019.MOV
+smith-machine-squat: https://wger.de/media/exercise-video/341/0cbfeace-dda9-4166-8424-f51358e88a4f.MOV
+lateral-raise: https://wger.de/media/exercise-video/348/de69928a-8a35-4096-821c-1f46de5e0e03.MOV
+leg-curl: https://wger.de/media/exercise-video/365/becaf013-5044-40d0-bae9-7ed60c973737.MOV
+seated-leg-curl: https://wger.de/media/exercise-video/366/43df4b79-d4c3-4fbf-bcb5-e0d825b84120.MOV
+leg-press: https://wger.de/media/exercise-video/371/6aae16b4-01b9-4eb4-935c-3250f84d2c59.MOV
+wide-stance-leg-press: https://wger.de/media/exercise-video/374/5336822a-7803-45b3-a880-f2bbf37a28f2.MOV
+romanian-deadlift: https://wger.de/media/exercise-video/507/307e7276-a14d-4ea0-b579-f5b0dbc6f5af.MOV
+incline-db-press: https://wger.de/media/exercise-video/537/b9c937e9-daeb-42a9-be8e-7a77e368478c.MOV
+incline-bench-press: https://wger.de/media/exercise-video/538/4349a6f6-4cee-4c09-828b-c5e7fc2c1ff1.MOV
+smith-machine-shrug: https://wger.de/media/exercise-video/575/a7d99f2b-86fc-433a-8ab1-83144c802296.MOV
+seated-calf-raise: https://wger.de/media/exercise-video/590/a325ae2e-686b-4a1f-aff2-ba37fa3fa157.MOV
+standing-calf-raise: https://wger.de/media/exercise-video/622/461171e5-2b16-407d-bf27-27aeef43f105.MOV
+tricep-kickback: https://wger.de/media/exercise-video/655/2d88a05b-bde3-4026-bfbf-524c11068dc5.MOV
