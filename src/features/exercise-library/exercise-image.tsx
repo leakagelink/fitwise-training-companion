@@ -1,21 +1,19 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { imageUrl } from "./catalog";
+import { Dumbbell } from "lucide-react";
 import { exerciseGif } from "./gif-motion";
 
-export function ExerciseImage({ file, alt, className }: { file: string; alt: string; className?: string | undefined }) {
+/** Placeholder shown when no animation exists; still photos are intentionally never shown. */
+export function ExerciseImage({ alt, className }: { file?: string; alt: string; className?: string | undefined }) {
   return (
-    <img
-      src={imageUrl(file)}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      className={cn("aspect-square w-full rounded-xl bg-surface object-contain", className)}
-    />
+    <div role="img" aria-label={`${alt} — animation coming soon`}
+      className={cn("flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl bg-surface text-muted-foreground", className)}>
+      <Dumbbell className="size-1/3 max-h-10 max-w-10" aria-hidden />
+    </div>
   );
 }
 
-/** List thumbnail: the reviewed animation when one exists, otherwise the still image. */
+/** List thumbnail: the reviewed animation when one exists, otherwise a placeholder. */
 export function ExerciseThumb({
   exercise,
   className,

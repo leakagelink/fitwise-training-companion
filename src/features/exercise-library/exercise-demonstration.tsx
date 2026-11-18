@@ -44,16 +44,10 @@ export function ExerciseDemonstration({ exercise }: { exercise: Exercise }) {
 
   if (!media || failed) {
     return (
-      <div className={exercise.peak ? "grid grid-cols-2 gap-3" : "mx-auto max-w-xs"}>
-        <figure>
-          <ExerciseImage file={exercise.start} alt={`${exercise.name} start position`} />
-          <figcaption className="mt-1 text-center text-xs text-muted-foreground">Start position</figcaption>
-        </figure>
-        {exercise.peak && <figure>
-          <ExerciseImage file={exercise.peak} alt={`${exercise.name} peak position`} />
-          <figcaption className="mt-1 text-center text-xs text-muted-foreground">Peak position</figcaption>
-        </figure>}
-      </div>
+      <figure className="mx-auto max-w-xs">
+        <ExerciseImage alt={exercise.name} />
+        <figcaption className="mt-1 text-center text-xs text-muted-foreground">Animation coming soon</figcaption>
+      </figure>
     );
   }
 
