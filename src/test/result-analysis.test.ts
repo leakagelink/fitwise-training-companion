@@ -16,7 +16,7 @@ describe("result analysis", () => {
   });
   it("workout adherence compares distinct workout days with the planned weekly frequency over 14 days", () => {
     const r = resultAnalysis({ ...base, workoutDates: [day(0), day(0), day(2), day(4), day(13), day(14)] });
-    expect(r.workout).toEqual({ score: 38, done: 3, planned: 8 });
+    expect(r.workout).toEqual({ score: 50, done: 4, planned: 8 });
   });
   it("defaults to 3 workouts a week when frequency is unknown", () => {
     expect(resultAnalysis({ ...base, workoutsPerWeek: null }).workout.planned).toBe(6);

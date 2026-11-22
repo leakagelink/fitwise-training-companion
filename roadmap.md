@@ -116,3 +116,8 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 ## Diet follow-up
 - [x] Breakfast, lunch, dinner, water and workout reminders (phone pop-ups in the Android app after rebuild)
 - [x] Missed-meal check-in: asks why, AI suggests quick alternatives, one-tap log
+
+# Result analysis
+- [x] 14-day diet, workout, water and sleep adherence scores with weight-trend check on Progress
+- [x] Coach review explaining why results are slow, with weekly improvement steps (once per day)
+- [x] Home alert when weight stalls or moves away from the goal; tests and phone check with a test member
