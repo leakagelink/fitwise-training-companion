@@ -10,7 +10,7 @@ describe("exercise GIF animations", () => {
       expect(ids.has(id)).toBe(true);
       expect(exerciseGif(id)?.url).toMatch(/^https:\/\/cdn\.jsdelivr\.net\/gh\/JahelCuadrado\/ExerciseGymGifsDB@v1\.1\.0\/[a-z-]+\/[a-z0-9-]+\.gif$/);
     }
-    expect(Object.keys(gifs).length).toBe(405);
+    expect(Object.keys(gifs).length).toBe(502);
   });
   it("marks near matches as similar and leaves unmatched exercises on stills", () => {
     expect(exerciseGif("push-up")).toEqual({ url: expect.stringContaining("pectorals/push-up.gif"), similar: false });
