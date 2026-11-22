@@ -16,7 +16,7 @@ The previously suggested MIT repository explicitly disclaims knowledge of video 
 - [x] Run all 60 regression tests; no page errors, section alerts or horizontal overflow observed in completed checks
 - [x] Active workout countdown change, pause/resume, set save/readback after reload and finish-to-workout navigation at 393px/1280px in both themes; no page errors or overflow
 - [x] Live name/quantity food analysis returned estimated micronutrients and saved macros; grocery purchase/quantity persisted; live coach response persisted after reload
-- [ ] Diet generation — two real vegetarian requests rejected by dietary validation; no invalid plan saved. Exact triggering content remains undiagnosed because full request log files and browser session expired mid-check. Safety validation must remain enabled.
+- [x] Diet generation — safety check no longer rejects safe words (eggplant, eggless, coconut milk, "instead of eggs"); a failing meal is regenerated (max 4) instead of discarding the plan; real 3-day vegetarian plan verified
 - [ ] Actual SMS delivery, confirmed coach appointments and scheduled delivery — not exercised; payments remain disconnected and native Android checks need device/project
 
 Test data and temporary elevated access were removed after verification. Checks were against the local preview with the live backend, not an installed APK; passing navigation and selected writes does not certify every action or external service.
@@ -62,7 +62,7 @@ Weekly/monthly diet generation supports dated administrator-granted access; paym
 - [x] Account-saved chat threads, streaming AI coach, contextual history and safety
 - [x] Human coach scheduling, callback requests, booking status and cancellation
 - [x] Account cleanup, tests and signed-in chat/callback verification
-- [ ] Live coach appointment confirmation verification — needs an authorized coach/admin and real availability; management page is implemented
+- [x] Live coach appointment confirmation verified (coach slot → member request → coach confirm → member sees Confirmed); booked times now hidden from others
 
 # Phase 6
 - [ ] Payments — Paddle was disconnected by the user; awaiting decision on payment provider
