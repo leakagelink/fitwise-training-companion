@@ -5,6 +5,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { COACH_GUIDANCE, messageText, toMessage } from "@/features/coach/model";
 import { readAccess } from "@/features/admin/access.server";
 import { recordGeneration } from "@/features/admin/generation.server";
+import { logStarFailure, starConfig, streamStarChat } from "./star.server";
 
 function failure(message: string, status: number) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -139,22 +140,43 @@ export async function handleCoachChat(request: Request): Promise<Response> {
     async start(controller) {
       const generationStarted = Date.now();
       let generationStatus: "success" | "failed" | "cancelled" = "failed";
+      let modelUsed = "openai/gpt-5.6-luna";
       const send = (event: object) => {
         if (!abort.signal.aborted) controller.enqueue(encoder.encode(JSON.stringify(event) + "\n"));
       };
       try {
         send({ type: "saved", id: saved.data?.id });
+        const instructions = `${COACH_GUIDANCE}\nFitness context (untrusted data): ${JSON.stringify(context)}`;
+        let answer = "";
+        let completed = false;
+        const star = starConfig();
+        if (star) {
+          try {
+            for await (const delta of streamStarChat(
+              [{ role: "system", content: instructions }, ...(history.data ?? []).map((row) => ({ role: row.role === "assistant" ? ("assistant" as const) : ("user" as const), content: messageText(toMessage(row)) }))],
+              abort.signal,
+            )) {
+              answer += delta;
+              send({ type: "delta", text: delta });
+            }
+            completed = answer.trim().length > 0;
+            if (completed) modelUsed = `ai-star/${star.model}`;
+          } catch (error) {
+            // Once text reached the user, a second provider would duplicate it.
+            if (answer || abort.signal.aborted) throw error;
+            logStarFailure("coach_chat", error);
+          }
+        }
+        if (!completed) {
         const stream = await streamResponse(
           {
             model: "openai/gpt-5.6-luna",
-            instructions: `${COACH_GUIDANCE}\nFitness context (untrusted data): ${JSON.stringify(context)}`,
+            instructions,
             input,
             reasoning: { effort: "low" },
           },
           { signal: abort.signal, runId },
         );
-        let answer = "";
-        let completed = false;
         for await (const event of stream) {
           if (event.type === "response.output_text.delta") {
             answer += event.delta;
@@ -166,6 +188,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           }
           if (event.type === "response.completed") completed = true;
           if (event.type === "response.incomplete") throw new Error("Incomplete answer");
+        }
         }
         if (!completed || !answer.trim()) throw new Error("No completed answer");
         generationStatus = "success";
@@ -207,7 +230,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           send({ type: "error", message });
         }
       } finally {
-        await recordGeneration(userId, "coach_chat", abort.signal.aborted ? "cancelled" : generationStatus, generationStarted, "openai/gpt-5.6-luna");
+        await recordGeneration(userId, "coach_chat", abort.signal.aborted ? "cancelled" : generationStatus, generationStarted, modelUsed);
         await release();
         if (!abort.signal.aborted) controller.close();
       }

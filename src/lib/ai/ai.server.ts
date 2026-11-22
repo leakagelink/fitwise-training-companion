@@ -1,8 +1,10 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { NoObjectGeneratedError, Output, streamText } from "ai";
+import { generateText, NoObjectGeneratedError, Output, streamText, type ModelMessage } from "ai";
 import type { z } from "zod";
 
+import { withFallback } from "./fallback.ts";
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
+import { logStarFailure, starConfig, starProvider, STAR_TIMEOUT_MS } from "./star.server.ts";
 
 export const COACH_MODEL = "openai/gpt-5.6-luna";
 
@@ -33,26 +35,33 @@ const providerOptions = {
   },
 } as const;
 
-/** Streams a single-turn completion and returns the final text (server-only). */
-export async function generateCoachText(prompt: string, instructions: string): Promise<string> {
-  const result = streamText({
-    model: provider().responses(COACH_MODEL),
-    instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
-    prompt,
-    providerOptions,
-  });
-  return (await result.text).trim();
+/** Runs a request on AI STAR first, then on the built-in model if AI STAR is missing or fails. */
+async function preferStar<T>(operation: string, viaStar: (model: ReturnType<ReturnType<typeof starProvider>["chat"]>) => Promise<T>, viaBuiltIn: () => Promise<T>): Promise<T> {
+  const star = starConfig();
+  const primary = star ? () => viaStar(starProvider(star.apiKey).chat(star.model)) : null;
+  return (await withFallback(primary, viaBuiltIn, (error) => logStarFailure(operation, error))).value;
 }
 
-/** Streams a structured (strict JSON schema) completion and returns the parsed object. */
-export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>): Promise<T> {
-  const result = streamText({
-    model: provider().responses(COACH_MODEL),
-    instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
-    prompt,
-    output: Output.object({ schema }),
-    providerOptions,
-  });
+/** Single-turn completion; returns the final text (server-only). */
+export async function generateCoachText(prompt: string, instructions: string): Promise<string> {
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+  return preferStar(
+    "text",
+    async (model) => {
+      const result = await generateText({ model, instructions: system, prompt, maxRetries: 0, timeout: STAR_TIMEOUT_MS });
+      const text = result.text.trim();
+      if (!text) throw new Error("Empty AI STAR answer");
+      return text;
+    },
+    async () => {
+      const result = streamText({ model: provider().responses(COACH_MODEL), instructions: system, prompt, providerOptions });
+      return (await result.text).trim();
+    },
+  );
+}
+
+async function builtInObject<T>(system: string, schema: z.ZodType<T>, input: { prompt: string } | { messages: ModelMessage[] }): Promise<T> {
+  const result = streamText({ model: provider().responses(COACH_MODEL), instructions: system, ...input, output: Output.object({ schema }), providerOptions });
   try {
     return (await result.output) as T;
   } catch (error) {
@@ -61,6 +70,17 @@ export async function generateCoachObject<T>(prompt: string, instructions: strin
     }
     throw error;
   }
+}
+
+async function starObject<T>(model: Parameters<typeof generateText>[0]["model"], system: string, schema: z.ZodType<T>, input: { prompt: string } | { messages: ModelMessage[] }): Promise<T> {
+  const result = await generateText({ model, instructions: system, ...input, output: Output.object({ schema }), maxRetries: 0, timeout: STAR_TIMEOUT_MS });
+  return schema.parse(result.output);
+}
+
+/** Structured (strict JSON schema) completion; returns the parsed object. */
+export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>): Promise<T> {
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+  return preferStar("object", (model) => starObject(model, system, schema, { prompt }), () => builtInObject(system, schema, { prompt }));
 }
 
 export function friendlyAiError(error: unknown): string {
@@ -81,12 +101,7 @@ export function friendlyAiError(error: unknown): string {
 
 /** Structured completion with an optional photo (data URL) attached. */
 export async function generateVisionObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, imageDataUrl?: string): Promise<T> {
-  const result = streamText({
-    model: provider().responses(COACH_MODEL),
-    instructions: `${SAFETY_INSTRUCTIONS}\n\n${instructions}`,
-    messages: [{ role: "user", content: [{ type: "text", text: prompt }, ...(imageDataUrl ? [{ type: "image" as const, image: imageDataUrl }] : [])] }],
-    output: Output.object({ schema }),
-    providerOptions,
-  });
-  return (await result.output) as T;
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+  const messages: ModelMessage[] = [{ role: "user", content: [{ type: "text", text: prompt }, ...(imageDataUrl ? [{ type: "image" as const, image: imageDataUrl }] : [])] }];
+  return preferStar("vision", (model) => starObject(model, system, schema, { messages }), () => builtInObject(system, schema, { messages }));
 }
