@@ -34,6 +34,7 @@ import { nutritionQuery, mealLogsQuery } from "@/features/nutrition/queries";
 import { generateDiet } from "@/features/nutrition/nutrition.functions";
 import { RecipeDialog } from "@/features/nutrition/recipe-dialog";
 import { MealLogDialog } from "@/features/nutrition/meal-log-dialog";
+import { NutritionReport } from "@/features/nutrition/nutrition-report";
 import { GroceryList } from "@/features/grocery/grocery-list";
 import { MissedMealCard } from "@/features/reminders/missed-meal-card";
 import bowl from "@/assets/nutrition-bowl.jpg";
@@ -445,6 +446,7 @@ function Nutrition() {
           </div>
         </TabsContent>
         <TabsContent value="diary">
+          <div className="mb-5"><NutritionReport date={date} targets={targets} /></div>
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold">Meals eaten</h2>
             <Button variant="outline" size="sm" onClick={() => setLogging(true)}>

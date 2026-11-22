@@ -212,3 +212,48 @@ export function resultAnalysis(input: ResultInput) {
   return { windowDays: RESULT_WINDOW_DAYS, from, diet, workout, water, sleep, weight, needsAttention, resultsSlowing: weight.status === "stalled" || weight.status === "wrong_direction" };
 }
 export type ResultAnalysis = ReturnType<typeof resultAnalysis>;
+
+// ---------- Meal scoring (food scanner) ----------
+
+export type MealVerdict = "good" | "moderate" | "avoid_frequently";
+
+/**
+ * Scores one meal 0–100. Protein: share of calories from protein vs 30%. Health: fiber (7 g per 500 kcal)
+ * and fat share (≤ 35% ideal), half each. Nutrition: 40% protein + 40% health + 20% portion fit
+ * (portion fits when ≤ 120% of a third of the daily calorie target). Verdict: ≥ 70 good, ≥ 45 moderate.
+ */
+export function scoreMeal(n: { calories: number; protein: number; fat: number; fiber: number }, dailyCalories: number, remainingCalories: number) {
+  const cal = Math.max(1, n.calories);
+  const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
+  const protein = clamp(((n.protein * 4) / cal / 0.3) * 100);
+  const fiberPart = Math.min(1, n.fiber / ((cal / 500) * 7));
+  const fatShare = (n.fat * 9) / cal;
+  const fatPart = fatShare <= 0.35 ? 1 : Math.max(0, 1 - (fatShare - 0.35) / 0.3);
+  const health = clamp(100 * (0.5 * fiberPart + 0.5 * fatPart));
+  const mealTarget = dailyCalories / 3;
+  const ratio = n.calories / mealTarget;
+  const portion = ratio <= 1.2 ? 100 : clamp(100 - (ratio - 1.2) * 100);
+  const nutrition = clamp(0.4 * protein + 0.4 * health + 0.2 * portion);
+  const verdict: MealVerdict = nutrition >= 70 ? "good" : nutrition >= 45 ? "moderate" : "avoid_frequently";
+  return { nutrition, protein, health, verdict, highProtein: protein >= 70, fitsToday: n.calories <= Math.max(0, remainingCalories) };
+}
+export type MealScore = ReturnType<typeof scoreMeal>;
+
+/** Weekly nutrition report from per-day totals (calories/protein logged, planned vs missed meals). */
+export function weeklyNutritionReport(days: { date: string; calories: number; protein: number; logged: number; missed: number }[], caloriesTarget: number, proteinTarget: number) {
+  const tracked = days.filter((d) => d.logged > 0);
+  const onTarget = (d: (typeof days)[number]) => d.calories >= caloriesTarget * 0.8 && d.calories <= caloriesTarget * 1.15;
+  const dayScore = (d: (typeof days)[number]) => (onTarget(d) ? 50 : 0) + Math.min(50, (d.protein / proteinTarget) * 50);
+  const avgCalories = tracked.length ? Math.round(tracked.reduce((a, d) => a + d.calories, 0) / tracked.length) : 0;
+  const avgProtein = tracked.length ? Math.round(tracked.reduce((a, d) => a + d.protein, 0) / tracked.length) : 0;
+  const best = [...tracked].sort((a, b) => dayScore(b) - dayScore(a)).slice(0, 2).map((d) => d.date);
+  const logged = days.reduce((a, d) => a + d.logged, 0), missed = days.reduce((a, d) => a + d.missed, 0);
+  const consistency = tracked.length ? Math.round((tracked.filter(onTarget).length / days.length) * 100) : 0;
+  const improve: string[] = [];
+  if (tracked.length < days.length - 2) improve.push("Log meals on more days");
+  if (tracked.length && avgProtein < proteinTarget * 0.8) improve.push("Eat more protein");
+  if (tracked.length && avgCalories > caloriesTarget * 1.15) improve.push("Reduce portion sizes");
+  if (tracked.length && avgCalories < caloriesTarget * 0.8) improve.push("Eat enough to reach your calorie target");
+  if (missed > 1) improve.push("Miss fewer meals");
+  return { avgCalories, avgProtein, consistency, best, logged, missed, adherence: logged + missed ? Math.round((logged / (logged + missed)) * 100) : null, improve };
+}
