@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { todayISO, weeklyWorkoutCounts, weightChange, workoutStreak } from "@/lib/fitness";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
+import { ResultAnalysisCard } from "@/features/progress/result-analysis-card";
+import { resultAnalysisQuery } from "@/features/progress/queries";
 
 const progressQuery = queryOptions({
   queryKey: ["progress"],
@@ -71,8 +73,10 @@ export const Route = createFileRoute("/_authenticated/_app/progress")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ ...progressQuery, revalidateIfStale: true }),
+  loader: ({ context }) => {
+    void context.queryClient.prefetchQuery(resultAnalysisQuery(todayISO()));
+    return context.queryClient.ensureQueryData({ ...progressQuery, revalidateIfStale: true });
+  },
   errorComponent: ScreenLoadError,
   notFoundComponent: ScreenNotFound,
   component: Progress,
@@ -139,6 +143,8 @@ function Progress() {
           value={change === null ? "—" : `${change > 0 ? "+" : ""}${change} kg`}
         />
       </div>
+
+      <ResultAnalysisCard />
 
       <Card>
         <CardHeader>

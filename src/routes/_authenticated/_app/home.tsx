@@ -21,6 +21,7 @@ import { checkinsQuery, homeWorkoutQuery } from "@/features/dashboard/queries";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 import { accessQuery } from "@/features/admin/queries";
 import { MissedMealCard } from "@/features/reminders/missed-meal-card";
+import { ResultAlert } from "@/features/progress/result-analysis-card";
 
 export const Route = createFileRoute("/_authenticated/_app/home")({
   head: () => ({
@@ -157,6 +158,7 @@ function Home() {
       </section>
 
       <MissedMealCard userId={p.id} />
+      <ResultAlert />
 
       <section className="card-premium flex items-center gap-6 p-5">
         <ActivityRings
