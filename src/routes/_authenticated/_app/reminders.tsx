@@ -86,7 +86,7 @@ function Reminders() {
           <div key={key} className="flex items-center gap-3 p-4">
             <Icon className="size-5 shrink-0 text-primary" />
             <label htmlFor={`${key}-on`} className="flex-1 text-sm font-medium">{label}</label>
-            <Input aria-label={`${label} time`} type="time" value={form[`${key}_at`]} disabled={!form[`${key}_on`]} onChange={(e) => set(`${key}_at`, e.target.value)} className="w-28" />
+            <Input aria-label={`${label} time`} type="time" value={form[`${key}_at`]} disabled={!form[`${key}_on`]} onChange={(e) => set(`${key}_at`, e.target.value)} className="w-32" />
             <Switch id={`${key}-on`} checked={form[`${key}_on`]} onCheckedChange={(v) => set(`${key}_on`, v)} />
           </div>
         ))}

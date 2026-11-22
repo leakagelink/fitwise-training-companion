@@ -112,3 +112,7 @@ Added Overview/Users/Plans/Support/More bottom navigation on mobile/tablet, repl
 - [x] Verify signed-in phone/tablet/desktop navigation and forms without page overflow
 
 All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details and plan/profile edit dialogs opened without page overflow. Mobile menu and forms visually checked; 13 admin regression tests passed. No management data or access rules changed.
+
+## Diet follow-up
+- [x] Breakfast, lunch, dinner, water and workout reminders (phone pop-ups in the Android app after rebuild)
+- [x] Missed-meal check-in: asks why, AI suggests quick alternatives, one-tap log
