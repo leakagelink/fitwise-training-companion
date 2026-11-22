@@ -39,14 +39,39 @@ const allergens = {
   Soy: ["soy", "tofu", "tempeh", "edamame"], Eggs: ["egg"], Shellfish: ["shrimp", "prawn", "crab", "lobster", "mussel"], Fish: ["fish", "salmon", "tuna", "cod", "sardine"],
 };
 export function mealFitsDiet(meal: Meal, diet: string | null, allergies: string[]) {
-  return textFitsDiet([meal.name, ...meal.ingredients.map(i => i.name), ...meal.instructions, ...meal.alternatives].join(" "), diet, allergies);
+  return mealDietConflict(meal, diet, allergies) === null;
+}
+export function mealDietConflict(meal: Meal, diet: string | null, allergies: string[]) {
+  return dietConflict([meal.name, ...meal.ingredients.map(i => i.name), ...meal.instructions, ...meal.alternatives].join(" "), diet, allergies);
+}
+/** Phrases that contain a banned word but are not that food (e.g. eggplant, coconut milk, peanut butter for dairy). */
+const SAFE_PHRASES: Record<string, string[]> = {
+  egg: ["eggplants?", "eggless", "flax eggs?", "chia eggs?", "egg replacer"],
+  milk: ["(coconut|almond|soy|soya|oat|cashew|rice|plant[- ]based|peanut) milk"],
+  butter: ["(peanut|almond|cashew|cocoa|vegan|nut|seed|sunflower) butter", "butternut"],
+  cream: ["(coconut|cashew|vegan|oat|soy) cream"],
+  cheese: ["(vegan|cashew|plant[- ]based) cheese"],
+  yogurt: ["(coconut|soy|soya|vegan|plant[- ]based|almond) yogh?urt"],
+  yoghurt: ["(coconut|soy|soya|vegan|plant[- ]based|almond) yoghurt"],
+  ghee: ["vegan ghee"],
+};
+const NEGATION = "(?:no|without|instead of|in place of|avoid|skip|replace|replacing|free of|not)";
+/** The first food word the user's diet type or allergies rule out, or null when the text is safe. */
+export function dietConflict(rawText: string, diet: string | null, allergies: string[]) {
+  const text = rawText.toLowerCase();
+  const banned = allergies.flatMap(a => allergens[a as keyof typeof allergens] ?? [a.toLowerCase()]);
+  if (diet !== "non_vegetarian") banned.push("chicken", "beef", "pork", "lamb", "mutton", "turkey", "bacon", "gelatin", ...allergens.Fish, ...allergens.Shellfish);
+  if (diet === "vegan" || diet === "vegetarian") banned.push(...allergens.Eggs);
+  if (diet === "vegan") banned.push(...allergens.Dairy, "honey");
+  for (const word of banned) {
+    let t = text;
+    for (const safe of SAFE_PHRASES[word] ?? []) t = t.replace(new RegExp(`\\b${safe}\\b`, "gi"), " ");
+    t = t.replace(new RegExp(`\\b${NEGATION}\\s+(?:any\\s+|the\\s+)?${word}\\w*`, "gi"), " ").replace(new RegExp(`\\b${word}\\w*[- ]free\\b`, "gi"), " ");
+    if (new RegExp(`\\b${word}\\w*\\b`, "i").test(t)) return word;
+  }
+  return null;
 }
 /** True when free text names nothing the user's diet type or allergies rule out. */
 export function textFitsDiet(rawText: string, diet: string | null, allergies: string[]) {
-  const text = rawText.toLowerCase();
-  const banned = allergies.flatMap(a => allergens[a as keyof typeof allergens] ?? [a.toLowerCase()]);
-  if (diet !== "non_vegetarian") banned.push("chicken", "beef", "pork", "lamb", "turkey", "bacon", "gelatin", ...allergens.Fish, ...allergens.Shellfish);
-  if (diet === "vegan" || diet === "vegetarian") banned.push(...allergens.Eggs);
-  if (diet === "vegan") banned.push(...allergens.Dairy, "honey");
-  return !banned.some(word => new RegExp(`\\b${word}\\w*\\b`, "i").test(text));
+  return dietConflict(rawText, diet, allergies) === null;
 }

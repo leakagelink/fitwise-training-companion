@@ -29,3 +29,22 @@ describe("meal scoring", () => {
     expect(r.avgCalories).toBe(1500); expect(r.adherence).toBe(67); expect(r.best[0]).toBe("a"); expect(r.improve).toContain("Miss fewer meals");
   });
 });
+
+import { dietConflict } from "@/features/nutrition/model";
+describe("diet check false positives", () => {
+  it("vegetarian plans may contain eggplant and eggless dishes", () => { expect(dietConflict("Baingan bharta with roasted eggplant, eggless besan cheela", "vegetarian", [])).toBeNull(); });
+  it("vegetarian plans still reject real eggs and meat", () => {
+    expect(dietConflict("Boiled eggs with toast", "vegetarian", [])).toBe("egg");
+    expect(dietConflict("Mutton curry", "vegetarian", [])).toBe("mutton");
+  });
+  it("negated mentions are allowed but a later real mention is caught", () => {
+    expect(dietConflict("Tofu scramble instead of eggs; no chicken", "vegetarian", [])).toBeNull();
+    expect(dietConflict("Without eggs. Top with a fried egg", "vegetarian", [])).toBe("egg");
+  });
+  it("vegan allows coconut milk and peanut butter but not cow milk", () => {
+    expect(dietConflict("Oats with coconut milk and peanut butter", "vegan", [])).toBeNull();
+    expect(dietConflict("Oats with milk", "vegan", [])).toBe("milk");
+  });
+  it("peanut allergy still catches peanut butter", () => { expect(dietConflict("Toast with peanut butter", "vegetarian", ["Peanuts"])).toBe("peanut"); });
+  it("dairy allergy allows dairy-free yogurt", () => { expect(dietConflict("Dairy-free coconut yogurt bowl", "vegetarian", ["Dairy"])).toBeNull(); });
+});
