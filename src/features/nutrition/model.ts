@@ -39,7 +39,11 @@ const allergens = {
   Soy: ["soy", "tofu", "tempeh", "edamame"], Eggs: ["egg"], Shellfish: ["shrimp", "prawn", "crab", "lobster", "mussel"], Fish: ["fish", "salmon", "tuna", "cod", "sardine"],
 };
 export function mealFitsDiet(meal: Meal, diet: string | null, allergies: string[]) {
-  const text = [meal.name, ...meal.ingredients.map(i => i.name), ...meal.instructions, ...meal.alternatives].join(" ").toLowerCase();
+  return textFitsDiet([meal.name, ...meal.ingredients.map(i => i.name), ...meal.instructions, ...meal.alternatives].join(" "), diet, allergies);
+}
+/** True when free text names nothing the user's diet type or allergies rule out. */
+export function textFitsDiet(rawText: string, diet: string | null, allergies: string[]) {
+  const text = rawText.toLowerCase();
   const banned = allergies.flatMap(a => allergens[a as keyof typeof allergens] ?? [a.toLowerCase()]);
   if (diet !== "non_vegetarian") banned.push("chicken", "beef", "pork", "lamb", "turkey", "bacon", "gelatin", ...allergens.Fish, ...allergens.Shellfish);
   if (diet === "vegan" || diet === "vegetarian") banned.push(...allergens.Eggs);

@@ -22,6 +22,7 @@ import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/_app/nutrition'
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/_app/profile'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
+import { Route as AuthenticatedAppRemindersRouteImport } from './routes/_authenticated/_app/reminders'
 import { Route as AuthenticatedAppWorkoutRouteImport } from './routes/_authenticated/_app/workout'
 import { Route as AuthenticatedSessionSessionIdRouteImport } from './routes/_authenticated/session.$sessionId'
 import { Route as ApiPublicCoachRouteImport } from './routes/api/public/coach'
@@ -96,6 +97,12 @@ const AuthenticatedAppProgressRoute =
     path: '/progress',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppRemindersRoute =
+  AuthenticatedAppRemindersRouteImport.update({
+    id: '/reminders',
+    path: '/reminders',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppWorkoutRoute = AuthenticatedAppWorkoutRouteImport.update({
   id: '/workout',
   path: '/workout',
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/nutrition': typeof AuthenticatedAppNutritionRoute
   '/profile': typeof AuthenticatedAppProfileRoute
   '/progress': typeof AuthenticatedAppProgressRoute
+  '/reminders': typeof AuthenticatedAppRemindersRoute
   '/workout': typeof AuthenticatedAppWorkoutRoute
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
@@ -176,6 +184,7 @@ export interface FileRoutesByTo {
   '/nutrition': typeof AuthenticatedAppNutritionRoute
   '/profile': typeof AuthenticatedAppProfileRoute
   '/progress': typeof AuthenticatedAppProgressRoute
+  '/reminders': typeof AuthenticatedAppRemindersRoute
   '/workout': typeof AuthenticatedAppWorkoutRoute
   '/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
@@ -200,6 +209,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/nutrition': typeof AuthenticatedAppNutritionRoute
   '/_authenticated/_app/profile': typeof AuthenticatedAppProfileRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
+  '/_authenticated/_app/reminders': typeof AuthenticatedAppRemindersRoute
   '/_authenticated/_app/workout': typeof AuthenticatedAppWorkoutRoute
   '/_authenticated/session/$sessionId': typeof AuthenticatedSessionSessionIdRoute
   '/api/public/coach': typeof ApiPublicCoachRoute
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/nutrition'
     | '/profile'
     | '/progress'
+    | '/reminders'
     | '/workout'
     | '/session/$sessionId'
     | '/api/public/coach'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/nutrition'
     | '/profile'
     | '/progress'
+    | '/reminders'
     | '/workout'
     | '/session/$sessionId'
     | '/api/public/coach'
@@ -267,6 +279,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/nutrition'
     | '/_authenticated/_app/profile'
     | '/_authenticated/_app/progress'
+    | '/_authenticated/_app/reminders'
     | '/_authenticated/_app/workout'
     | '/_authenticated/session/$sessionId'
     | '/api/public/coach'
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProgressRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/reminders': {
+      id: '/_authenticated/_app/reminders'
+      path: '/reminders'
+      fullPath: '/reminders'
+      preLoaderRoute: typeof AuthenticatedAppRemindersRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/workout': {
       id: '/_authenticated/_app/workout'
       path: '/workout'
@@ -444,6 +464,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppNutritionRoute: typeof AuthenticatedAppNutritionRoute
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
+  AuthenticatedAppRemindersRoute: typeof AuthenticatedAppRemindersRoute
   AuthenticatedAppWorkoutRoute: typeof AuthenticatedAppWorkoutRoute
   AuthenticatedAppCoachThreadIdRoute: typeof AuthenticatedAppCoachThreadIdRoute
   AuthenticatedAppCoachManageRoute: typeof AuthenticatedAppCoachManageRoute
@@ -457,6 +478,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppNutritionRoute: AuthenticatedAppNutritionRoute,
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
+  AuthenticatedAppRemindersRoute: AuthenticatedAppRemindersRoute,
   AuthenticatedAppWorkoutRoute: AuthenticatedAppWorkoutRoute,
   AuthenticatedAppCoachThreadIdRoute: AuthenticatedAppCoachThreadIdRoute,
   AuthenticatedAppCoachManageRoute: AuthenticatedAppCoachManageRoute,

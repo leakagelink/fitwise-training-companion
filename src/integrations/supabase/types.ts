@@ -439,6 +439,44 @@ export type Database = {
           },
         ]
       }
+      meal_followups: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          meal_type: string
+          reason: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          meal_type: string
+          reason?: string | null
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          meal_type?: string
+          reason?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_followups_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meal_logs: {
         Row: {
           created_at: string
@@ -861,6 +899,68 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      reminder_settings: {
+        Row: {
+          breakfast_at: string
+          breakfast_on: boolean
+          dinner_at: string
+          dinner_on: boolean
+          lunch_at: string
+          lunch_on: boolean
+          missed_meal_followup: boolean
+          updated_at: string
+          user_id: string
+          water_end: string
+          water_every_hours: number
+          water_on: boolean
+          water_start: string
+          workout_at: string
+          workout_on: boolean
+        }
+        Insert: {
+          breakfast_at?: string
+          breakfast_on?: boolean
+          dinner_at?: string
+          dinner_on?: boolean
+          lunch_at?: string
+          lunch_on?: boolean
+          missed_meal_followup?: boolean
+          updated_at?: string
+          user_id: string
+          water_end?: string
+          water_every_hours?: number
+          water_on?: boolean
+          water_start?: string
+          workout_at?: string
+          workout_on?: boolean
+        }
+        Update: {
+          breakfast_at?: string
+          breakfast_on?: boolean
+          dinner_at?: string
+          dinner_on?: boolean
+          lunch_at?: string
+          lunch_on?: boolean
+          missed_meal_followup?: boolean
+          updated_at?: string
+          user_id?: string
+          water_end?: string
+          water_every_hours?: number
+          water_on?: boolean
+          water_start?: string
+          workout_at?: string
+          workout_on?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       staff_notes: {
         Row: {

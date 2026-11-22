@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { createCacheIdentityGuard } from "@/lib/query-cache";
 import { SplashScreen } from "@/components/brand/splash-screen";
 import logoAsset from "@/assets/fitnessai-logo.png.asset.json";
+import { cancelNativeReminders } from "@/lib/native-reminders";
 import { NativeNavigation } from "@/components/native-navigation";
 import { ScreenEffects } from "@/components/screen-effects";
 
@@ -139,6 +140,8 @@ function RootComponent() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       const changed = syncIdentity(session?.user.id ?? null);
       if (event !== "SIGNED_OUT" && event !== "USER_UPDATED" && !changed) return;
+      // Another account must not receive the previous user's reminders on this phone.
+      if (event === "SIGNED_OUT") void cancelNativeReminders().catch(() => undefined);
       // Clear old account data before any loaders for the new identity run.
       void router.invalidate();
       if (event === "USER_UPDATED") void queryClient.invalidateQueries();

@@ -4,6 +4,7 @@ import { profileQuery } from "@/hooks/use-profile";
 import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 import { workspaceQuery } from "@/features/account/workspace";
+import { NativeReminders } from "@/features/reminders/native-reminders";
 
 export const Route = createFileRoute("/_authenticated/_app")({
   beforeLoad: async ({ context }) => {
@@ -29,6 +30,7 @@ const NAV = [
 function AppShell() {
   return (
     <div className="min-h-screen bg-background md:flex">
+      <NativeReminders />
       <aside className="app-safe-sidebar sticky hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar p-5 md:flex">
         <Logo className="text-lg" />
         <nav className="mt-10 flex flex-1 flex-col gap-1">

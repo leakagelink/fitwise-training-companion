@@ -57,6 +57,9 @@ function Profile() {
       <div className="card-premium divide-y divide-border">
         {admin.data?.isAdmin && <Link to="/admin" className="block p-4">Administration</Link>}
         {!!staff.data?.capabilities.length && <Link to="/staff" className="block p-4">Staff workspace</Link>}
+        <Link to="/reminders" className="block p-4">
+          Reminders &amp; missed-meal check-ins
+        </Link>
         <Link to="/onboarding" className="block p-4">
           Edit fitness profile
         </Link>

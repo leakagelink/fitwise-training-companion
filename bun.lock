@@ -8,6 +8,7 @@
         "@ai-sdk/openai": "^4.0.109",
         "@capacitor/app": "^7",
         "@capacitor/core": "^7",
+        "@capacitor/local-notifications": "^7",
         "@hookform/resolvers": "^5.2.2",
         "@lovable.dev/ai-gateway": "^0.1.11",
         "@lovable.dev/cloud-auth-js": "^1.2.0",
@@ -162,6 +163,8 @@
     "@capacitor/app": ["@capacitor/app@7.1.2", "", { "peerDependencies": { "@capacitor/core": ">=7.0.0" } }, "sha512-d4I/oF/PRu4megL7/IGKYfe5j7yzSON1FRFgq6kH+m5kH6g7V+wyjHRLauCzGNjdRx4S+nWOumINds0qcRBtKg=="],
 
     "@capacitor/core": ["@capacitor/core@7.6.10", "", { "dependencies": { "tslib": "^2.1.0" } }, "sha512-foYHd//t6E3RTELVG8wdkp5jVnmLcHKUurAa9BA8EUSNd2eY0SijCHpfO0bFwYBP5DrCeXwgSFYi3NJw413gtQ=="],
+
+    "@capacitor/local-notifications": ["@capacitor/local-notifications@7.0.7", "", { "peerDependencies": { "@capacitor/core": ">=7.0.0" } }, "sha512-3qSpa8PpVMONHqBOaJ4RbA/lB5vOdEngtep0myGmP3S56gShPScDCotbw7dwmQy3NCdY4Up9nH3ySrGvUh2jZg=="],
 
     "@chevrotain/types": ["@chevrotain/types@11.1.2", "", {}, "sha512-U+HFai5+zmJCkK86QsaJtoITlboZHBqrVketcO2ROv865xfCMSFpELQoz1GkX5GzME8pTa+3kbKrZHQtI0gdbw=="],
 

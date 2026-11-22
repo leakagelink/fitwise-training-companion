@@ -35,6 +35,7 @@ import { generateDiet } from "@/features/nutrition/nutrition.functions";
 import { RecipeDialog } from "@/features/nutrition/recipe-dialog";
 import { MealLogDialog } from "@/features/nutrition/meal-log-dialog";
 import { GroceryList } from "@/features/grocery/grocery-list";
+import { MissedMealCard } from "@/features/reminders/missed-meal-card";
 import bowl from "@/assets/nutrition-bowl.jpg";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
 
@@ -261,6 +262,7 @@ function Nutrition() {
           <ChevronRight />
         </Button>
       </div>
+      {date === todayISO() && <MissedMealCard userId={p.id} />}
       <section className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         {(
           [
