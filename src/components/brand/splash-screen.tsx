@@ -35,7 +35,7 @@ export function SplashScreen({ startup = false }: { startup?: boolean }) {
 
   if (!visible) return null;
   return <div role="status" aria-label="Opening FitnessAI" data-leaving={leaving} className="brand-splash fixed inset-0 z-50 grid place-items-center bg-background p-8">
-    <img ref={image} src={logoAsset.url} alt="FitnessAI — Your AI Fitness Coach" width={288} height={288}
+    <img ref={image} src={logoAsset.url} alt="FitnessAI — Your Personalized Fitness Coach" width={288} height={288}
       fetchPriority="high" className="brand-splash-logo aspect-square w-72 max-w-full object-contain" />
   </div>;
 }

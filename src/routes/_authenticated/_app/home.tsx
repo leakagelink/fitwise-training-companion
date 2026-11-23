@@ -190,7 +190,7 @@ function Home() {
             Today's workout
           </span>
           <span className="mt-1 block font-semibold">
-            {nextDay ? nextDay.title : "Generate your AI workout plan"}
+            {nextDay ? nextDay.title : "Generate your personalized workout plan"}
           </span>
           {nextDay?.focus && (
             <span className="block text-sm text-muted-foreground">{nextDay.focus}</span>

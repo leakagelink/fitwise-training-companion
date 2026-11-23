@@ -8,7 +8,7 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
     body: [
       "We collect only what you give us: your account email, the fitness profile you fill in during onboarding, and the logs you record (check-ins, weight, and later meals, workouts and photos).",
       "Sensitive health information such as medical conditions and allergies is optional and only processed after you give explicit consent during onboarding.",
-      "To personalize plans and coaching, relevant parts of your profile and logs are sent to an AI model through our secure server. This data is never shown to other users and is not used for advertising.",
+      "To personalize plans and coaching, relevant parts of your profile and logs are processed by our smart coaching system on our secure server. This data is never shown to other users and is not used for advertising.",
       "Progress and food photos are stored in private storage that only your account can access.",
       "You can delete your account and all associated data at any time from Profile → Delete account. Deletion is permanent.",
       "We do not request location, contacts or microphone access. Camera or photo access is only requested when you choose a photo feature.",

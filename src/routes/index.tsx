@@ -6,10 +6,10 @@ import { Logo } from "@/components/brand/logo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fitness AI — Your Personal AI Fitness & Lifestyle Coach" },
-      { name: "description", content: "AI diet plans, personalized workouts, 24/7 coaching and real progress tracking — try free for 3 days." },
-      { property: "og:title", content: "Fitness AI — Your Personal AI Fitness & Lifestyle Coach" },
-      { property: "og:description", content: "AI diet plans, personalized workouts, 24/7 coaching and real progress tracking." },
+      { title: "Fitness AI — Your Personalized Fitness & Lifestyle Coach" },
+      { name: "description", content: "Personalized diet plans, personalized workouts, 24/7 coaching and real progress tracking — try free for 3 days." },
+      { property: "og:title", content: "Fitness AI — Your Personalized Fitness & Lifestyle Coach" },
+      { property: "og:description", content: "Personalized diet plans, personalized workouts, 24/7 coaching and real progress tracking." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -42,7 +42,7 @@ function Landing() {
               <Activity className="size-3.5" /> 3-day free trial · no card needed
             </span>
             <h1 className="mt-6 text-4xl font-bold leading-[1.05] md:text-6xl">
-              Your personal AI <span className="text-primary">fitness</span> &amp; lifestyle coach.
+              Your personalized <span className="text-primary">fitness</span> &amp; lifestyle coach.
             </h1>
             <p className="mt-5 max-w-lg text-lg text-muted-foreground">
               Tell us about you once. Get a diet plan, workouts and daily guidance that adapt as you progress.

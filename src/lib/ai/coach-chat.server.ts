@@ -218,11 +218,11 @@ export async function handleCoachChat(request: Request): Promise<Response> {
           const message =
             error instanceof GatewayError
               ? error.httpStatus === 402
-                ? "AI credits are unavailable. The app owner can restore credits in Settings → Plans & credits."
+                ? "This feature is temporarily unavailable. Please try again later."
                 : error.httpStatus === 429
                   ? "The coach is busy. Please wait before trying again."
                   : error.httpStatus === 403
-                    ? "AI access is unavailable under the current workspace policy."
+                    ? "This feature is temporarily unavailable. Please try again later."
                     : "The coach could not finish. Your message is saved; no automatic retry was made."
               : "The response could not be completed or saved. Your message remains in this chat.";
           if (error instanceof GatewayError)

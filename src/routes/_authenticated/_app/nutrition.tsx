@@ -370,7 +370,7 @@ function Nutrition() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    title="Replace meal with AI"
+                    title="Replace with a personalized meal"
                     disabled={!!busy || !active}
                     onClick={() => generate(index)}
                   >

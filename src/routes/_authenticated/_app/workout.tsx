@@ -24,9 +24,9 @@ export const Route = createFileRoute("/_authenticated/_app/workout")({
   head: () => ({
     meta: [
       { title: "Workout — Fitness AI" },
-      { name: "description", content: "Your AI workout plan." },
+      { name: "description", content: "Your personalized workout plan." },
       { property: "og:title", content: "Workout — Fitness AI" },
-      { property: "og:description", content: "Your AI workout plan." },
+      { property: "og:description", content: "Your personalized workout plan." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -131,7 +131,7 @@ function Workout() {
       ) : !plan.data ? (
         <div className="card-premium bg-hero p-8 text-center">
           <Wand2 className="mx-auto size-10 text-primary" />
-          <h2 className="mt-4 text-xl font-semibold">Build your AI workout plan</h2>
+          <h2 className="mt-4 text-xl font-semibold">Build your personalized workout plan</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
             We'll design a weekly program from 700+ exercises that match your goal, level and
             equipment.

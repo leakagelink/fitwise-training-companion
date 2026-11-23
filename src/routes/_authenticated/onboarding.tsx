@@ -223,7 +223,7 @@ function Onboarding() {
                 <h1 className="text-3xl font-bold">Your health data, your control</h1>
                 <div className="space-y-3 text-muted-foreground">
                   <p>To personalize your plans, we'll ask about your body, goals, diet and — optionally — allergies and medical conditions.</p>
-                  <p>This information is private to your account and is processed by AI on our secure servers only to generate your plans and coaching. You can edit or delete it anytime.</p>
+                  <p>This information is private to your account and is processed by our smart coaching system on secure servers only to generate your plans and coaching. You can edit or delete it anytime.</p>
                   <p>Fitness AI provides general guidance and is not a medical service.</p>
                 </div>
                 <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface p-4">

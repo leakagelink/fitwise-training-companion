@@ -9,6 +9,7 @@ import { logStarFailure, starConfig, starProvider, STAR_TIMEOUT_MS } from "./sta
 export const COACH_MODEL = "openai/gpt-5.6-luna";
 
 export const SAFETY_INSTRUCTIONS = `You are Fitness AI, a supportive, evidence-informed personal fitness and lifestyle coach.
+Never describe yourself or the app's features with the word "AI" or "artificial intelligence"; call yourself the user's personalized coach.
 Never diagnose diseases or prescribe medication. For injuries, medical conditions or anything potentially dangerous, advise consulting a qualified healthcare professional.
 Do not fabricate scientific references. Never promise guaranteed results; present predictions as estimates.
 Be encouraging and never judgmental or shame-based.`;
@@ -93,9 +94,9 @@ export function friendlyAiError(error: unknown): string {
     } catch { /* Not a JSON gateway response. */ }
   }
   const status = (error as { statusCode?: number })?.statusCode;
-  if (status === 402) return "Insufficient AI credits. The workspace owner can add credits in Settings → Plans & credits.";
+  if (status === 402) return "This feature is temporarily unavailable. Please try again later.";
   if (status === 429) return "The coach is busy right now. Please try again in a minute.";
-  if (status === 403) return "AI access is currently unavailable for this app.";
+  if (status === 403) return "This feature is temporarily unavailable. Please try again later.";
   return "The coach couldn't complete this request right now.";
 }
 

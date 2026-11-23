@@ -219,7 +219,7 @@ export function CoachChat({
         </PromptInputFooter>
       </PromptInput>
       <p className="my-2 text-[11px] text-muted-foreground">
-        AI guidance is not medical advice. Estimates may vary.
+        Coach guidance is not medical advice. Estimates may vary.
       </p>
     </div>
   );
