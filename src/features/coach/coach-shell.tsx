@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/brand/logo";
 import { createThread, deleteThread } from "./coach.functions";
 import { coachQuery } from "./queries";
-import { HumanCoach } from "./human-coach";
 
 export function CoachShell({
   threadId,
@@ -40,7 +39,7 @@ export function CoachShell({
     <div className="mx-auto max-w-5xl px-5 pt-6">
       <header className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">AI Coach</h1>
+          <h1 className="text-2xl font-bold">Customize Coach</h1>
           <p className="mt-1 text-xs text-muted-foreground">
             Your fitness & recovery conversations
           </p>
@@ -115,7 +114,6 @@ export function CoachShell({
               </Button>
             </div>
           )}
-          <HumanCoach />
         </div>
       </div>
     </div>

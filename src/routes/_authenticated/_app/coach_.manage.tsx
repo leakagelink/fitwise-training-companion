@@ -40,7 +40,7 @@ function ManageError({ error }: ErrorComponentProps) {
       <h1 className="text-xl font-bold">Coaches only</h1>
       <p className="text-sm text-muted-foreground">This page is for authorized coaches and staff.</p>
       <Button asChild>
-        <Link to="/coach">Back to AI Coach</Link>
+        <Link to="/coach">Back to Customize Coach</Link>
       </Button>
     </div>
   );
@@ -72,7 +72,7 @@ function Management() {
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-5 py-6">
       <Link to="/coach" className="text-sm text-primary">
-        ← AI Coach
+        ← Customize Coach
       </Link>
       <h1 className="text-2xl font-bold">Coach management</h1>
       <section>

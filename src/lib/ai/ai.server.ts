@@ -96,7 +96,7 @@ export function friendlyAiError(error: unknown): string {
   if (status === 402) return "Insufficient AI credits. The workspace owner can add credits in Settings → Plans & credits.";
   if (status === 429) return "The coach is busy right now. Please try again in a minute.";
   if (status === 403) return "AI access is currently unavailable for this app.";
-  return "The AI coach couldn't complete this request right now.";
+  return "The coach couldn't complete this request right now.";
 }
 
 /** Structured completion with an optional photo (data URL) attached. */

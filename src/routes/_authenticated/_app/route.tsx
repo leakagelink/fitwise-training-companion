@@ -24,7 +24,7 @@ const NAV = [
   { to: "/workout", label: "Workout", icon: Dumbbell },
   { to: "/nutrition", label: "Nutrition", icon: Apple },
   { to: "/progress", label: "Progress", icon: LineChart },
-  { to: "/coach", label: "AI Coach", icon: Bot },
+  { to: "/coach", label: "Customize Coach", icon: Bot },
 ] as const;
 
 function AppShell() {

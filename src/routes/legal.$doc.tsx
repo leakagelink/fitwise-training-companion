@@ -18,9 +18,9 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
     title: "Terms of Service",
     body: [
       "Fitness AI provides general fitness, nutrition and lifestyle guidance for adults. You are responsible for deciding whether a recommendation is right for you.",
-      "New accounts receive a 3-day free trial of diet plans, workout plans and AI coaching. After the trial, continued access requires a paid subscription.",
+      "New accounts receive a 3-day free trial of diet plans, workout plans and coaching. After the trial, continued access requires a paid subscription.",
       "Subscriptions renew according to the plan you choose and can be cancelled before renewal. Pricing and billing details are shown before any purchase.",
-      "Do not misuse the service, attempt to access other users' data, or use the AI coach for unlawful purposes.",
+      "Do not misuse the service, attempt to access other users' data, or use the coach for unlawful purposes.",
     ],
   },
   disclaimer: {
@@ -35,7 +35,7 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
   support: {
     title: "Support",
     body: [
-      "Need help with your account, plans or billing? Use the Human Coach options inside the AI Coach tab, or reach out through the support contact listed in the app store listing.",
+      "Need help with your account, plans or billing? Reach out through the support contact listed in the app store listing.",
       "To delete your account and all of your data, open Profile and choose Delete account.",
     ],
   },

@@ -6,15 +6,15 @@ import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state"
 export const Route = createFileRoute("/_authenticated/_app/coach")({
   head: () => ({
     meta: [
-      { title: "AI Coach — Fitness AI" },
+      { title: "Customize Coach — Fitness AI" },
       {
         name: "description",
-        content: "Personalized fitness conversations and human coach requests.",
+        content: "Personalized fitness, nutrition and recovery conversations.",
       },
-      { property: "og:title", content: "AI Coach — Fitness AI" },
+      { property: "og:title", content: "Customize Coach — Fitness AI" },
       {
         property: "og:description",
-        content: "Chat about fitness, nutrition and recovery, or request a human coach.",
+        content: "Chat about fitness, nutrition and recovery.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

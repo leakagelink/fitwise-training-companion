@@ -202,7 +202,7 @@ export function CoachChat({
       <PromptInput onSubmit={() => send(draft)} className="mt-3">
         <PromptInputTextarea
           ref={textarea}
-          aria-label="Message AI Coach"
+          aria-label="Message Customize Coach"
           placeholder="Ask your fitness coach…"
           value={draft}
           maxLength={6000}
