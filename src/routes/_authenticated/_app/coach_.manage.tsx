@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, type ErrorComponentProps } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -29,10 +29,22 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/manage")({
   }),
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({ ...managementQuery, revalidateIfStale: true }),
-  errorComponent: ScreenLoadError,
+  errorComponent: ManageError,
   notFoundComponent: ScreenNotFound,
   component: Management,
 });
+function ManageError({ error }: ErrorComponentProps) {
+  if (!/restricted/i.test(error instanceof Error ? error.message : "")) return <ScreenLoadError />;
+  return (
+    <div className="mx-auto max-w-md space-y-4 px-5 py-10 text-center">
+      <h1 className="text-xl font-bold">Coaches only</h1>
+      <p className="text-sm text-muted-foreground">This page is for authorized coaches and staff.</p>
+      <Button asChild>
+        <Link to="/coach">Back to AI Coach</Link>
+      </Button>
+    </div>
+  );
+}
 function Management() {
   const { data } = useSuspenseQuery(managementQuery);
   const qc = useQueryClient();
