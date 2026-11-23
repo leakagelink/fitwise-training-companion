@@ -2,15 +2,27 @@ import { createOpenAI } from "@ai-sdk/openai";
 
 /** AI STAR (OpenAI-compatible reseller) is the preferred provider when its key is set. */
 export const STAR_BASE_URL = "https://ai.starimg.ru/v1";
-/** Cheapest low-token model by default; AI_STAR_MODEL overrides it without a code change. */
-export const STAR_DEFAULT_MODEL = "gemini-2.5-flash-lite";
-/** Leave time for the built-in fallback inside one request. */
-export const STAR_TIMEOUT_MS = 40_000;
+/**
+ * Cheapest models that reliably return structured JSON and accept photos,
+ * cheapest first; AI_STAR_MODEL overrides them without a code change.
+ */
+export const STAR_DEFAULT_MODELS = ["nemotron-3.5-super-vl", "mimo-v2.6-flash"];
+/** Photo requests only go to models verified to read images; others would invent an answer. */
+export const STAR_VISION_MODELS = ["nemotron-3.5-super-vl"];
+/** Per attempt; leaves time for the built-in fallback inside one request. */
+export const STAR_TIMEOUT_MS = 25_000;
 
-export function starConfig(): { apiKey: string; model: string } | null {
-  const apiKey = process.env["AI_STAR_API_KEY"];
-  if (!apiKey) return null;
-  return { apiKey, model: process.env["AI_STAR_MODEL"] || STAR_DEFAULT_MODEL };
+/** AI_STAR_API_KEY, then AI_STAR_API_KEY_2 … _9: the next key takes over when one runs out of tokens. */
+export function starKeys(): string[] {
+  const names = ["AI_STAR_API_KEY", ...Array.from({ length: 8 }, (_, i) => `AI_STAR_API_KEY_${i + 2}`)];
+  const keys = names.map((name) => process.env[name]?.trim()).filter((key): key is string => !!key);
+  return [...new Set(keys)];
+}
+
+export function starModels(kind: "text" | "vision" = "text"): string[] {
+  const override = process.env["AI_STAR_MODEL"]?.trim();
+  if (override) return [override];
+  return kind === "vision" ? STAR_VISION_MODELS : STAR_DEFAULT_MODELS;
 }
 
 export function starProvider(apiKey: string) {
@@ -19,7 +31,7 @@ export function starProvider(apiKey: string) {
 
 export function logStarFailure(operation: string, error: unknown) {
   const status = (error as { statusCode?: number; status?: number })?.statusCode ?? (error as { status?: number })?.status;
-  console.warn("AI STAR unavailable, using built-in AI", { operation, status: status ?? null });
+  console.warn("AI STAR attempt failed", { operation, status: status ?? null });
 }
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
@@ -28,14 +40,12 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
  * Streams text deltas from AI STAR chat completions. Throws before the first
  * delta when the key is exhausted or the service is down, so callers can fall back.
  */
-export async function* streamStarChat(messages: ChatMessage[], signal: AbortSignal): AsyncGenerator<string> {
-  const config = starConfig();
-  if (!config) throw new Error("AI STAR not configured");
+export async function* streamStarChat(messages: ChatMessage[], signal: AbortSignal, apiKey: string, model: string): AsyncGenerator<string> {
   const timeout = AbortSignal.timeout(STAR_TIMEOUT_MS);
   const response = await fetch(`${STAR_BASE_URL}/chat/completions`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: config.model, messages, stream: true }),
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model, messages, stream: true }),
     signal: AbortSignal.any([signal, timeout]),
   });
   if (!response.ok || !response.body) {

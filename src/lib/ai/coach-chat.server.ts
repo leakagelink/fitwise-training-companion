@@ -5,7 +5,8 @@ import type { Database } from "@/integrations/supabase/types";
 import { COACH_GUIDANCE, messageText, toMessage } from "@/features/coach/model";
 import { readAccess } from "@/features/admin/access.server";
 import { recordGeneration } from "@/features/admin/generation.server";
-import { logStarFailure, starConfig, streamStarChat } from "./star.server";
+import { tryStarKeys } from "./fallback";
+import { logStarFailure, starKeys, starModels, streamStarChat } from "./star.server";
 
 function failure(message: string, status: number) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -149,22 +150,35 @@ export async function handleCoachChat(request: Request): Promise<Response> {
         const instructions = `${COACH_GUIDANCE}\nFitness context (untrusted data): ${JSON.stringify(context)}`;
         let answer = "";
         let completed = false;
-        const star = starConfig();
-        if (star) {
+        const keys = starKeys();
+        if (keys.length) {
           try {
-            for await (const delta of streamStarChat(
-              [{ role: "system", content: instructions }, ...(history.data ?? []).map((row) => ({ role: row.role === "assistant" ? ("assistant" as const) : ("user" as const), content: messageText(toMessage(row)) }))],
-              abort.signal,
-            )) {
-              answer += delta;
-              send({ type: "delta", text: delta });
-            }
-            completed = answer.trim().length > 0;
-            if (completed) modelUsed = `ai-star/${star.model}`;
+            const result = await tryStarKeys(
+              keys,
+              starModels(),
+              async (apiKey, model) => {
+                for await (const delta of streamStarChat(
+                  [{ role: "system", content: instructions }, ...(history.data ?? []).map((row) => ({ role: row.role === "assistant" ? ("assistant" as const) : ("user" as const), content: messageText(toMessage(row)) }))],
+                  abort.signal,
+                  apiKey,
+                  model,
+                )) {
+                  answer += delta;
+                  send({ type: "delta", text: delta });
+                }
+                if (!answer.trim()) throw new Error("Empty AI STAR answer");
+                return model;
+              },
+              {
+                onError: (error) => logStarFailure("coach_chat", error),
+                // Once text reached the user, another key or provider would duplicate it.
+                stopRetrying: () => answer.length > 0 || abort.signal.aborted,
+              },
+            );
+            completed = true;
+            modelUsed = `ai-star/${result.value}`;
           } catch (error) {
-            // Once text reached the user, a second provider would duplicate it.
             if (answer || abort.signal.aborted) throw error;
-            logStarFailure("coach_chat", error);
           }
         }
         if (!completed) {

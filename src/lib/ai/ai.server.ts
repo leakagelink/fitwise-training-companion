@@ -2,9 +2,9 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, NoObjectGeneratedError, Output, streamText, type ModelMessage } from "ai";
 import type { z } from "zod";
 
-import { withFallback } from "./fallback.ts";
+import { tryStarKeys, withFallback } from "./fallback.ts";
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
-import { logStarFailure, starConfig, starProvider, STAR_TIMEOUT_MS } from "./star.server.ts";
+import { logStarFailure, starKeys, starModels, starProvider, STAR_TIMEOUT_MS } from "./star.server.ts";
 
 export const COACH_MODEL = "openai/gpt-5.6-luna";
 
@@ -36,11 +36,13 @@ const providerOptions = {
   },
 } as const;
 
-/** Runs a request on AI STAR first, then on the built-in model if AI STAR is missing or fails. */
+/** Runs a request on each AI STAR key with balance, then on the built-in model if none answers. */
 async function preferStar<T>(operation: string, viaStar: (model: ReturnType<ReturnType<typeof starProvider>["chat"]>) => Promise<T>, viaBuiltIn: () => Promise<T>): Promise<T> {
-  const star = starConfig();
-  const primary = star ? () => viaStar(starProvider(star.apiKey).chat(star.model)) : null;
-  return (await withFallback(primary, viaBuiltIn, (error) => logStarFailure(operation, error))).value;
+  const keys = starKeys();
+  const primary = keys.length
+    ? async () => (await tryStarKeys(keys, starModels(operation === "vision" ? "vision" : "text"), (apiKey, model) => viaStar(starProvider(apiKey).chat(model)), { onError: (error) => logStarFailure(operation, error) })).value
+    : null;
+  return (await withFallback(primary, viaBuiltIn, () => console.warn("AI STAR unavailable, using built-in AI", { operation }))).value;
 }
 
 /** Single-turn completion; returns the final text (server-only). */
