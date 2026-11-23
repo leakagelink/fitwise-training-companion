@@ -175,8 +175,8 @@ export function weightTrend(goal: string | null, weights: ResultInput["weights"]
  * - Workout: distinct workout days vs the planned weekly frequency (default 3) for the window.
  * - Water: average logged water vs target. Sleep: average sleep vs 7 hours.
  */
-export function resultAnalysis(input: ResultInput) {
-  const from = addDaysISO(input.today, -(RESULT_WINDOW_DAYS - 1));
+export function resultAnalysis(input: ResultInput, windowDays = RESULT_WINDOW_DAYS) {
+  const from = addDaysISO(input.today, -(windowDays - 1));
   const inWindow = (d: string) => d >= from && d <= input.today;
   const checkins = input.checkins.filter((c) => inWindow(c.date));
 
@@ -192,7 +192,7 @@ export function resultAnalysis(input: ResultInput) {
   const diet = { score: dietDays.size >= MIN_TRACKED_DAYS ? pct(onTrack / dietDays.size) : null, onTrackDays: onTrack, trackedDays: dietDays.size };
 
   const perWeek = input.workoutsPerWeek && input.workoutsPerWeek > 0 ? input.workoutsPerWeek : DEFAULT_WORKOUTS_PER_WEEK;
-  const planned = Math.round((perWeek * RESULT_WINDOW_DAYS) / 7);
+  const planned = Math.max(1, Math.round((perWeek * windowDays) / 7));
   const done = new Set(input.workoutDates.filter(inWindow)).size;
   const workout = { score: pct(done / planned), done, planned };
 
@@ -209,7 +209,7 @@ export function resultAnalysis(input: ResultInput) {
     .filter((a) => scores[a] !== null && scores[a]! < ATTENTION_SCORE)
     .sort((a, b) => scores[a]! - scores[b]!);
   const weight = weightTrend(input.goal, input.weights, input.today);
-  return { windowDays: RESULT_WINDOW_DAYS, from, diet, workout, water, sleep, weight, needsAttention, resultsSlowing: weight.status === "stalled" || weight.status === "wrong_direction" };
+  return { windowDays, from, diet, workout, water, sleep, weight, needsAttention, resultsSlowing: weight.status === "stalled" || weight.status === "wrong_direction" };
 }
 export type ResultAnalysis = ReturnType<typeof resultAnalysis>;
 
@@ -257,3 +257,74 @@ export function weeklyNutritionReport(days: { date: string; calories: number; pr
   if (missed > 1) improve.push("Miss fewer meals");
   return { avgCalories, avgProtein, consistency, best, logged, missed, adherence: logged + missed ? Math.round((logged / (logged + missed)) * 100) : null, improve };
 }
+
+// ---------- Weekly progress score ----------
+
+export const SCORE_WEIGHTS = { diet: 0.3, workout: 0.3, consistency: 0.2, goal: 0.2 } as const;
+const GOAL_TREND_SCORE: Record<WeightTrend, number | null> = { on_track: 100, stalled: 50, wrong_direction: 20, not_enough_data: null };
+
+/**
+ * Last 7 days (today included), each 0–100:
+ * - Diet / Workout: the result-analysis adherence over 7 days (diet null with < 3 tracked days).
+ * - Consistency: share of the 7 days with anything tracked (check-in, meal, workout or weight).
+ * - Overall transformation: 30% diet + 30% workout + 20% consistency + 20% weight-trend-vs-goal
+ *   (on track 100, stalled 50, wrong direction 20); missing parts are left out and the rest re-weighted.
+ */
+export function weeklyProgressScore(input: ResultInput & { activityDates: string[] }) {
+  const week = resultAnalysis(input, 7);
+  const from = week.from;
+  const active = new Set([...input.activityDates, ...input.workoutDates, ...input.meals.map((m) => m.date), ...input.weights.map((w) => w.logged_on)].filter((d) => d >= from && d <= input.today));
+  const consistency = pct(active.size / 7);
+  const goal = GOAL_TREND_SCORE[week.weight.status];
+  const parts: [number | null, number][] = [[week.diet.score, SCORE_WEIGHTS.diet], [week.workout.score, SCORE_WEIGHTS.workout], [consistency, SCORE_WEIGHTS.consistency], [goal, SCORE_WEIGHTS.goal]];
+  const used = parts.filter((p): p is [number, number] => p[0] !== null);
+  const weight = used.reduce((a, [, w]) => a + w, 0);
+  const overall = Math.round(used.reduce((a, [v, w]) => a + v * w, 0) / weight);
+  return { from, diet: week.diet.score, workout: week.workout.score, consistency, goal, overall, activeDays: active.size };
+}
+export type WeeklyProgressScore = ReturnType<typeof weeklyProgressScore>;
+
+// ---------- Before / after and goal prediction ----------
+
+/** Share (0–100) of the way from the starting weight to the target; null without a target or when start equals target. */
+export function goalProgressPct(startKg: number | null, currentKg: number | null, targetKg: number | null): number | null {
+  if (startKg === null || currentKg === null || targetKg === null || Math.abs(startKg - targetKg) < 0.1) return null;
+  return Math.max(0, Math.min(100, Math.round(((startKg - currentKg) / (startKg - targetKg)) * 100)));
+}
+
+export type MeasurementKey = "waist_cm" | "chest_cm" | "hips_cm" | "arm_cm" | "body_fat_pct";
+export const MEASUREMENT_KEYS: MeasurementKey[] = ["waist_cm", "chest_cm", "hips_cm", "arm_cm", "body_fat_pct"];
+
+/** First and latest recorded value per measurement (each field independently), with the change. */
+export function measurementComparison(rows: ({ measured_on: string } & Partial<Record<MeasurementKey, number | string | null>>)[]) {
+  const sorted = [...rows].sort((a, b) => a.measured_on.localeCompare(b.measured_on));
+  return MEASUREMENT_KEYS.map((key) => {
+    const values = sorted.flatMap((r) => (r[key] === null || r[key] === undefined ? [] : [{ date: r.measured_on, value: Number(r[key]) }]));
+    const first = values[0] ?? null, last = values[values.length - 1] ?? null;
+    return { key, start: first, current: last, change: first && last && values.length > 1 ? Math.round((last.value - first.value) * 10) / 10 : null };
+  });
+}
+
+/** Predictions beyond this are reported as "very slow" instead of a date. */
+export const MAX_PREDICTION_WEEKS = 104;
+export type GoalPredictionStatus = "reached" | "on_track" | "very_slow" | "not_moving" | "maintenance" | "no_target" | "not_enough_data";
+
+/**
+ * Estimates when the target weight is reached at the recent pace (first vs last weight log of the
+ * last 28 days, needing ≥ 7 days between them). Reached within 0.5 kg.
+ */
+export function goalPrediction(input: { goal: string | null; currentKg: number | null; targetKg: number | null; weights: ResultInput["weights"]; today: string }) {
+  const base = { ratePerWeek: null as number | null, weeksLeft: null as number | null, etaDate: null as string | null, remainingKg: null as number | null };
+  if (input.goal === "maintenance") return { ...base, status: "maintenance" as GoalPredictionStatus };
+  if (input.targetKg === null || input.currentKg === null) return { ...base, status: "no_target" as GoalPredictionStatus };
+  const remainingKg = Math.round((input.targetKg - input.currentKg) * 10) / 10;
+  if (Math.abs(remainingKg) <= 0.5) return { ...base, remainingKg, status: "reached" as GoalPredictionStatus };
+  const trend = weightTrend(input.goal, input.weights, input.today);
+  if (trend.changeKg === null || !trend.weeks) return { ...base, remainingKg, status: "not_enough_data" as GoalPredictionStatus };
+  const ratePerWeek = Math.round((trend.changeKg / trend.weeks) * 100) / 100;
+  if (Math.sign(ratePerWeek) !== Math.sign(remainingKg) || Math.abs(ratePerWeek) < 0.05) return { ...base, remainingKg, ratePerWeek, status: "not_moving" as GoalPredictionStatus };
+  const weeksLeft = Math.ceil(Math.abs(remainingKg) / Math.abs(ratePerWeek));
+  if (weeksLeft > MAX_PREDICTION_WEEKS) return { ...base, remainingKg, ratePerWeek, weeksLeft, status: "very_slow" as GoalPredictionStatus };
+  return { remainingKg, ratePerWeek, weeksLeft, etaDate: addDaysISO(input.today, weeksLeft * 7), status: "on_track" as GoalPredictionStatus };
+}
+export type GoalPrediction = ReturnType<typeof goalPrediction>;
