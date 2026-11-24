@@ -135,3 +135,8 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] Rename user/admin/staff pages, metadata, coach identity and grocery exports; rename project and Capacitor display name while preserving app ID/domain
 - [x] Verify new logo and name on landing/login at phone/desktop sizes and startup splash; all 119 tests pass, build OK
 - [ ] Update and verify installed Android launcher icon/native splash — local Android project and device unavailable
+
+# Current full-panel end-to-end check
+- [ ] Run regression tests and check signed-in user, admin and staff screens on phone/desktop
+- [ ] Verify saved progress/photos, reminders, workout, food/diary/groceries, coach chat and support flows
+- [ ] Recheck real weekly/monthly generation and record external-service blockers; remove test data/access
