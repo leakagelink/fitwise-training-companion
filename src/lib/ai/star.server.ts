@@ -11,6 +11,8 @@ export const STAR_DEFAULT_MODELS = ["nemotron-3.5-super-vl", "mimo-v2.6-flash"];
 export const STAR_VISION_MODELS = ["nemotron-3.5-super-vl"];
 /** Per attempt; leaves time for the built-in fallback inside one request. */
 export const STAR_TIMEOUT_MS = 25_000;
+/** A full streamed answer needs longer than the non-stream request timeout. */
+export const STAR_STREAM_TIMEOUT_MS = 90_000;
 
 /** AI_STAR_API_KEY, then AI_STAR_API_KEY_2 … _9: the next key takes over when one runs out of tokens. */
 export function starKeys(): string[] {
@@ -41,7 +43,7 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
  * delta when the key is exhausted or the service is down, so callers can fall back.
  */
 export async function* streamStarChat(messages: ChatMessage[], signal: AbortSignal, apiKey: string, model: string): AsyncGenerator<string> {
-  const timeout = AbortSignal.timeout(STAR_TIMEOUT_MS);
+  const timeout = AbortSignal.timeout(STAR_STREAM_TIMEOUT_MS);
   const response = await fetch(`${STAR_BASE_URL}/chat/completions`, {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -71,4 +73,5 @@ export async function* streamStarChat(messages: ChatMessage[], signal: AbortSign
       if (delta) yield delta;
     }
   }
+  if (!finished) throw new Error("AI STAR answer stream ended before completion");
 }
