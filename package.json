@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.109",
+    "@capacitor/android": "^7",
     "@capacitor/app": "^7",
     "@capacitor/core": "^7",
     "@capacitor/local-notifications": "^7",
@@ -87,6 +88,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.27.1",
     "@testing-library/jest-dom": "^6.6.0",
