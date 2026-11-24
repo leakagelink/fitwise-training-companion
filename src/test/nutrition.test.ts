@@ -48,3 +48,11 @@ describe("diet check false positives", () => {
   it("peanut allergy still catches peanut butter", () => { expect(dietConflict("Toast with peanut butter", "vegetarian", ["Peanuts"])).toBe("peanut"); });
   it("dairy allergy allows dairy-free yogurt", () => { expect(dietConflict("Dairy-free coconut yogurt bowl", "vegetarian", ["Dairy"])).toBeNull(); });
 });
+
+it('builds all seven and thirty days in order with small batches', async () => {
+  const { generatePlanDays } = await import('@/features/nutrition/plan-days');
+  expect(await generatePlanDays(7, async (i) => i + 1)).toEqual([1,2,3,4,5,6,7]);
+  const monthly = await generatePlanDays(30, async (i) => i + 1);
+  expect(monthly).toHaveLength(30);
+  expect(monthly.at(-1)).toBe(30);
+});

@@ -49,7 +49,7 @@ export async function tryStarKeys<T>(
   keys: string[],
   models: string[],
   run: (apiKey: string, model: string) => Promise<T>,
-  options: { onError?: (error: unknown) => void; stopRetrying?: () => boolean; now?: () => number } = {},
+  options: { onError?: (error: unknown) => void; stopRetrying?: () => boolean; now?: () => number; budgetMs?: number } = {},
 ): Promise<{ value: T; key: string; model: string }> {
   const now = options.now ?? Date.now;
   const started = now();
@@ -57,7 +57,7 @@ export async function tryStarKeys<T>(
   for (const key of keys) {
     if ((exhaustedUntil.get(key) ?? 0) > now()) continue;
     for (const model of models) {
-      if (now() - started > STAR_BUDGET_MS) throw lastError;
+      if (now() - started > (options.budgetMs ?? STAR_BUDGET_MS)) throw lastError;
       try {
         const value = await run(key, model);
         exhaustedUntil.delete(key);

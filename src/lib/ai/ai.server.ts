@@ -37,10 +37,10 @@ const providerOptions = {
 } as const;
 
 /** Runs a request on each AI STAR key with balance, then on the built-in model if none answers. */
-async function preferStar<T>(operation: string, viaStar: (model: ReturnType<ReturnType<typeof starProvider>["chat"]>) => Promise<T>, viaBuiltIn: () => Promise<T>): Promise<T> {
+async function preferStar<T>(operation: string, viaStar: (model: ReturnType<ReturnType<typeof starProvider>["chat"]>) => Promise<T>, viaBuiltIn: () => Promise<T>, budgetMs?: number): Promise<T> {
   const keys = starKeys();
   const primary = keys.length
-    ? async () => (await tryStarKeys(keys, starModels(operation === "vision" ? "vision" : "text"), (apiKey, model) => viaStar(starProvider(apiKey).chat(model)), { onError: (error) => logStarFailure(operation, error) })).value
+    ? async () => (await tryStarKeys(keys, starModels(operation === "vision" ? "vision" : "text"), (apiKey, model) => viaStar(starProvider(apiKey).chat(model)), { ...(budgetMs === undefined ? {} : { budgetMs }), onError: (error) => logStarFailure(operation, error) })).value
     : null;
   return (await withFallback(primary, viaBuiltIn, () => console.warn("AI STAR unavailable, using built-in AI", { operation }))).value;
 }
@@ -75,15 +75,15 @@ async function builtInObject<T>(system: string, schema: z.ZodType<T>, input: { p
   }
 }
 
-async function starObject<T>(model: Parameters<typeof generateText>[0]["model"], system: string, schema: z.ZodType<T>, input: { prompt: string } | { messages: ModelMessage[] }): Promise<T> {
-  const result = await generateText({ model, instructions: system, ...input, output: Output.object({ schema }), maxRetries: 0, timeout: STAR_TIMEOUT_MS });
+async function starObject<T>(model: Parameters<typeof generateText>[0]["model"], system: string, schema: z.ZodType<T>, input: { prompt: string } | { messages: ModelMessage[] }, timeoutMs = STAR_TIMEOUT_MS): Promise<T> {
+  const result = await generateText({ model, instructions: system, ...input, output: Output.object({ schema }), maxRetries: 0, timeout: timeoutMs });
   return schema.parse(result.output);
 }
 
 /** Structured (strict JSON schema) completion; returns the parsed object. */
-export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>): Promise<T> {
+export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, timeoutMs = STAR_TIMEOUT_MS): Promise<T> {
   const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
-  return preferStar("object", (model) => starObject(model, system, schema, { prompt }), () => builtInObject(system, schema, { prompt }));
+  return preferStar("object", (model) => starObject(model, system, schema, { prompt }, timeoutMs), () => builtInObject(system, schema, { prompt }), timeoutMs * 2 + 5000);
 }
 
 export function friendlyAiError(error: unknown): string {

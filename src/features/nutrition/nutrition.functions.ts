@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { generatePlanDays } from "./plan-days";
 import { dailyTargets } from "@/lib/fitness";
 import { dietSchema, mealDietConflict, mealSchema, type Meal } from "./model";
 import type { Json } from "@/integrations/supabase/types";
@@ -40,7 +41,16 @@ STRICTLY exclude listed allergens, their derivatives and cross-contamination ris
     const { generateCoachObject, friendlyAiError } = await import("@/lib/ai/ai.server");
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     try {
-      const result = await trackedGeneration(userId, existing ? "meal_replacement" : "diet_plan", "openai/gpt-5.6-luna", async () => existing ? { name: existing.name, days: [{ meals: [await generateCoachObject(prompt, "Design a safe personalized nutrition recipe with estimated values.", mealSchema)] }] } : await generateCoachObject(prompt, "Design a balanced personalized nutrition plan with estimated values.", dietSchema));
+      const result = await trackedGeneration(userId, existing ? "meal_replacement" : "diet_plan", "openai/gpt-5.6-luna", async () => {
+        if (existing) return { name: existing.name, days: [{ meals: [await generateCoachObject(prompt, "Design a safe personalized nutrition recipe with estimated values.", mealSchema)] }] };
+        const days = await generatePlanDays(data.duration, async (index) => {
+          const dayPrompt = prompt.replace(`${data.duration} days with four meals each`, "ONE day with four meals") + `\nThis is day ${index + 1} of ${data.duration}; vary dishes by day. Return exactly one day, four meals. Keep every text field concise: ingredients up to 6, instructions 2 short steps, two short alternatives. Micronutrients must include estimated vitamins and minerals with mg/mcg units.`;
+          const day = await generateCoachObject(dayPrompt, "Design a balanced personalized nutrition plan with estimated values. Short recipes, no extra prose.", dietSchema, 75_000);
+          if (day.days.length !== 1 || day.days[0]?.meals.length !== 4) throw new Error("The generated day was incomplete. Nothing was saved.");
+          return day.days[0];
+        });
+        return { name: "Your personalized diet plan", days };
+      });
       if (!result.days.length || (!existing && (result.days.length !== data.duration || result.days.some(d => d.meals.length !== 4)))) throw new Error("The generated plan was incomplete. Please start a fresh request.");
       // Repair individual meals that fail the restriction check (at most 4 extra requests), instead of discarding the whole plan.
       let repairs = 0;

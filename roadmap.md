@@ -123,8 +123,9 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] Home alert when weight stalls or moves away from the goal; tests and phone check with a test member
 
 # Requested diet and progress additions
-- [ ] Show vitamins/minerals on meal plan cards; open 1/3/7/30-day plans to all signed-in users (including expired trial), preserving the admin pause switch
-- [ ] Private progress photo upload, before/after selection and deletion
-- [ ] Weekly Diet, Workout, Consistency and Overall scores
-- [ ] Goal date estimate and starting/current weight and measurement comparisons
-- [ ] Verify new flows and tests
+- [x] Show vitamins/minerals on meal plan cards; open 1/3/7/30-day plans to all signed-in users (including expired trial), preserving the admin pause switch
+- [x] Private progress photo upload, before/after selection and deletion
+- [x] Weekly Diet, Workout, Consistency and Overall scores
+- [x] Goal date estimate and starting/current weight and measurement comparisons
+- [x] Verify photo upload/readback and scores in the browser; all 119 tests pass
+- [ ] Complete live weekly/monthly diet generation verification — AI STAR long replies timed out; built-in fallback returned credit-limit 402. A real single-day structured response succeeded; full 7/30-day runs are not verified.
