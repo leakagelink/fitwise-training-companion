@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logoAsset from "@/assets/fitnessai-logo.png.asset.json";
+import logoAsset from "@/assets/muscles-zone-logo.jpeg.asset.json";
 
 export function SplashScreen({ startup = false }: { startup?: boolean }) {
   const [visible, setVisible] = useState(true);
@@ -34,8 +34,8 @@ export function SplashScreen({ startup = false }: { startup?: boolean }) {
   }, [startup]);
 
   if (!visible) return null;
-  return <div role="status" aria-label="Opening FitnessAI" data-leaving={leaving} className="brand-splash fixed inset-0 z-50 grid place-items-center bg-background p-8">
-    <img ref={image} src={logoAsset.url} alt="FitnessAI — Your Personalized Fitness Coach" width={288} height={288}
+  return <div role="status" aria-label="Opening Muscles Zone" data-leaving={leaving} className="brand-splash fixed inset-0 z-50 grid place-items-center bg-background p-8">
+    <img ref={image} src={logoAsset.url} alt="Muscles Zone — Your Personalized Fitness Coach" width={288} height={288}
       fetchPriority="high" className="brand-splash-logo aspect-square w-72 max-w-full object-contain" />
   </div>;
 }

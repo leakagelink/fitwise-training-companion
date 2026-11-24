@@ -26,9 +26,9 @@ import { ResultAlert } from "@/features/progress/result-analysis-card";
 export const Route = createFileRoute("/_authenticated/_app/home")({
   head: () => ({
     meta: [
-      { title: "Home — Fitness AI" },
-      { name: "description", content: "Your daily Fitness AI dashboard." },
-      { property: "og:title", content: "Home — Fitness AI" },
+      { title: "Home — Muscles Zone" },
+      { name: "description", content: "Your daily Muscles Zone dashboard." },
+      { property: "og:title", content: "Home — Muscles Zone" },
       { property: "og:description", content: "Your daily dashboard." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

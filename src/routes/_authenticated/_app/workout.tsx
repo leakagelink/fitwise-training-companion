@@ -23,9 +23,9 @@ import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state"
 export const Route = createFileRoute("/_authenticated/_app/workout")({
   head: () => ({
     meta: [
-      { title: "Workout — Fitness AI" },
+      { title: "Workout — Muscles Zone" },
       { name: "description", content: "Your personalized workout plan." },
-      { property: "og:title", content: "Workout — Fitness AI" },
+      { property: "og:title", content: "Workout — Muscles Zone" },
       { property: "og:description", content: "Your personalized workout plan." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

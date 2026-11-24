@@ -6,9 +6,9 @@ import { Logo } from "@/components/brand/logo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Fitness AI — Your Personalized Fitness & Lifestyle Coach" },
+      { title: "Muscles Zone — Your Personalized Fitness & Lifestyle Coach" },
       { name: "description", content: "Personalized diet plans, personalized workouts, 24/7 coaching and real progress tracking — try free for 3 days." },
-      { property: "og:title", content: "Fitness AI — Your Personalized Fitness & Lifestyle Coach" },
+      { property: "og:title", content: "Muscles Zone — Your Personalized Fitness & Lifestyle Coach" },
       { property: "og:description", content: "Personalized diet plans, personalized workouts, 24/7 coaching and real progress tracking." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -96,7 +96,7 @@ function Landing() {
         <section className="mt-16 flex items-start gap-3 rounded-2xl border border-border p-5 text-sm text-muted-foreground">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
           <p>
-            Your health data stays private to your account and you can delete it at any time. Fitness AI offers general
+            Your health data stays private to your account and you can delete it at any time. Muscles Zone offers general
             guidance only and is not a substitute for medical advice.
           </p>
         </section>
@@ -104,7 +104,7 @@ function Landing() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl flex-wrap gap-5 px-5 text-sm text-muted-foreground">
-          <span>© 2026 Fitness AI</span>
+          <span>© 2026 Muscles Zone</span>
           <a href="https://repdb.co" rel="nofollow noreferrer" target="_blank" className="hover:text-foreground">Exercise data by RepDB (repdb.co)</a>
           <Link to="/legal/$doc" params={{ doc: "privacy" }} className="hover:text-foreground">Privacy</Link>
           <Link to="/legal/$doc" params={{ doc: "terms" }} className="hover:text-foreground">Terms</Link>

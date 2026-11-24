@@ -129,3 +129,9 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] Goal date estimate and starting/current weight and measurement comparisons
 - [x] Verify photo upload/readback and scores in the browser; all 119 tests pass
 - [ ] Complete live weekly/monthly diet generation verification — AI STAR long replies timed out; built-in fallback returned credit-limit 402. A real single-day structured response succeeded; full 7/30-day runs are not verified.
+
+# Muscles Zone branding
+- [x] Replace supplied logo across shared branding, web splash, preload and favicon
+- [x] Rename user/admin/staff pages, metadata, coach identity and grocery exports; rename project and Capacitor display name while preserving app ID/domain
+- [x] Verify new logo and name on landing/login at phone/desktop sizes and startup splash; all 119 tests pass, build OK
+- [ ] Update and verify installed Android launcher icon/native splash — local Android project and device unavailable

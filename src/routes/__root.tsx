@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { createCacheIdentityGuard } from "@/lib/query-cache";
 import { SplashScreen } from "@/components/brand/splash-screen";
-import logoAsset from "@/assets/fitnessai-logo.png.asset.json";
+import logoAsset from "@/assets/muscles-zone-logo.jpeg.asset.json";
 import { cancelNativeReminders } from "@/lib/native-reminders";
 import { NativeNavigation } from "@/components/native-navigation";
 import { ScreenEffects } from "@/components/screen-effects";
@@ -87,7 +87,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#1a1c20" },
-      { title: "Fitness AI — Your Personalized Fitness & Lifestyle Coach" },
+      { title: "Muscles Zone — Your Personalized Fitness & Lifestyle Coach" },
+      { name: "application-name", content: "Muscles Zone" },
+      { name: "apple-mobile-web-app-title", content: "Muscles Zone" },
       {
         name: "description",
         content: "Personalized diet plans, workouts, coaching and progress tracking.",
@@ -103,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/muscles-zone-favicon.png", type: "image/png" },
       { rel: "preload", href: logoAsset.url, as: "image" },
     ],
   }),

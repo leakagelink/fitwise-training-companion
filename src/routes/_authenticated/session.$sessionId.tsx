@@ -32,9 +32,9 @@ export const Route = createFileRoute("/_authenticated/session/$sessionId")({
   },
   head: () => ({
     meta: [
-      { title: "Active workout — Fitness AI" },
+      { title: "Active workout — Muscles Zone" },
       { name: "description", content: "Track your sets, preparation countdown and rest." },
-      { property: "og:title", content: "Active workout — Fitness AI" },
+      { property: "og:title", content: "Active workout — Muscles Zone" },
       {
         property: "og:description",
         content: "Track your workout with preparation and rest timers.",

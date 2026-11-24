@@ -1,6 +1,6 @@
 {
   "appId": "com.fitnessai.app",
-  "appName": "FitnessAI",
+  "appName": "Muscles Zone",
   "webDir": "public",
   "server": {
     "url": "https://fitness.100businessideas.in",

@@ -19,9 +19,9 @@ const managementQuery = queryOptions({
 export const Route = createFileRoute("/_authenticated/_app/coach_/manage")({
   head: () => ({
     meta: [
-      { title: "Coach management — Fitness AI" },
+      { title: "Coach management — Muscles Zone" },
       { name: "description", content: "Manage coach profiles, availability and booking requests." },
-      { property: "og:title", content: "Coach management — Fitness AI" },
+      { property: "og:title", content: "Coach management — Muscles Zone" },
       { property: "og:description", content: "Authorized coach appointment management." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -14,9 +14,9 @@ import { getOperationsIdentity } from "@/features/admin/operations.functions";
 export const Route = createFileRoute("/_authenticated/_app/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — Fitness AI" },
-      { name: "description", content: "Manage your Fitness AI profile." },
-      { property: "og:title", content: "Profile — Fitness AI" },
+      { title: "Profile — Muscles Zone" },
+      { name: "description", content: "Manage your Muscles Zone profile." },
+      { property: "og:title", content: "Profile — Muscles Zone" },
       { property: "og:description", content: "Manage your profile." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

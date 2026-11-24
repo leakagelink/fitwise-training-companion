@@ -20,9 +20,9 @@ import { Attribution, ExerciseThumb } from "@/features/exercise-library/exercise
 export const Route = createFileRoute("/_authenticated/_app/exercises/")({
   head: () => ({
     meta: [
-      { title: "Exercise Library — Fitness AI" },
+      { title: "Exercise Library — Muscles Zone" },
       { name: "description", content: "Search 700+ illustrated exercises." },
-      { property: "og:title", content: "Exercise Library — Fitness AI" },
+      { property: "og:title", content: "Exercise Library — Muscles Zone" },
       { property: "og:description", content: "Search 700+ illustrated exercises." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

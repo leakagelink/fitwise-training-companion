@@ -9,9 +9,9 @@ export const Route = createFileRoute("/_authenticated/_app/coach_/$threadId")({
   remountDeps: ({ params }) => params.threadId,
   head: () => ({
     meta: [
-      { title: "Coach conversation — Fitness AI" },
+      { title: "Coach conversation — Muscles Zone" },
       { name: "description", content: "Your private fitness coaching conversation." },
-      { property: "og:title", content: "Coach conversation — Fitness AI" },
+      { property: "og:title", content: "Coach conversation — Muscles Zone" },
       {
         property: "og:description",
         content: "Personal fitness guidance with saved conversation history.",

@@ -61,12 +61,12 @@ const progressQuery = queryOptions({
 export const Route = createFileRoute("/_authenticated/_app/progress")({
   head: () => ({
     meta: [
-      { title: "Progress — Fitness AI" },
+      { title: "Progress — Muscles Zone" },
       {
         name: "description",
         content: "Track weight, body measurements, sleep, water, energy and weekly workouts.",
       },
-      { property: "og:title", content: "Progress — Fitness AI" },
+      { property: "og:title", content: "Progress — Muscles Zone" },
       {
         property: "og:description",
         content: "Your fitness progress charts and daily lifestyle tracking.",

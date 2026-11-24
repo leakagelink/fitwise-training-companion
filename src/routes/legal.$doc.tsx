@@ -17,7 +17,7 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
   terms: {
     title: "Terms of Service",
     body: [
-      "Fitness AI provides general fitness, nutrition and lifestyle guidance for adults. You are responsible for deciding whether a recommendation is right for you.",
+      "Muscles Zone provides general fitness, nutrition and lifestyle guidance for adults. You are responsible for deciding whether a recommendation is right for you.",
       "New accounts receive a 3-day free trial of diet plans, workout plans and coaching. After the trial, continued access requires a paid subscription.",
       "Subscriptions renew according to the plan you choose and can be cancelled before renewal. Pricing and billing details are shown before any purchase.",
       "Do not misuse the service, attempt to access other users' data, or use the coach for unlawful purposes.",
@@ -26,7 +26,7 @@ const DOCS: Record<string, { title: string; body: string[] }> = {
   disclaimer: {
     title: "Health & Fitness Disclaimer",
     body: [
-      "Fitness AI is not a medical service. It does not diagnose, treat or cure any disease and does not prescribe medication.",
+      "Muscles Zone is not a medical service. It does not diagnose, treat or cure any disease and does not prescribe medication.",
       "All calorie, macro and nutrition figures are estimates. Goal timelines are predictions, not guarantees.",
       "Consult a qualified healthcare professional before starting a new diet or exercise program, especially if you are pregnant, have a medical condition, injury, or take medication.",
       "Stop exercising and seek medical help if you feel pain, dizziness, chest discomfort or shortness of breath.",
@@ -50,10 +50,10 @@ export const Route = createFileRoute("/legal/$doc")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.title ?? "Legal"} — Fitness AI` },
-      { name: "description", content: `${loaderData?.title ?? "Legal"} for Fitness AI.` },
-      { property: "og:title", content: `${loaderData?.title ?? "Legal"} — Fitness AI` },
-      { property: "og:description", content: `${loaderData?.title ?? "Legal"} for Fitness AI.` },
+      { title: `${loaderData?.title ?? "Legal"} — Muscles Zone` },
+      { name: "description", content: `${loaderData?.title ?? "Legal"} for Muscles Zone.` },
+      { property: "og:title", content: `${loaderData?.title ?? "Legal"} — Muscles Zone` },
+      { property: "og:description", content: `${loaderData?.title ?? "Legal"} for Muscles Zone.` },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],

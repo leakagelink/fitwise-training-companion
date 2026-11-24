@@ -24,10 +24,10 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   },
   head: () => ({
     meta: [
-      { title: "Set up your profile — Fitness AI" },
-      { name: "description", content: "Tell Fitness AI about yourself to personalize your plans." },
-      { property: "og:title", content: "Set up your profile — Fitness AI" },
-      { property: "og:description", content: "Personalize your Fitness AI plans." },
+      { title: "Set up your profile — Muscles Zone" },
+      { name: "description", content: "Tell Muscles Zone about yourself to personalize your plans." },
+      { property: "og:title", content: "Set up your profile — Muscles Zone" },
+      { property: "og:description", content: "Personalize your Muscles Zone plans." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -224,11 +224,11 @@ function Onboarding() {
                 <div className="space-y-3 text-muted-foreground">
                   <p>To personalize your plans, we'll ask about your body, goals, diet and — optionally — allergies and medical conditions.</p>
                   <p>This information is private to your account and is processed by our smart coaching system on secure servers only to generate your plans and coaching. You can edit or delete it anytime.</p>
-                  <p>Fitness AI provides general guidance and is not a medical service.</p>
+                  <p>Muscles Zone provides general guidance and is not a medical service.</p>
                 </div>
                 <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface p-4">
                   <Checkbox checked={f.consent} onCheckedChange={(v) => set("consent", v === true)} className="mt-0.5" />
-                  <span className="text-sm">I consent to Fitness AI processing my health and fitness information as described in the <a href="/legal/privacy" target="_blank" className="text-primary underline">Privacy Policy</a>.</span>
+                  <span className="text-sm">I consent to Muscles Zone processing my health and fitness information as described in the <a href="/legal/privacy" target="_blank" className="text-primary underline">Privacy Policy</a>.</span>
                 </label>
               </>
             )}

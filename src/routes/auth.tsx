@@ -14,10 +14,10 @@ import { workspaceQuery, workspaceDestination } from "@/features/account/workspa
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Fitness AI" },
-      { name: "description", content: "Sign in or create your Fitness AI account to start your 3-day free trial." },
-      { property: "og:title", content: "Sign in — Fitness AI" },
-      { property: "og:description", content: "Create your Fitness AI account and start your free trial." },
+      { title: "Sign in — Muscles Zone" },
+      { name: "description", content: "Sign in or create your Muscles Zone account to start your 3-day free trial." },
+      { property: "og:title", content: "Sign in — Muscles Zone" },
+      { property: "og:description", content: "Create your Muscles Zone account and start your free trial." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -129,7 +129,7 @@ function AuthPage() {
             </form>}
 
             <p className="mt-5 text-center text-sm text-muted-foreground">
-              {mode === "signup" ? "Already have an account?" : "New to Fitness AI?"}{" "}
+              {mode === "signup" ? "Already have an account?" : "New to Muscles Zone?"}{" "}
               <button className="font-semibold text-primary" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
                 {mode === "signup" ? "Sign in" : "Create one"}
               </button>

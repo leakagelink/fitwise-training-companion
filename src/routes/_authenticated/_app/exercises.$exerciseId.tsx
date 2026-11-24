@@ -13,9 +13,9 @@ import { startSession } from "@/features/workout/session";
 export const Route = createFileRoute("/_authenticated/_app/exercises/$exerciseId")({
   head: () => ({
     meta: [
-      { title: "Exercise — Fitness AI" },
+      { title: "Exercise — Muscles Zone" },
       { name: "description", content: "Exercise instructions and form tips." },
-      { property: "og:title", content: "Exercise — Fitness AI" },
+      { property: "og:title", content: "Exercise — Muscles Zone" },
       { property: "og:description", content: "Exercise instructions and form tips." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

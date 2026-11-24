@@ -16,9 +16,9 @@ import { nativeReminderPermission, syncNativeReminders, type NativePermission } 
 export const Route = createFileRoute("/_authenticated/_app/reminders")({
   head: () => ({
     meta: [
-      { title: "Reminders — Fitness AI" },
+      { title: "Reminders — Muscles Zone" },
       { name: "description", content: "Set breakfast, lunch, dinner, water and workout reminders, plus missed-meal check-ins." },
-      { property: "og:title", content: "Reminders — Fitness AI" },
+      { property: "og:title", content: "Reminders — Muscles Zone" },
       { property: "og:description", content: "Daily meal, water and workout reminders." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -79,7 +79,7 @@ function Reminders() {
       </header>
 
       {permission === "unsupported" && <p className="border-l-2 border-primary pl-3 text-sm text-muted-foreground"><BellRing className="mr-1 inline size-4 text-primary" /> Pop-up reminders arrive in the Android app. Here, missed-meal check-ins appear on Home and Nutrition.</p>}
-      {permission === "denied" && <p role="alert" className="border-l-2 border-destructive pl-3 text-sm">Notifications are blocked. Turn them on for FitnessAI in your phone settings.</p>}
+      {permission === "denied" && <p role="alert" className="border-l-2 border-destructive pl-3 text-sm">Notifications are blocked. Turn them on for Muscles Zone in your phone settings.</p>}
 
       <section className="card-premium divide-y divide-border">
         {TIMED.map(({ key, label, icon: Icon }) => (

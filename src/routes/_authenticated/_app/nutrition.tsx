@@ -43,12 +43,12 @@ import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state"
 export const Route = createFileRoute("/_authenticated/_app/nutrition")({
   head: () => ({
     meta: [
-      { title: "Nutrition & Recipes — Fitness AI" },
+      { title: "Nutrition & Recipes — Muscles Zone" },
       {
         name: "description",
         content: "Personal diet plans, recipes, grocery lists and your daily meal diary.",
       },
-      { property: "og:title", content: "Nutrition & Recipes — Fitness AI" },
+      { property: "og:title", content: "Nutrition & Recipes — Muscles Zone" },
       { property: "og:description", content: "Personalized meals and real nutrition tracking." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
