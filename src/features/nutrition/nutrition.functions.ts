@@ -20,7 +20,7 @@ export const generateDiet = createServerFn({ method: "POST" }).middleware([requi
     if (!p.health_consent_at) return { status: "error" as const, message: "Health data consent is needed in your profile." };
     const { readAccess } = await import("@/features/admin/access.server");
     const access = await readAccess(supabase, userId, p.trial_started_at);
-    if (data.duration > access.dietDays) return { status: "locked" as const, message: "Your membership does not include this diet duration. Contact the administrator for plan access." };
+    if (data.duration > access.dietDays) return { status: "locked" as const, message: "Diet plan generation is temporarily paused. Please try again later." };
     const targets = dailyTargets({ weightKg: p.weight_kg ?? 70, heightCm: p.height_cm ?? 170, age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
     let existing: Awaited<ReturnType<typeof getNutrition>> = null;
     if (data.planId) {

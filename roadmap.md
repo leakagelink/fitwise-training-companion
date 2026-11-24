@@ -121,3 +121,10 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] 14-day diet, workout, water and sleep adherence scores with weight-trend check on Progress
 - [x] Coach review explaining why results are slow, with weekly improvement steps (once per day)
 - [x] Home alert when weight stalls or moves away from the goal; tests and phone check with a test member
+
+# Requested diet and progress additions
+- [ ] Show vitamins/minerals on meal plan cards; open 1/3/7/30-day plans to all signed-in users (including expired trial), preserving the admin pause switch
+- [ ] Private progress photo upload, before/after selection and deletion
+- [ ] Weekly Diet, Workout, Consistency and Overall scores
+- [ ] Goal date estimate and starting/current weight and measurement comparisons
+- [ ] Verify new flows and tests

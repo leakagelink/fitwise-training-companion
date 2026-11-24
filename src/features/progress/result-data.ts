@@ -16,7 +16,7 @@ export async function loadResultAnalysis(db: SupabaseClient<Database>, userId: s
   if (profile.error || !profile.data || checkins.error || meals.error || sessions.error || weights.error) throw new Error("Could not load your result analysis");
   const p = profile.data;
   const targets = dailyTargets({ weightKg: Number(p.weight_kg ?? 70), heightCm: Number(p.height_cm ?? 170), age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
-  const analysis = resultAnalysis({
+  const input = {
     today,
     goal: p.goal,
     caloriesTarget: targets.calories,
@@ -32,6 +32,6 @@ export async function loadResultAnalysis(db: SupabaseClient<Database>, userId: s
       ...checkins.data.filter((c) => c.workout_done).map((c) => c.date),
     ],
     weights: weights.data.map((w) => ({ logged_on: w.logged_on, weight_kg: Number(w.weight_kg) })),
-  });
-  return { analysis, profile: p, targets };
+  };
+  return { analysis: resultAnalysis(input), input, profile: p, targets };
 }

@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { todayISO, weeklyWorkoutCounts, weightChange, workoutStreak } from "@/lib/fitness";
 import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state";
+import { ProgressSummary } from "@/features/progress/summary";
+import { ProgressPhotos } from "@/features/progress/photos";
 import { ResultAnalysisCard } from "@/features/progress/result-analysis-card";
 import { resultAnalysisQuery } from "@/features/progress/queries";
 
@@ -144,6 +146,8 @@ function Progress() {
         />
       </div>
 
+      <ProgressSummary />
+      <ProgressPhotos />
       <ResultAnalysisCard />
 
       <Card>

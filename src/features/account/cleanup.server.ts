@@ -1,6 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 export async function eraseAccount(db: SupabaseClient<Database>, userId: string) {
+  const photos = await db.from("progress_photos").select("storage_path").eq("user_id", userId);
+  if (photos.error) throw new Error("Could not read progress photos for cleanup");
+  if (photos.data.length) {
+    const removed = await db.storage.from("progress-photos").remove(photos.data.map(p => p.storage_path));
+    if (removed.error) throw new Error("Could not remove progress photo files");
+  }
   for (const table of ["staff_notes", "support_replies"] as const) {
     const result = await db.from(table).update({ author_id: null }).eq("author_id", userId);
     if (result.error) throw new Error("Could not anonymize staff history");

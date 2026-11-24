@@ -363,6 +363,7 @@ function Nutrition() {
                   <span>{m.nutrition.fat} g fat</span>
                   <span>{m.nutrition.fiber} g fiber</span>
                 </div>
+                <p className="mt-3 text-xs text-muted-foreground"><span className="font-medium">Estimated vitamins &amp; minerals:</span> {m.micronutrients || "Not available for this saved meal"} · original recipe serving</p>
                 <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3">
                   <Button variant="secondary" size="sm" onClick={() => setRecipe(m)}>
                     <ChefHat /> Recipe
@@ -425,8 +426,8 @@ function Nutrition() {
               >
                 <option value={1}>Daily</option>
                 <option value={3}>3-day trial</option>
-                <option value={7}>Weekly · premium</option>
-                <option value={30}>Monthly · premium</option>
+                <option value={7}>Weekly · 7 days</option>
+                <option value={30}>Monthly · 30 days</option>
               </select>
               <Button disabled={!!busy || !active} onClick={() => generate()}>
                 {busy === "plan" ? <Loader2 className="animate-spin" /> : <Wand2 />}
@@ -439,7 +440,7 @@ function Nutrition() {
             </div>
             {!active && (
               <p role="status" className="text-sm text-muted-foreground">
-                Diet generation access is not active. Contact the administrator for plan access;
+                Diet plan generation is temporarily paused;
                 your saved meals and diary remain available.
               </p>
             )}
