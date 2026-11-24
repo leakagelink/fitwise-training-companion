@@ -137,6 +137,9 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [ ] Update and verify installed Android launcher icon/native splash — local Android project and device unavailable
 
 # Current full-panel end-to-end check
-- [ ] Run regression tests and check signed-in user, admin and staff screens on phone/desktop
-- [ ] Verify saved progress/photos, reminders, workout, food/diary/groceries, coach chat and support flows
-- [ ] Recheck real weekly/monthly generation and record external-service blockers; remove test data/access
+- [x] Run 121 regression tests; signed-in user screens on phone, all 13 admin sections on phone/desktop and all five permission-scoped staff views on phone loaded without page errors or horizontal overflow
+- [x] Verify check-in, weight, measurements, private photo upload/comparison/reload, reminder settings, food scan/meal diary, workout set reload/finish, coach reply persistence, own-data export and admin support reply
+- [x] Correct coach stream cutoff: full streamed responses get 90 seconds instead of the 25-second non-stream timeout; reject truncated streams, regression tests and longer live reply/readback passed
+- [x] Real seven-day diet generated and saved exactly seven days; temporary account permissions removed and remaining test fitness records cleaned up
+- [ ] Monthly diet complete generation/readback — combined browser run exceeded the 600-second sandbox limit; no 30-day plan was observed, so monthly reliability remains unverified
+- [ ] Remaining exhaustive checks — grocery edits, all admin mutations, scheduled delivery, real SMS and native Android not exercised in this run; payments remain disconnected
