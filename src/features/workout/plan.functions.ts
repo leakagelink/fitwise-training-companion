@@ -33,7 +33,8 @@ export const generateWorkoutPlan = createServerFn({ method: "POST" })
     const { data: p } = await supabase.from("profiles").select("*").eq("id", userId).single();
     if (!p) return { status: "error", message: "Profile not found" };
     const { readAccess } = await import("@/features/admin/access.server");
-    if (!(await readAccess(supabase, userId, p.trial_started_at)).workouts) return { status: "locked" };
+    const { workoutIsFree } = await import("@/features/admin/access");
+    if (!workoutIsFree(p.workout_location) && !(await readAccess(supabase, userId, p.trial_started_at)).workouts) return { status: "locked" };
 
     const all = (await import("@/data/exercises.json")).default as Exercise[];
     const pool = all.filter(
