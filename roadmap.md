@@ -148,3 +148,9 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] Add separate camera capture and gallery upload controls to food scanning and progress photos without changing scan or storage rules
 - [x] Verify signed-in camera-input and gallery selection, decoded food preview, progress upload and decoded readback after reload; test photos removed, 20 nutrition/progress tests passed
 - [ ] Verify actual camera launch on installed Android — requires a physical device; desktop verification uses file chooser input rather than a real camera
+
+# Account language
+- [ ] Ask signed-in users without a saved language to choose before onboarding or any panel; allow later changes
+- [ ] Persist account language and translate visible app labels, forms, messages and content without changing stored values or control behavior
+- [ ] Apply the saved language to coach chat and all personalized generators
+- [ ] Verify first-login selection, saved-language reload, language changes, translated navigation/forms and live coach response; run regression tests
