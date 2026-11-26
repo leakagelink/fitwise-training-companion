@@ -27,15 +27,24 @@ export function languageInstructions(code: string): string {
 }
 export function canTranslate(source: string): boolean {
   const text = source.trim();
+  // Clocks and quantities are values, not prose; never translate them on each tick.
+  if (/^(?:[\d\s.,:()+\-–—×/%→]|kg|kcal|mcg|mg|ml|cm|min|sec|s|h|g|L)+$/i.test(text)) return false;
   if (/^[\[{]/.test(text)) { try { JSON.parse(text); return false; } catch { /* Human-readable text, not a machine record. */ } }
   return text.length > 0 && text.length <= 4000 && /\p{L}/u.test(text) &&
     !/^(https?:\/\/|data:|[\w.+-]+@[\w.-]+\.[a-z]{2,}|[0-9a-f]{8}-[0-9a-f-]{27,})/i.test(text) &&
-    !/^(Muscles Zone|Exercise data by RepDB|RepDB|kg|g|mg|mcg|ml|cm|kcal|IU|UTC)$/i.test(text);
+    !/^(Muscles Zone|Exercise data by RepDB|RepDB|kg|g|mg|mcg|ml|cm|kcal|IU|UTC|s|h|L)$/i.test(text);
 }
 export const translationRequestLimits = { batch: 50, characters: 12000, source: 4000 } as const;
+export function numberTemplate(source: string): { key: string; values: string[] } {
+  const values: string[] = [];
+  const key = source.trim().replace(/https?:\/\/[^\s]+|[\w.+-]+@[\w.-]+\.[a-z]{2,}|\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b|\d+(?:[.,]\d+)*/gi, value => {
+    const token = `__NUM_${values.length}__`; values.push(value); return token;
+  });
+  return { key, values };
+}
 export function translationKeepsValues(source: string, translated: string): boolean {
   const numbers = (text: string) => (text.match(/\d+(?:[.,]\d+)*/g) ?? []).sort().join('|');
   if (numbers(source) !== numbers(translated)) return false;
-  const literals = source.match(/https?:\/\/[^\s]+|\b(?:Muscles Zone|RepDB|EXPORT|kg|g|ml|kcal|cm|mg|mcg|IU)\b/g) ?? [];
+  const literals = source.match(/__NUM_\d+__|https?:\/\/[^\s]+|\b(?:Muscles Zone|RepDB|EXPORT|kg|g|ml|kcal|cm|mg|mcg|IU)\b/g) ?? [];
   return literals.every(literal => translated.includes(literal));
 }

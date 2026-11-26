@@ -5,3 +5,5 @@
 - Nutrition recipes remain canonical English through dietary validation; localization is a presentation layer, not a replacement for allergy checks.
 - Library primitives receive translated string children through the same runtime; input values, native textarea content and structured JSON remain original. Confirmation dialogs resolve explicit booleans, and translation validation preserves every number, unit and confirmation token.
 - Assistant messages save their original language; streaming uses that language directly and older/mismatched replies translate for display without rewriting history.
+- Initial screen packs and newly opened dialogs show a native-language loading state while their mounted controls translate; readiness never remounts active forms or workouts. Numeric clocks/quantities are not translation requests.
+- Numeric values, URLs, emails and UUIDs use restored placeholders in translated prose; changing a count reuses the same template instead of generating another translation or sending private identifiers.

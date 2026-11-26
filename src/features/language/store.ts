@@ -1,5 +1,5 @@
 import { bootstrapTranslations } from './bootstrap';
-import { canTranslate, translationRequestLimits } from './model';
+import { canTranslate, numberTemplate, translationRequestLimits } from './model';
 import { canPersistTranslation } from './sources';
 
 export type TranslationResult = { source: string; translated: string };
@@ -18,6 +18,7 @@ export class TranslationStore {
   private active = false;
   private revision = 0;
   error = false;
+  get busy(): boolean { return this.active || this.waiting.size > 0; }
   constructor(readonly language: string, private fetcher: TranslationFetcher) {
     this.translations = new Map(Object.entries(bootstrapTranslations(language)));
     for (const value of this.translations.values()) this.rendered.add(value);
@@ -26,14 +27,22 @@ export class TranslationStore {
   snapshot = () => this.revision;
   private notify() { this.revision++; for (const listener of this.listeners) listener(); }
   text = (source: string): string => {
-    const key = source.trim();
+    const original = source.trim();
+    const direct = this.translations.get(original);
+    if (direct !== undefined) return source.replace(original, direct);
+    const { key, values } = numberTemplate(source);
     const result = this.translations.get(key);
-    return result === undefined ? source : source.replace(key, result);
+    if (result === undefined) return source;
+    const restored = result.replace(/__NUM_(\d+)__/g, (_token, index: string) => values[Number(index)] ?? '');
+    return source.replace(original, restored);
   };
   request(source: string) {
-    const key = source.trim();
-    if (this.disposed || (this.language === 'en' && canPersistTranslation(key)) || !canTranslate(key) || this.translations.has(key) || this.rendered.has(key) || this.inFlight.has(key) || this.failed.has(key)) return;
+    const original = source.trim();
+    const { key } = numberTemplate(original);
+    if (this.disposed || (this.language === 'en' && canPersistTranslation(key)) || !canTranslate(original) || key.length > translationRequestLimits.source || this.translations.has(original) || this.translations.has(key) || this.rendered.has(key) || this.inFlight.has(key) || this.failed.has(key)) return;
+    const wasBusy = this.busy;
     this.waiting.add(key);
+    if (!wasBusy) this.notify();
     if (!this.timer && !this.active) this.timer = setTimeout(() => { this.timer = undefined; void this.flush(); }, 150);
   }
   async flush(): Promise<void> {
@@ -66,7 +75,7 @@ export class TranslationStore {
     this.failed.clear(); this.error = false; this.notify(); void this.flush();
   }
   async resolve(sources: string[]): Promise<string[]> {
-    const missing = [...new Set(sources.filter(source => canTranslate(source) && !this.translations.has(source.trim()) && !this.rendered.has(source.trim()) && !(this.language === 'en' && canPersistTranslation(source))).map(source => source.trim()))];
+    const missing = [...new Set(sources.filter(source => canTranslate(source) && !this.translations.has(source.trim()) && !(this.language === 'en' && canPersistTranslation(source))).map(source => numberTemplate(source).key).filter(key => !this.translations.has(key) && !this.rendered.has(key) && key.length <= translationRequestLimits.source))];
     for (let index = 0; index < missing.length;) {
       const batch: string[] = [];
       let size = 0;

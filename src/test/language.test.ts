@@ -36,7 +36,7 @@ describe('Account language rules', () => {
     expect(languageInstructions('hi-Latn')).toContain('Roman Hindi / Hinglish');
   });
   it('does not send numeric-only values, units, links or branding for translation', () => {
-    for (const source of ['80', '30-45', 'kg', 'Muscles Zone', 'https://example.com', 'person@example.com']) expect(canTranslate(source)).toBe(false);
+    for (const source of ['80', '30-45', 'kg', '12s', '80 kg → 75 kg', '1920 kcal', 'Muscles Zone', 'https://example.com', 'person@example.com']) expect(canTranslate(source)).toBe(false);
     expect(canTranslate('Meal details')).toBe(true);
   });
   it('bounds translation requests before model calls', () => {
@@ -90,6 +90,25 @@ describe('Private translation cache', () => {
     store.request('Dynamic label'); await store.flush();
     store.request('translated-value'); await store.flush();
     expect(fetcher).toHaveBeenCalledTimes(1);
+    store.dispose();
+  });
+  it('reuses a numeric template when counts change and restores each original value', async () => {
+    const fetcher = vi.fn(async (sources: string[]) => sources.map(source => ({ source, translated: source.replace('records', 'रिकॉर्ड') })));
+    const store = new TranslationStore('hi', fetcher);
+    store.request('3 records'); await store.flush();
+    expect(store.text('3 records')).toBe('3 रिकॉर्ड');
+    store.request('12 records'); await store.flush();
+    expect(store.text('12 records')).toBe('12 रिकॉर्ड');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledWith(['__NUM_0__ records']);
+    store.dispose();
+  });
+  it('does not send user identifiers inside translated prose to the model', async () => {
+    const fetcher = vi.fn(async (sources: string[]) => sources.map(source => ({ source, translated: source })));
+    const store = new TranslationStore('hi', fetcher);
+    store.request('User 00000000-0000-4000-8000-000000000001'); await store.flush();
+    expect(fetcher).toHaveBeenCalledWith(['User __NUM_0__']);
+    expect(store.text('User 00000000-0000-4000-8000-000000000001')).toBe('User 00000000-0000-4000-8000-000000000001');
     store.dispose();
   });
   it('does not accept late private results after account/language disposal', async () => {

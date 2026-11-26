@@ -20,16 +20,19 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { messageText, messageLanguage } from "./model";
 import { OriginalText, useTranslatedText, useLanguageStore } from '@/features/language/context';
+import { Loader2 } from 'lucide-react';
 
 function AssistantResponse({ text, originalLanguage, streaming }: { text: string; originalLanguage: string | null; streaming: boolean }) {
   const language = useLanguageStore();
   const [translated, setTranslated] = useState(text);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [resolvedFor, setResolvedFor] = useState('');
   const sameLanguage = originalLanguage === language?.language;
+  const key = `${language?.language ?? 'en'}:${text}`;
   useEffect(() => {
     setTranslated(text); setFailed(false);
-    if (!language || streaming || sameLanguage) return;
+    if (!language || streaming || sameLanguage) { setResolvedFor(key); return; }
     let cancelled = false;
     const chunks: string[] = [];
     for (let start = 0; start < text.length;) {
@@ -37,10 +40,11 @@ function AssistantResponse({ text, originalLanguage, streaming }: { text: string
       if (end < text.length) { const boundary = text.lastIndexOf('\n\n', end); if (boundary > start + 1500) end = boundary + 2; }
       chunks.push(text.slice(start, end)); start = end;
     }
-    void language.resolve(chunks).then(parts => { if (!cancelled) setTranslated(parts.join('')); }).catch(() => { if (!cancelled) setFailed(true); });
+    void language.resolve(chunks).then(parts => { if (!cancelled) { setTranslated(parts.join('')); setResolvedFor(key); } }).catch(() => { if (!cancelled) setFailed(true); });
     return () => { cancelled = true; };
   }, [language, text, streaming, sameLanguage, attempt]);
-  return <><OriginalText><MessageResponse>{streaming || sameLanguage ? text : translated}</MessageResponse></OriginalText>{failed && <Button type="button" variant="ghost" size="sm" onClick={() => setAttempt(value => value + 1)}>Retry translation</Button>}</>;
+  const loading = !!language && !streaming && !sameLanguage && !failed && resolvedFor !== key;
+  return <>{loading ? <Loader2 className="my-4 size-5 animate-spin text-primary motion-reduce:animate-none" /> : <OriginalText><MessageResponse>{streaming || sameLanguage ? text : translated}</MessageResponse></OriginalText>}{failed && <Button type="button" variant="ghost" size="sm" onClick={() => setAttempt(value => value + 1)}>Retry translation</Button>}</>;
 }
 
 const eventSchema = z.discriminatedUnion("type", [
