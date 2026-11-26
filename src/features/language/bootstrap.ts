@@ -19,6 +19,7 @@ export const HINDI: Record<string, string> = {
   'Track your food — photo or name': 'फोटो या नाम से अपने खाने की जानकारी देखें',
   'Enter estimates for the portion you ate, or use values from the food label.': 'आपने जितना खाना खाया, उसका अनुमान भरें या खाने के पैकेट पर दी गई जानकारी इस्तेमाल करें।',
   'Ingredients:': 'सामग्री:', 'Values are estimates.': 'मात्राएं अनुमानित हैं।', 'Close': 'बंद करें',
+  'e.g. 2 roti, 1 bowl, 150 g': 'जैसे 2 रोटी, 1 कटोरी, 150 g',
   'Meal type': 'भोजन का समय', 'Breakfast': 'नाश्ता', 'Lunch': 'दोपहर का खाना', 'Dinner': 'रात का खाना', 'Snack': 'हल्का नाश्ता', 'Save meal': 'खाना सेव करें',
   'Calories': 'कैलोरी', 'Protein': 'प्रोटीन', 'Carbs': 'कार्बोहाइड्रेट', 'Fat': 'वसा', 'Fiber': 'फाइबर', 'calories': 'कैलोरी', 'protein': 'प्रोटीन', 'carbs': 'कार्बोहाइड्रेट', 'fat': 'वसा', 'fiber': 'फाइबर',
   'Meal plan': 'भोजन प्लान', 'Diary': 'डायरी', 'Groceries': 'खरीदारी सूची', 'Your personal diet plan': 'आपका व्यक्तिगत डाइट प्लान',
