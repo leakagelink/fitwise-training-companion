@@ -1,3 +1,4 @@
+import { useLanguageDialogs } from "@/features/language/dialogs";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/_app/profile")({
 });
 
 function Profile() {
+  const dialogs = useLanguageDialogs();
   const { data: p } = useProfile();
   const navigate = useNavigate();
   const del = useServerFn(deleteMyAccount);
@@ -39,7 +41,7 @@ function Profile() {
     localStorage.setItem("fa-theme", light ? "light" : "dark");
   };
   async function onDelete() {
-    if (!confirm("Permanently delete your account and all data? This cannot be undone.")) return;
+    if (!await dialogs.confirm("Permanently delete your account and all data? This cannot be undone.")) return;
     setBusy(true);
     try {
       await del();

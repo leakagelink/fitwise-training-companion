@@ -1,3 +1,4 @@
+import { useLanguageDialogs } from "@/features/language/dialogs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import { listAdminRecords, saveAdminRecord } from "./admin.functions";
 import { resourceConfig, type ResourceName, validateRecord } from "./resources";
 
 export function RecordManager({ resource, userId }: { resource: ResourceName; userId?: string }) {
+  const dialogs = useLanguageDialogs();
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
   const [values, setValues] = useState<Record<string, unknown>>({});
@@ -44,8 +46,8 @@ export function RecordManager({ resource, userId }: { resource: ResourceName; us
     finally { setBusy(false); }
   }
   async function remove(row: Record<string, unknown>) {
-    if (!confirm(`Delete this ${config.label.toLowerCase()} record? Related child records may also be deleted.`)) return;
-    const why = prompt("Reason for deletion"); if (!why) return;
+    if (!await dialogs.confirm(`Delete this ${config.label.toLowerCase()} record? Related child records may also be deleted.`)) return;
+    const why = await dialogs.prompt("Reason for deletion"); if (!why) return;
     setBusy(true);
     try { await save({ data: { resource, id: String(row[key]), values: {}, remove: true, reason: why } }); await refresh(); toast.success("Record deleted"); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Could not delete"); }

@@ -17,7 +17,12 @@ export function LanguageChooser({ current = null, onComplete }: { current?: stri
   const [error, setError] = useState('');
   const save = useServerFn(saveAccountLanguage);
   const qc = useQueryClient();
-  const languages = useMemo(() => LANGUAGE_CODES.map(code => ({ code, name: languageName(code), native: nativeLanguageName(code) })), []);
+  const languages = useMemo(() => {
+    const priority = ['en', 'hi', 'hi-Latn', 'mr', 'gu', 'bn', 'ta', 'te', 'kn', 'ml', 'pa', 'or', 'as', 'ur', 'ne'];
+    const rank = (code: string) => priority.includes(code) ? priority.indexOf(code) : 100;
+    return LANGUAGE_CODES.map(code => ({ code, name: languageName(code), native: nativeLanguageName(code) }))
+      .sort((a, b) => rank(a.code) - rank(b.code) || a.name.localeCompare(b.name));
+  }, []);
   const filtered = languages.filter(language => `${language.code} ${language.name} ${language.native}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
   const selectedName = languages.find(language => language.code === selected)?.native;
   async function continueWithLanguage() {

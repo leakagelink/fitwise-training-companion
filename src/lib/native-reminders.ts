@@ -25,17 +25,18 @@ async function cancelBlock(notifications: NonNullable<Awaited<ReturnType<typeof 
 }
 
 /** Replaces this device's daily reminders with the saved settings (only when permission is granted). */
-export async function syncNativeReminders(settings: ReminderSettings): Promise<NativePermission> {
+export async function syncNativeReminders(settings: ReminderSettings, translate?: (sources: string[]) => Promise<string[]>): Promise<NativePermission> {
   const notifications = await plugin();
   if (!notifications) return "unsupported";
   const permission = await nativeReminderPermission(false);
   if (permission !== "granted") return permission;
-  await cancelBlock(notifications);
   const items = reminderSchedule(settings);
+  const localized = translate ? await translate(items.flatMap(item => [item.title, item.body])) : items.flatMap(item => [item.title, item.body]);
+  await cancelBlock(notifications);
   if (items.length) {
     await notifications.schedule({
-      notifications: items.map((r) => ({
-        id: r.id, title: r.title, body: r.body,
+      notifications: items.map((r, index) => ({
+        id: r.id, title: localized[index * 2] ?? r.title, body: localized[index * 2 + 1] ?? r.body,
         schedule: { on: { hour: r.hour, minute: r.minute }, allowWhileIdle: true },
         extra: { path: r.path },
       })),

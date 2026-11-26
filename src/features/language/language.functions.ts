@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
-import { isLanguageCode, languageName, translationRequestLimits } from './model';
+import { isLanguageCode, languageName, translationRequestLimits, translationKeepsValues } from './model';
 import type { TranslationResult } from './store';
 
 const codeSchema = z.string().refine(isLanguageCode, 'Choose a supported language');
@@ -35,7 +35,7 @@ export const translateAppText = createServerFn({ method: 'POST' }).middleware([r
     }));
     const cached = await db.from('language_translations').select('source_text,translated_text').eq('user_id', context.userId).eq('language_code', data.language).in('source_hash', hashes);
     if (cached.error) throw new Error('Could not load translations');
-    const values = new Map((cached.data ?? []).map(row => [row.source_text, row.translated_text]));
+    const values = new Map((cached.data ?? []).filter(row => translationKeepsValues(row.source_text, row.translated_text)).map(row => [row.source_text, row.translated_text]));
     const missing = sources.filter(source => !values.has(source));
     if (missing.length) {
       const { generateCoachObject } = await import('@/lib/ai/ai.server');
@@ -48,7 +48,7 @@ export const translateAppText = createServerFn({ method: 'POST' }).middleware([r
       );
       for (const item of output.translations) {
         const source = missing[item.id];
-        if (source && !values.has(source)) values.set(source, item.text);
+        if (source && !values.has(source) && translationKeepsValues(source, item.text)) values.set(source, item.text);
       }
       if (missing.some(source => !values.has(source))) throw new Error('Some translations were incomplete. Please retry.');
       const rows = sources.flatMap((source, index) => {

@@ -12,6 +12,7 @@ import { ScreenLoadError, ScreenNotFound } from "@/components/screen-load-state"
 import { reminderSettingsQuery } from "@/features/reminders/queries";
 import { MISSED_GRACE_MINUTES, reminderSettingsSchema, waterTimes, type ReminderSettings } from "@/features/reminders/model";
 import { nativeReminderPermission, syncNativeReminders, type NativePermission } from "@/lib/native-reminders";
+import { useLanguageStore } from '@/features/language/context';
 
 export const Route = createFileRoute("/_authenticated/_app/reminders")({
   head: () => ({
@@ -39,6 +40,7 @@ const TIMED: { key: TimedKey; label: string; icon: typeof Sun }[] = [
 ];
 
 function Reminders() {
+  const language = useLanguageStore();
   const saved = useSuspenseQuery(reminderSettingsQuery);
   const { data: p } = useProfile();
   const qc = useQueryClient();
@@ -58,7 +60,7 @@ function Reminders() {
       if (saveError) throw saveError;
       await qc.invalidateQueries({ queryKey: ["reminder-settings"] });
       let status = await nativeReminderPermission(true);
-      if (status === "granted") status = await syncNativeReminders(check.data);
+      if (status === "granted") status = await syncNativeReminders(check.data, language ? sources => language.resolve(sources) : undefined);
       setPermission(status);
       toast.success(status === "denied" ? "Saved. Allow notifications in phone settings to get reminders." : "Reminders saved");
     } catch {

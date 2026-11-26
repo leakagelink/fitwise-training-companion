@@ -3,3 +3,4 @@
 - The opt-in app JSX runtime localizes rendered host text and accessibility attributes through a provider-owned memory cache, preserving refs, form values, IDs and numbers; excluded/native text uses OriginalText. No DOM translation mutation is allowed because React owns its nodes.
 - Translation requests and caches are authenticated and owner-scoped; never share generated health text between accounts or persist it in browser storage.
 - Nutrition recipes remain canonical English through dietary validation; localization is a presentation layer, not a replacement for allergy checks.
+- Library primitives receive translated string children through the same runtime; input values, native textarea content and structured JSON remain original. Confirmation dialogs resolve explicit booleans, and translation validation preserves every number, unit and confirmation token.

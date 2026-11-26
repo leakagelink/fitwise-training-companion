@@ -1,3 +1,4 @@
+import { useLanguageDialogs } from "@/features/language/dialogs";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -16,6 +17,7 @@ export function CoachShell({
   threadId?: string;
   children?: React.ReactNode;
 }) {
+  const dialogs = useLanguageDialogs();
   const { data } = useSuspenseQuery(coachQuery);
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -81,7 +83,7 @@ export function CoachShell({
                   aria-label={`Delete ${t.title}`}
                   disabled={busy}
                   onClick={async () => {
-                    if (!window.confirm("Delete this conversation and its messages?")) return;
+                    if (!await dialogs.confirm("Delete this conversation and its messages?")) return;
                     setBusy(true);
                     try {
                       await remove({ data: { id: t.id } });

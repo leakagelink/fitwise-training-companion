@@ -24,6 +24,7 @@ import { ProgressSummary } from "@/features/progress/summary";
 import { ProgressPhotos } from "@/features/progress/photos";
 import { ResultAnalysisCard } from "@/features/progress/result-analysis-card";
 import { resultAnalysisQuery } from "@/features/progress/queries";
+import { useTranslatedText } from '@/features/language/context';
 
 const progressQuery = queryOptions({
   queryKey: ["progress"],
@@ -92,6 +93,10 @@ const num = (v: FormDataEntryValue | null) => {
 };
 
 function Progress() {
+  const workoutsLabel = useTranslatedText('Workouts');
+  const sleepLabel = useTranslatedText('Sleep (h)');
+  const energyLabel = useTranslatedText('Energy');
+  const waterLabel = useTranslatedText('Water (L)');
   const { data } = useSuspenseQuery(progressQuery);
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
@@ -225,7 +230,7 @@ function Progress() {
               <Tooltip
                 contentStyle={{ background: "var(--card)", border: "1px solid var(--border)" }}
               />
-              <Bar dataKey="count" name="Workouts" fill="var(--primary)" radius={4} />
+              <Bar dataKey="count" name={workoutsLabel} fill="var(--primary)" radius={4} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -291,9 +296,9 @@ function Progress() {
                 <Tooltip
                   contentStyle={{ background: "var(--card)", border: "1px solid var(--border)" }}
                 />
-                <Line dataKey="sleep" name="Sleep (h)" stroke="var(--primary)" connectNulls />
-                <Line dataKey="energy" name="Energy" stroke="var(--chart-2)" connectNulls />
-                <Line dataKey="water" name="Water (L)" stroke="var(--chart-3)" connectNulls />
+                <Line dataKey="sleep" name={sleepLabel} stroke="var(--primary)" connectNulls />
+                <Line dataKey="energy" name={energyLabel} stroke="var(--chart-2)" connectNulls />
+                <Line dataKey="water" name={waterLabel} stroke="var(--chart-3)" connectNulls />
               </LineChart>
             </ResponsiveContainer>
           ) : (

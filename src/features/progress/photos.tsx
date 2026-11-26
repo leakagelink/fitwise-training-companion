@@ -1,3 +1,4 @@
+import { useLanguageDialogs } from "@/features/language/dialogs";
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Upload, Trash2 } from 'lucide-react';
@@ -9,6 +10,7 @@ import { todayISO } from '@/lib/fitness';
 import { PhotoPicker } from '@/components/photo-picker';
 
 export function ProgressPhotos() {
+  const dialogs = useLanguageDialogs();
   const qc=useQueryClient();
   const [busy,setBusy]=useState(false), [before,setBefore]=useState(''), [after,setAfter]=useState('');
   const [photo,setPhoto]=useState<File|null>(null);
@@ -40,7 +42,7 @@ export function ProgressPhotos() {
     }catch{toast.error('Could not save photo');}finally{setBusy(false);}
   }
   async function remove(id:string,path:string){
-    if(!window.confirm('Permanently delete this progress photo?'))return;
+    if(!await dialogs.confirm('Permanently delete this progress photo?'))return;
     setBusy(true);
     try{const r=await supabase.storage.from('progress-photos').remove([path]);if(r.error)throw r.error;const d=await supabase.from('progress_photos').delete().eq('id',id);if(d.error)throw d.error;await qc.invalidateQueries({queryKey:['progress','photos']});toast.success('Photo deleted');}catch{toast.error('Could not delete photo');}finally{setBusy(false);}
   }

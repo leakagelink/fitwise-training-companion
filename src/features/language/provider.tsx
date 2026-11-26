@@ -26,7 +26,7 @@ export function LanguageProvider({ userId, children }: { userId: string | null |
   const translate = useServerFn(translateAppText);
   const code = language.data ?? 'en';
   const store = useMemo(() => new TranslationStore(code, sources => translate({ data: { language: code, sources } })), [code, userId, translate]);
-  useEffect(() => () => store.dispose(), [store]);
+  useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
   useEffect(() => {
     document.documentElement.lang = userId ? code : 'en';
     document.documentElement.dir = languageDirection(userId ? code : 'en');

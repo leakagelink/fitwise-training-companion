@@ -1,4 +1,5 @@
 // ISO 639-1 living languages, plus common script/regional choices.
+import { ENGLISH_LANGUAGE_NAMES } from './names';
 export const LANGUAGE_CODES = ('aa ab ae af ak am an ar as av ay az ba be bg bh bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu zh-Hans zh-Hant pt-BR hi-Latn').split(' ');
 export const RTL_CODES = new Set(['ar', 'fa', 'he', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv']);
 const NATIVE_NAMES: Record<string, string> = {
@@ -8,12 +9,13 @@ export function isLanguageCode(code: unknown): code is string {
   return typeof code === 'string' && LANGUAGE_CODES.includes(code);
 }
 export function languageName(code: string): string {
-  if (code === 'hi-Latn') return 'Hinglish (Hindi written in Latin letters)';
+  const known = ENGLISH_LANGUAGE_NAMES[code];
+  if (known) return known;
   try { return new Intl.DisplayNames(['en'], { type: 'language' }).of(code) ?? code; } catch { return code; }
 }
 export function nativeLanguageName(code: string): string {
   if (NATIVE_NAMES[code]) return NATIVE_NAMES[code];
-  try { return new Intl.DisplayNames([code], { type: 'language' }).of(code) ?? languageName(code); } catch { return languageName(code); }
+  try { const name = new Intl.DisplayNames([code], { type: 'language' }).of(code); return name && name !== code ? name : languageName(code); } catch { return languageName(code); }
 }
 export function languageDirection(code: string): 'ltr' | 'rtl' {
   return RTL_CODES.has(code.split('-')[0] ?? '') ? 'rtl' : 'ltr';
@@ -25,8 +27,15 @@ export function languageInstructions(code: string): string {
 }
 export function canTranslate(source: string): boolean {
   const text = source.trim();
+  if (/^[\[{]/.test(text)) { try { JSON.parse(text); return false; } catch { /* Human-readable text, not a machine record. */ } }
   return text.length > 0 && text.length <= 4000 && /\p{L}/u.test(text) &&
     !/^(https?:\/\/|data:|[\w.+-]+@[\w.-]+\.[a-z]{2,}|[0-9a-f]{8}-[0-9a-f-]{27,})/i.test(text) &&
     !/^(Muscles Zone|Exercise data by RepDB|RepDB|kg|g|mg|mcg|ml|cm|kcal|IU|UTC)$/i.test(text);
 }
 export const translationRequestLimits = { batch: 50, characters: 12000, source: 4000 } as const;
+export function translationKeepsValues(source: string, translated: string): boolean {
+  const numbers = (text: string) => (text.match(/\d+(?:[.,]\d+)*/g) ?? []).sort().join('|');
+  if (numbers(source) !== numbers(translated)) return false;
+  const literals = source.match(/https?:\/\/[^\s]+|\b(?:Muscles Zone|RepDB|EXPORT|kg|g|ml|kcal|cm|mg|mcg|IU)\b/g) ?? [];
+  return literals.every(literal => translated.includes(literal));
+}

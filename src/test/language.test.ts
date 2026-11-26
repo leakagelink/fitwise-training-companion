@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { LANGUAGE_CODES, canTranslate, isLanguageCode, languageDirection, languageInstructions, needsLanguageChoice } from '@/features/language/model';
+import { LANGUAGE_CODES, canTranslate, isLanguageCode, languageDirection, languageInstructions, languageName, needsLanguageChoice, translationKeepsValues } from '@/features/language/model';
 import { TranslationStore } from '@/features/language/store';
 import { translationInputSchema } from '@/features/language/language.functions';
 
@@ -14,6 +14,7 @@ describe('Account language rules', () => {
     expect(LANGUAGE_CODES.length).toBeGreaterThanOrEqual(180);
     for (const code of ['en', 'hi', 'mr', 'gu', 'bn', 'ta', 'te', 'kn', 'ml', 'pa', 'or', 'as', 'ur', 'ar', 'fr', 'ja', 'zh-Hant', 'hi-Latn']) expect(isLanguageCode(code)).toBe(true);
     expect(new Set(LANGUAGE_CODES).size).toBe(LANGUAGE_CODES.length);
+    for (const code of LANGUAGE_CODES) expect(languageName(code)).not.toBe(code);
   });
   it('rejects unknown or injected language identifiers', () => {
     expect(isLanguageCode('xx-invalid')).toBe(false);
@@ -42,6 +43,13 @@ describe('Account language rules', () => {
     expect(translationInputSchema.safeParse({ language: 'hi', sources: ['a'.repeat(4001)] }).success).toBe(false);
     expect(translationInputSchema.safeParse({ language: 'hi', sources: Array.from({ length: 4 }, () => 'a'.repeat(4000)) }).success).toBe(false);
   });
+  it('rejects translated text when it changes calories, quantities or confirmation tokens', () => {
+    expect(translationKeepsValues('1920 kcal, 160 g protein', '1920 kcal, 160 g प्रोटीन')).toBe(true);
+    expect(translationKeepsValues('1920 kcal, 160 g protein', '1200 kcal, 160 g प्रोटीन')).toBe(false);
+    expect(translationKeepsValues('Type EXPORT to confirm', 'पुष्टि करने के लिए EXPORT लिखें')).toBe(true);
+    expect(translationKeepsValues('Type EXPORT to confirm', 'पुष्टि करने के लिए निर्यात लिखें')).toBe(false);
+    expect(canTranslate('{"exercise_id":"bench-press","sets":3}')).toBe(false);
+  });
 });
 describe('Private translation cache', () => {
   it('deduplicates sources and reuses a resolved translation without another request', async () => {
@@ -61,6 +69,14 @@ describe('Private translation cache', () => {
     const store = new TranslationStore('en', fetcher);
     store.request('Dynamic label'); await store.flush();
     expect(fetcher).not.toHaveBeenCalled();
+    store.dispose();
+  });
+  it('does not translate already-rendered target text a second time', async () => {
+    const fetcher = vi.fn(async (sources: string[]) => sources.map(source => ({ source, translated: 'translated-value' })));
+    const store = new TranslationStore('es', fetcher);
+    store.request('Dynamic label'); await store.flush();
+    store.request('translated-value'); await store.flush();
+    expect(fetcher).toHaveBeenCalledTimes(1);
     store.dispose();
   });
   it('does not accept late private results after account/language disposal', async () => {
