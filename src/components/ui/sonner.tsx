@@ -1,8 +1,20 @@
-import { Toaster as Sonner } from "sonner";
+import { Toaster as Sonner, toast, useSonner } from "sonner";
+import { createElement, useEffect } from 'react';
+import { TranslatedText } from '@/features/language/context';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  const { toasts } = useSonner();
+  useEffect(() => {
+    for (const item of toasts) {
+      if (typeof item.title !== 'string' && typeof item.description !== 'string') continue;
+      toast(typeof item.title === 'string' ? createElement(TranslatedText, { source: item.title }) : item.title ?? '', {
+        ...item,
+        ...(typeof item.description === 'string' ? { description: createElement(TranslatedText, { source: item.description }) } : {}),
+      });
+    }
+  }, [toasts]);
   return (
     <Sonner
       className="toaster group"

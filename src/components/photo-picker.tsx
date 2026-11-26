@@ -23,6 +23,6 @@ export function PhotoPicker({ label, fileName, disabled = false, onChange }: {
     </div>
     <input ref={camera} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" aria-label={`${label} camera`} className="hidden" disabled={disabled} onChange={select} />
     <input ref={gallery} type="file" accept="image/jpeg,image/png,image/webp" aria-label={`${label} gallery`} className="hidden" disabled={disabled} onChange={select} />
-    {fileName && <p className="break-all text-xs text-muted-foreground">{fileName}</p>}
+    {fileName && <p translate="no" className="break-all text-xs text-muted-foreground">{fileName}</p>}
   </div>;
 }

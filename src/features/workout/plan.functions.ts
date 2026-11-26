@@ -32,6 +32,8 @@ export const generateWorkoutPlan = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: p } = await supabase.from("profiles").select("*").eq("id", userId).single();
     if (!p) return { status: "error", message: "Profile not found" };
+    const { readUserLanguage } = await import('@/features/language/language.server');
+    const language = await readUserLanguage(supabase, userId);
     const { readAccess } = await import("@/features/admin/access.server");
     const { workoutIsFree } = await import("@/features/admin/access");
     if (!workoutIsFree(p.workout_location) && !(await readAccess(supabase, userId, p.trial_started_at)).workouts) return { status: "locked" };
@@ -66,7 +68,7 @@ ${catalog}`;
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     let plan: z.infer<typeof planSchema>;
     try {
-      plan = await trackedGeneration(userId, "workout_plan", "openai/gpt-5.6-luna", () => generateCoachObject(prompt, "You are an expert strength & conditioning coach designing safe programs.", planSchema));
+      plan = await trackedGeneration(userId, "workout_plan", "openai/gpt-5.6-luna", () => generateCoachObject(prompt, "You are an expert strength & conditioning coach designing safe programs.", planSchema, undefined, language));
     } catch (error) {
       console.error("plan generation failed", error);
       return { status: "error", message: friendlyAiError(error) };

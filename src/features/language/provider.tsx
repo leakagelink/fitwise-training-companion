@@ -11,6 +11,7 @@ import { translateAppText } from './language.functions';
 import { TranslationStore } from './store';
 import { languageDirection, needsLanguageChoice } from './model';
 import { LanguageChooser } from './chooser';
+import { LanguageDialogs } from './dialogs';
 
 function TranslationStatus() {
   const store = useLanguageStore();
@@ -39,5 +40,5 @@ export function LanguageProvider({ userId, children }: { userId: string | null |
   } else if (!publicPage && userId && needsLanguageChoice(language.data)) {
     content = <LanguageChooser />;
   }
-  return <LanguageContext.Provider value={userId ? store : null}><TranslationStatus />{content}</LanguageContext.Provider>;
+  return <LanguageContext.Provider value={userId ? store : null}><LanguageDialogs><TranslationStatus />{content}</LanguageDialogs></LanguageContext.Provider>;
 }

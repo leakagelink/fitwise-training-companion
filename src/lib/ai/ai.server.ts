@@ -5,6 +5,7 @@ import type { z } from "zod";
 import { tryStarKeys, withFallback } from "./fallback.ts";
 import { createLovableAiGatewayRunIdFetch } from "./run-id.ts";
 import { logStarFailure, starKeys, starModels, starProvider, STAR_TIMEOUT_MS } from "./star.server.ts";
+import { languageInstructions } from '@/features/language/model';
 
 export const COACH_MODEL = "openai/gpt-5.6-luna";
 
@@ -46,8 +47,8 @@ async function preferStar<T>(operation: string, viaStar: (model: ReturnType<Retu
 }
 
 /** Single-turn completion; returns the final text (server-only). */
-export async function generateCoachText(prompt: string, instructions: string): Promise<string> {
-  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+export async function generateCoachText(prompt: string, instructions: string, language = 'en'): Promise<string> {
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}\n${languageInstructions(language)}`;
   return preferStar(
     "text",
     async (model) => {
@@ -81,8 +82,8 @@ async function starObject<T>(model: Parameters<typeof generateText>[0]["model"],
 }
 
 /** Structured (strict JSON schema) completion; returns the parsed object. */
-export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, timeoutMs = STAR_TIMEOUT_MS): Promise<T> {
-  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+export async function generateCoachObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, timeoutMs = STAR_TIMEOUT_MS, language = 'en'): Promise<T> {
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}\n${languageInstructions(language)}`;
   return preferStar("object", (model) => starObject(model, system, schema, { prompt }, timeoutMs), () => builtInObject(system, schema, { prompt }), timeoutMs * 2 + 5000);
 }
 
@@ -103,8 +104,8 @@ export function friendlyAiError(error: unknown): string {
 }
 
 /** Structured completion with an optional photo (data URL) attached. */
-export async function generateVisionObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, imageDataUrl?: string): Promise<T> {
-  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}`;
+export async function generateVisionObject<T>(prompt: string, instructions: string, schema: z.ZodType<T>, imageDataUrl?: string, language = 'en'): Promise<T> {
+  const system = `${SAFETY_INSTRUCTIONS}\n\n${instructions}\n${languageInstructions(language)}`;
   const messages: ModelMessage[] = [{ role: "user", content: [{ type: "text", text: prompt }, ...(imageDataUrl ? [{ type: "image" as const, image: imageDataUrl }] : [])] }];
   return preferStar("vision", (model) => starObject(model, system, schema, { messages }), () => builtInObject(system, schema, { messages }));
 }

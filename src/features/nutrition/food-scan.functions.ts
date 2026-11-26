@@ -25,6 +25,8 @@ export const analyzeFood = createServerFn({ method: "POST" }).middleware([requir
     ]);
     if (profile.error || !profile.data || logs.error) return { status: "error" as const, message: "Could not load your profile. Please try again." };
     const p = profile.data;
+    const { readUserLanguage } = await import('@/features/language/language.server');
+    const language = await readUserLanguage(db, context.userId);
     const { dailyTargets, scoreMeal } = await import("@/lib/fitness");
     const { nutrientsSchema, totalNutrition } = await import("./model");
     const t = dailyTargets({ weightKg: Number(p.weight_kg ?? 70), heightCm: Number(p.height_cm ?? 170), age: p.age ?? 30, gender: p.gender, activityLevel: p.activity_level, goal: p.goal });
@@ -38,7 +40,7 @@ export const analyzeFood = createServerFn({ method: "POST" }).middleware([requir
 Identify the food name, main ingredients (3-8) and approximate quantity. Estimate nutrition for exactly this quantity: calories (kcal), protein/carbs/fat/fiber (g), and 8-12 key micronutrients (vitamins and minerals) with amount and unit (mg, mcg, IU).
 User goal: ${p.goal ?? "maintenance"}. Diet type: ${p.diet_type ?? "any"}. Allergies: ${(p.allergies ?? []).join(", ") || "none"}. Calories left today: ${remainingCalories} kcal.
 improvement: one short, specific tip to make this meal better for the goal, using foods allowed by the diet type (e.g. "Add 100 g paneer for more protein"). If the photo is not food, set name to "Not food" and all values 0. note: one short line about estimate accuracy.`,
-        "You are a nutrition estimator. Give realistic, non-negative estimated values.", resultSchema, data.image ?? undefined));
+        "You are a nutrition estimator. Give realistic, non-negative estimated values.", resultSchema, data.image ?? undefined, language));
       const score = scoreMeal(r.nutrition, t.calories, remainingCalories);
       return { status: "ok" as const, result: { ...r, ingredients: r.ingredients.slice(0, 8), score, remainingCalories } satisfies FoodScan };
     } catch (e) {

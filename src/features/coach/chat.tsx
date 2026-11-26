@@ -19,6 +19,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { messageText } from "./model";
+import { OriginalText, useTranslatedText } from '@/features/language/context';
 
 const eventSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("saved"), id: z.string() }),
@@ -46,6 +47,8 @@ export function CoachChat({
   const abortRef = useRef<AbortController | null>(null);
   const qc = useQueryClient();
   const busy = status === "submitted" || status === "streaming";
+  const placeholder = useTranslatedText('Ask your fitness coach…');
+  const messageLabel = useTranslatedText('Message Customize Coach');
   useEffect(() => {
     textarea.current?.focus({ preventScroll: true });
     return () => abortRef.current?.abort();
@@ -176,6 +179,7 @@ export function CoachChat({
                     : "w-full"
                 }
               >
+                <OriginalText>
                 {message.parts.map((part, i) =>
                   part.type === "text" ? (
                     message.role === "assistant" ? (
@@ -187,6 +191,7 @@ export function CoachChat({
                     )
                   ) : null,
                 )}
+                </OriginalText>
               </MessageContent>
             </Message>
           ))}
@@ -202,8 +207,8 @@ export function CoachChat({
       <PromptInput onSubmit={() => send(draft)} className="mt-3">
         <PromptInputTextarea
           ref={textarea}
-          aria-label="Message Customize Coach"
-          placeholder="Ask your fitness coach…"
+          aria-label={messageLabel}
+          placeholder={placeholder}
           value={draft}
           maxLength={6000}
           onChange={(e) => setDraft(e.target.value)}

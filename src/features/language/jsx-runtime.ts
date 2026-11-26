@@ -1,4 +1,4 @@
-import { createElement, Fragment, useContext, useEffect, useSyncExternalStore, type ElementType, type ReactNode } from 'react';
+import { createElement, Fragment, useContext, useEffect, useSyncExternalStore, type ElementType, type ReactNode, type Key } from 'react';
 import { jsx as reactJsx, jsxs as reactJsxs } from 'react/jsx-runtime';
 import { Link } from '@tanstack/react-router';
 import { LanguageContext, OriginalTextContext, TranslatedText } from './context';
@@ -42,7 +42,8 @@ function LocalizedHost({ tag, originalProps }: HostProps) {
   }
   return createElement(tag, props);
 }
-function localize(type: ElementType, props: Record<string, unknown> | null, key: string | undefined, runtime: typeof reactJsx) {
+export function localize(type: ElementType, input: unknown, key: Key | undefined, runtime: typeof reactJsx) {
+  const props = input !== null && typeof input === 'object' ? input as Record<string, unknown> : null;
   if (typeof type === 'string' && !excluded.has(type)) return runtime(LocalizedHost, { tag: type, originalProps: props ?? {} }, key);
   if ((type === Fragment || type === Link) && props) return runtime(type, { ...props, children: wrapText(props['children'] as ReactNode) }, key);
   return runtime(type, props, key);

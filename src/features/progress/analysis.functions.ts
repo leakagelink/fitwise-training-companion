@@ -34,6 +34,8 @@ export const analyzeResults = createServerFn({ method: "POST" })
       return { status: "error", message: "Could not load your logs. Please try again." };
     }
     const { analysis: a, profile: p, targets } = loaded;
+    const { readUserLanguage } = await import('@/features/language/language.server');
+    const language = await readUserLanguage(db, userId);
     const { readAccess } = await import("@/features/admin/access.server");
     if (!(await readAccess(db, userId, p.trial_started_at)).coach) return { status: "locked" };
 
@@ -55,7 +57,7 @@ suggestions: 3 or 4 specific, small, realistic improvement steps for this week, 
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     try {
       const analysis = await trackedGeneration(userId, "result_analysis", "openai/gpt-5.6-luna", () =>
-        generateCoachObject(prompt, "You analyse why the user's fitness results are or are not coming and suggest improvements.", coachAnalysisSchema));
+        generateCoachObject(prompt, "You analyse why the user's fitness results are or are not coming and suggest improvements.", coachAnalysisSchema, undefined, language));
       const clean: CoachAnalysis = { headline: analysis.headline, findings: analysis.findings.slice(0, 4), suggestions: analysis.suggestions.slice(0, 4) };
       await db.from("ai_recommendations").upsert({ user_id: userId, kind: "result_analysis", for_date: data.date, content: JSON.stringify(clean) }, { onConflict: "user_id,kind,for_date" });
       return { status: "ok", analysis: clean };

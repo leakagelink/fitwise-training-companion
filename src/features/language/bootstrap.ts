@@ -2,6 +2,7 @@
 export const HINDI: Record<string, string> = {
   'Home': 'होम', 'Workout': 'वर्कआउट', 'Nutrition': 'पोषण', 'Progress': 'प्रगति', 'Customize Coach': 'पर्सनल कोच',
   'Profile & settings': 'प्रोफ़ाइल और सेटिंग्स', 'Change language': 'भाषा बदलें', 'Language': 'भाषा', 'Continue': 'आगे बढ़ें',
+  'Cancel': 'रद्द करें', 'Your response': 'आपका जवाब', 'Saved': 'सेव हो गया', 'Your profile is ready': 'आपकी प्रोफ़ाइल तैयार है', 'Profile updated': 'प्रोफ़ाइल अपडेट हो गई',
   'Choose your language': 'अपनी भाषा चुनें', 'Search languages': 'भाषा खोजें', 'Save language': 'भाषा सेव करें', 'Saving…': 'सेव हो रहा है…',
   'Your health data, your control': 'आपकी स्वास्थ्य जानकारी, आपका नियंत्रण',
   "Let's get to know you": 'आपके बारे में जानें', 'Name': 'नाम', 'Age': 'उम्र', 'Gender': 'लिंग', 'Male': 'पुरुष', 'Female': 'महिला',

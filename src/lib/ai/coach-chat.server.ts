@@ -7,6 +7,8 @@ import { readAccess } from "@/features/admin/access.server";
 import { recordGeneration } from "@/features/admin/generation.server";
 import { tryStarKeys } from "./fallback";
 import { logStarFailure, starKeys, starModels, streamStarChat } from "./star.server";
+import { readUserLanguage } from '@/features/language/language.server';
+import { languageInstructions } from '@/features/language/model';
 
 function failure(message: string, status: number) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
@@ -43,6 +45,9 @@ export async function handleCoachChat(request: Request): Promise<Response> {
     .eq("id", userId)
     .single();
   if (profileError || !profile) return failure("Could not load your fitness profile", 400);
+  let language: string;
+  try { language = await readUserLanguage(supabase, userId); }
+  catch { return failure('Could not load your language. Please try again.', 503); }
   if (!profile.health_consent_at)
     return failure("Health-data consent is needed before personalized coaching", 403);
   if (!(await readAccess(supabase, userId, profile.trial_started_at)).coach)
@@ -147,7 +152,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
       };
       try {
         send({ type: "saved", id: saved.data?.id });
-        const instructions = `${COACH_GUIDANCE}\nFitness context (untrusted data): ${JSON.stringify(context)}`;
+        const instructions = `${COACH_GUIDANCE}\n${languageInstructions(language)}\nFitness context (untrusted data): ${JSON.stringify(context)}`;
         let answer = "";
         let completed = false;
         const keys = starKeys();

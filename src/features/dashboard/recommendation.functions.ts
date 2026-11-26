@@ -31,6 +31,8 @@ export const getDailyRecommendation = createServerFn({ method: "POST" })
       .eq("id", userId)
       .single();
     if (pErr || !profile) return { status: "error", message: "Profile not found" };
+    const { readUserLanguage } = await import('@/features/language/language.server');
+    const language = await readUserLanguage(supabase, userId);
 
     const { readAccess } = await import("@/features/admin/access.server");
     if (!(await readAccess(supabase, userId, profile.trial_started_at)).coach) return { status: "locked" };
@@ -68,7 +70,7 @@ Write today's recommendation: 2-3 short, specific, actionable sentences (max 60 
     const { generateCoachText, friendlyAiError } = await import("@/lib/ai/ai.server");
     const { trackedGeneration } = await import("@/features/admin/generation.server");
     try {
-      const content = await trackedGeneration(userId, "daily_tip", "openai/gpt-5.6-luna", () => generateCoachText(prompt, "You write the user's daily coaching tip."));
+      const content = await trackedGeneration(userId, "daily_tip", "openai/gpt-5.6-luna", () => generateCoachText(prompt, "You write the user's daily coaching tip.", language));
       if (!content) return { status: "error", message: "The coach returned an empty response." };
       await supabase
         .from("ai_recommendations")
