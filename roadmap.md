@@ -143,3 +143,8 @@ All 13 admin sections checked at 320px, 393px, 768px and 1280px; user details an
 - [x] Real seven-day diet generated and saved exactly seven days; temporary account permissions removed and remaining test fitness records cleaned up
 - [ ] Monthly diet complete generation/readback — combined browser run exceeded the 600-second sandbox limit; no 30-day plan was observed, so monthly reliability remains unverified
 - [ ] Remaining exhaustive checks — grocery edits, all admin mutations, scheduled delivery, real SMS and native Android not exercised in this run; payments remain disconnected
+
+# Camera photo upload
+- [x] Add separate camera capture and gallery upload controls to food scanning and progress photos without changing scan or storage rules
+- [x] Verify signed-in camera-input and gallery selection, decoded food preview, progress upload and decoded readback after reload; test photos removed, 20 nutrition/progress tests passed
+- [ ] Verify actual camera launch on installed Android — requires a physical device; desktop verification uses file chooser input rather than a real camera

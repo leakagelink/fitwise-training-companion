@@ -6,6 +6,7 @@ import { emptyNutrition, type Nutrients } from "./model";
 import { analyzeFood, type FoodScan } from "./food-scan.functions";
 import { toast } from "sonner";
 import { todayISO } from "@/lib/fitness";
+import { PhotoPicker } from "@/components/photo-picker";
 
 const VERDICT = { good: "Good choice", moderate: "Moderate choice", avoid_frequently: "Avoid frequently" } as const;
 
@@ -24,6 +25,7 @@ export function MealLogDialog({ open, close, save }: { open: boolean; close: () 
   const [busy, setBusy] = useState(false);
   const [qty, setQty] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [photoName, setPhotoName] = useState("");
   const [scan, setScan] = useState<FoodScan | null>(null);
   const [scanning, setScanning] = useState(false);
   async function runScan() {
@@ -35,12 +37,12 @@ export function MealLogDialog({ open, close, save }: { open: boolean; close: () 
       setNutrition(Object.fromEntries(Object.entries(r.result.nutrition).map(([k, v]) => [k, Math.max(0, Math.round(v * 10) / 10)])) as Nutrients);
     } catch { toast.error("Could not analyse this food. Try again."); } finally { setScanning(false); }
   }
-  return <Dialog open={open} onOpenChange={o => !o && close()}><DialogContent className="max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>Log a meal</DialogTitle></DialogHeader><form className="space-y-4" onSubmit={async e => { e.preventDefault(); setBusy(true); try { await save(name, type, nutrition); setName(""); setQty(""); setImage(null); setScan(null); setNutrition({ ...emptyNutrition }); close(); } finally { setBusy(false); } }}>
+  return <Dialog open={open} onOpenChange={o => !o && close()}><DialogContent className="max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>Log a meal</DialogTitle></DialogHeader><form className="space-y-4" onSubmit={async e => { e.preventDefault(); setBusy(true); try { await save(name, type, nutrition); setName(""); setQty(""); setImage(null); setPhotoName(""); setScan(null); setNutrition({ ...emptyNutrition }); close(); } finally { setBusy(false); } }}>
     <label className="block space-y-2 text-sm"><span>Meal name</span><Input required aria-label="Meal name" value={name} maxLength={120} onChange={e => setName(e.target.value)} /></label>
     <div className="space-y-3 rounded-lg border border-border p-3">
       <p className="text-sm font-medium">Track your food — photo or name</p>
       <label className="block space-y-1 text-sm"><span>Quantity</span><Input aria-label="Quantity" placeholder="e.g. 2 roti, 1 bowl, 150 g" value={qty} maxLength={100} onChange={e => setQty(e.target.value)} /></label>
-      <label className="block space-y-1 text-sm"><span>Food photo (optional)</span><Input type="file" accept="image/png,image/jpeg,image/webp" capture="environment" onChange={async e => { const f = e.target.files?.[0]; if (!f) { setImage(null); return; } try { setImage(await resizeImage(f)); } catch { toast.error("Could not read this photo"); } }} /></label>
+      <PhotoPicker label="Food photo (optional)" fileName={photoName} disabled={scanning || busy} onChange={async file => { try { setImage(await resizeImage(file)); setPhotoName(file.name); setScan(null); } catch { toast.error("Could not read this photo"); } }} />
       {image && <img src={image} alt="Selected food" className="h-32 w-full rounded-md object-cover" />}
       <Button type="button" variant="secondary" className="w-full" disabled={scanning || (!name.trim() && !image)} onClick={runScan}>{scanning ? "Checking…" : "Get nutrition details"}</Button>
       {scan && <div className="space-y-2 text-sm"><p className="font-medium">{scan.name} · {scan.quantity}</p>
