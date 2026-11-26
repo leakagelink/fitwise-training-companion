@@ -24,7 +24,7 @@ export async function eraseAccount(db: SupabaseClient<Database>, userId: string)
   }
   const grants = await db.from("membership_access").update({ granted_by: null }).eq("granted_by", userId);
   if (grants.error) throw new Error("Could not anonymize access history");
-  for (const table of ["daily_checkins", "weight_logs", "body_measurements", "ai_recommendations", "user_favorites", "workout_sessions", "workout_plans", "meal_logs", "grocery_items", "nutrition_plans", "coach_bookings", "coach_threads", "coach_profiles"] as const) {
+  for (const table of ["language_translations", "account_languages", "daily_checkins", "weight_logs", "body_measurements", "ai_recommendations", "user_favorites", "workout_sessions", "workout_plans", "meal_logs", "grocery_items", "nutrition_plans", "coach_bookings", "coach_threads", "coach_profiles"] as const) {
     const result = await db.from(table).delete().eq("user_id", userId);
     if (result.error) throw new Error(`Could not remove account ${table}`);
   }

@@ -55,7 +55,7 @@ function Profile() {
   }
   return (
     <div className="mx-auto max-w-xl space-y-4 px-5 py-8">
-      <h1 className="text-3xl font-bold">{p?.full_name}</h1>
+      <h1 translate="no" className="text-3xl font-bold">{p?.full_name}</h1>
       <div className="card-premium divide-y divide-border">
         {admin.data?.isAdmin && <Link to="/admin" className="block p-4">Administration</Link>}
         {!!staff.data?.capabilities.length && <Link to="/staff" className="block p-4">Staff workspace</Link>}

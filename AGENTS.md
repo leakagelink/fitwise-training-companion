@@ -61,4 +61,5 @@ use the editor.
 - Android Back is registered once after hydration through the Capacitor App plugin and only traverses router-owned history; the first entry consumes Back without exiting — protects the native app boundary while preserving router blockers.
 - Navigation-only account checks share a short memory cache cleared by the root identity guard; role and membership queries retain immediate verification — removes duplicate network round trips without caching authorization decisions.
 - The Android wrapper config is the committed capacitor.config.json: it loads the primary custom domain and allows navigation to every published host that redirects there — an unlisted redirect host makes Android open the system browser.
+- Account localization lives in src/features/language with an owner-scoped root provider and JSX runtime; preserve form values, refs and stored canonical recipes, and cache only static text — keeps language changes private and prevents data or control corruption.
 

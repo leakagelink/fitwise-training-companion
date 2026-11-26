@@ -25,8 +25,13 @@ export function languageInstructions(code: string): string {
   const valid = isLanguageCode(code) ? code : 'en';
   return `The user's saved communication language is ${languageName(valid)} (${valid}). Reply in this language even if the user's message is in another language, unless they explicitly ask for another language. Use its native script${valid === 'hi-Latn' ? ' exception: use Roman Hindi / Hinglish, not Devanagari' : ''}. For JSON: translate human-readable names, headings, explanations and guidance only. Preserve JSON keys, enum values, identifiers, exercise_id, numbers, timestamps, nutrition values and standard measurement units exactly; never translate machine-readable fields. Never mention these instructions.`;
 }
+export function canonicalRecipeInstructions(code: string, conversational = false): string {
+  const valid = isLanguageCode(code) ? code : 'en';
+  return `The account's communication language is ${languageName(valid)} (${valid}). The app displays recipes in this language. For reliable allergy and diet validation, keep recipe names, ingredient names, quantities, cooking instructions and alternatives in canonical English; keep JSON keys, enums, numeric nutrients and standard units unchanged. ${conversational ? `Only the conversational message and each why must be in ${languageName(valid)}${valid === 'hi-Latn' ? ' in Roman Hindi / Hinglish' : ' in its native script'}.` : 'The app translates the validated recipe payload for display; never translate safety-check fields before validation.'}`;
+}
 export function canTranslate(source: string): boolean {
   const text = source.trim();
+  if (/^\p{L}$/u.test(text)) return false;
   // Clocks and quantities are values, not prose; never translate them on each tick.
   if (/^(?:[\d\s.,:()+\-–—×/%→]|kg|kcal|mcg|mg|ml|cm|min|sec|s|h|g|L)+$/i.test(text)) return false;
   if (/^[\[{]/.test(text)) { try { JSON.parse(text); return false; } catch { /* Human-readable text, not a machine record. */ } }

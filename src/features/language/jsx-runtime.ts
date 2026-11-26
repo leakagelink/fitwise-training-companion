@@ -46,10 +46,11 @@ function LocalizedHost({ tag, originalProps }: HostProps) {
 export function localize(type: ElementType, input: unknown, key: Key | undefined, runtime: typeof reactJsx) {
   const props = input !== null && typeof input === 'object' ? input as Record<string, unknown> : null;
   if (typeof type === 'string' && !excluded.has(type)) return runtime(LocalizedHost, { tag: type, originalProps: props ?? {} }, key);
-  if ((type === Fragment || type === Link) && props) return runtime(type, { ...props, children: wrapText(props['children'] as ReactNode) }, key);
+  if (type === Fragment && props) return runtime(type, { ...props, children: wrapText(props['children'] as ReactNode) }, key);
+  if (type === Link && props) return runtime(LocalizedHost, { tag: type, originalProps: { ...props, children: wrapText(props['children'] as ReactNode) } }, key);
   // Radix primitives and motion elements render their host nodes inside library code.
   // Localize plain string children without changing their type or their submitted values.
-  if (typeof type !== 'string' && props && sourceStrings(props['children'] as ReactNode).length) return runtime(LocalizedHost, { tag: type, originalProps: props }, key);
+  if (typeof type !== 'string' && props && (sourceStrings(props['children'] as ReactNode).length || attributes.some(attr => typeof props[attr] === 'string'))) return runtime(LocalizedHost, { tag: type, originalProps: props }, key);
   return runtime(type, props, key);
 }
 export const jsx: typeof reactJsx = (type, props, key) => localize(type, props, key, reactJsx);

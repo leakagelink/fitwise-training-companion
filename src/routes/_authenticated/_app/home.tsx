@@ -117,7 +117,7 @@ function Home() {
       <header className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Hello,</p>
-          <h1 className="text-2xl font-bold">{p.full_name ?? "Athlete"}</h1>
+          <h1 translate={p.full_name ? 'no' : 'yes'} className="text-2xl font-bold">{p.full_name ?? "Athlete"}</h1>
         </div>
         <Link
           to="/profile"
