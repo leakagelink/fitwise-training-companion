@@ -21,7 +21,19 @@ export class TranslationStore {
   get busy(): boolean { return this.active || this.waiting.size > 0; }
   constructor(readonly language: string, private fetcher: TranslationFetcher) {
     this.translations = new Map(Object.entries(bootstrapTranslations(language)));
+    for (const [source, value] of Object.entries(readLocal(language))) this.translations.set(source, value);
     for (const value of this.translations.values()) this.rendered.add(value);
+  }
+  /** Merge saved static translations so revisited screens render instantly in the chosen language. */
+  merge(items: TranslationResult[]) {
+    if (this.disposed || !items.length) return;
+    for (const item of items) if (item.translated.trim() && !this.translations.has(item.source)) { this.translations.set(item.source, item.translated); this.rendered.add(item.translated); }
+    this.persist(items); this.notify();
+  }
+  private persist(items: TranslationResult[]) {
+    const statics = items.filter(item => canPersistTranslation(item.source));
+    if (!statics.length || this.language === 'en') return;
+    writeLocal(this.language, statics);
   }
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   snapshot = () => this.revision;
@@ -58,6 +70,7 @@ export class TranslationStore {
       const result = await this.fetcher(sources);
       if (this.disposed) return;
       for (const item of result) if (sources.includes(item.source) && item.translated.trim()) { this.translations.set(item.source, item.translated); this.rendered.add(item.translated); }
+      this.persist(result);
       for (const source of sources) if (!this.translations.has(source)) this.failed.add(source);
       this.error = this.failed.size > 0;
     } catch {
@@ -88,6 +101,7 @@ export class TranslationStore {
       const result = await this.fetcher(batch);
       if (this.disposed) throw new Error('Language changed');
       for (const item of result) { this.translations.set(item.source, item.translated); this.rendered.add(item.translated); }
+      this.persist(result);
       this.notify();
       if (batch.some(source => !this.translations.has(source))) throw new Error('Some translations were incomplete');
     }
@@ -95,4 +109,21 @@ export class TranslationStore {
   }
   dispose() { this.disposed = true; if (this.timer) clearTimeout(this.timer); this.waiting.clear(); this.listeners.clear(); }
   activate() { this.disposed = false; }
+}
+const localKey = (language: string) => `fa-static-translations-${language}`;
+/** Only allowlisted static app text is kept on the device; health text and user data stay in memory. */
+function readLocal(language: string): Record<string, string> {
+  if (language === 'en' || typeof localStorage === 'undefined') return {};
+  try {
+    const parsed = JSON.parse(localStorage.getItem(localKey(language)) ?? '{}') as Record<string, unknown>;
+    return Object.fromEntries(Object.entries(parsed).filter((entry): entry is [string, string] => typeof entry[1] === 'string' && canPersistTranslation(entry[0])));
+  } catch { return {}; }
+}
+function writeLocal(language: string, items: TranslationResult[]) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const current = readLocal(language);
+    for (const item of items) current[item.source] = item.translated;
+    localStorage.setItem(localKey(language), JSON.stringify(current));
+  } catch { /* storage full or blocked: memory cache still works */ }
 }

@@ -7,7 +7,7 @@ import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageContext, OriginalText, useLanguageStore } from './context';
 import { accountLanguageQuery } from './queries';
-import { translateAppText } from './language.functions';
+import { translateAppText, loadSavedTranslations } from './language.functions';
 import { TranslationStore } from './store';
 import { languageDirection, needsLanguageChoice } from './model';
 import { LanguageChooser } from './chooser';
@@ -28,9 +28,14 @@ export function LanguageProvider({ userId, children }: { userId: string | null |
   const publicPage = pathname === '/' || pathname === '/auth' || pathname.startsWith('/legal/');
   const language = useQuery({ ...accountLanguageQuery(userId ?? ''), enabled: !!userId });
   const translate = useServerFn(translateAppText);
+  const loadSaved = useServerFn(loadSavedTranslations);
   const code = language.data ?? 'en';
   const store = useMemo(() => new TranslationStore(code, sources => translate({ data: { language: code, sources } })), [code, userId, translate]);
   useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
+  useEffect(() => {
+    if (!userId || code === 'en' || !language.data) return;
+    void loadSaved({ data: { language: code } }).then(items => store.merge(items)).catch(() => {});
+  }, [store, userId, code, language.data, loadSaved]);
   useEffect(() => {
     document.documentElement.lang = userId ? code : 'en';
     document.documentElement.dir = languageDirection(userId ? code : 'en');

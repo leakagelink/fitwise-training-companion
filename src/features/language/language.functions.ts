@@ -23,6 +23,13 @@ export const saveAccountLanguage = createServerFn({ method: 'POST' }).middleware
     return { language: data.language };
   });
 
+export const loadSavedTranslations = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ language: codeSchema })).handler(async ({ data, context }): Promise<TranslationResult[]> => {
+    const rows = await context.supabase.from('language_translations').select('source_text,translated_text').eq('user_id', context.userId).eq('language_code', data.language).limit(10000);
+    if (rows.error) return [];
+    return (rows.data ?? []).filter(row => canPersistTranslation(row.source_text) && translationKeepsValues(row.source_text, row.translated_text)).map(row => ({ source: row.source_text, translated: row.translated_text }));
+  });
+
 export const translateAppText = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator(translationInputSchema).handler(async ({ data, context }): Promise<TranslationResult[]> => {
     const db = context.supabase;
