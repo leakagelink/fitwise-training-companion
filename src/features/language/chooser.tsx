@@ -2,9 +2,8 @@
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
-import { Check, Languages, Search } from 'lucide-react';
+import { Check, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/brand/logo';
 import { LANGUAGE_CODES, languageName, nativeLanguageName } from './model';
 import { OriginalText } from './context';
@@ -18,10 +17,7 @@ export function LanguageChooser({ current = null, onComplete }: { current?: stri
   const save = useServerFn(saveAccountLanguage);
   const qc = useQueryClient();
   const languages = useMemo(() => {
-    const priority = ['en', 'hi', 'hi-Latn', 'mr', 'gu', 'bn', 'ta', 'te', 'kn', 'ml', 'pa', 'or', 'as', 'ur', 'ne'];
-    const rank = (code: string) => priority.includes(code) ? priority.indexOf(code) : 100;
-    return LANGUAGE_CODES.map(code => ({ code, name: languageName(code), native: nativeLanguageName(code) }))
-      .sort((a, b) => rank(a.code) - rank(b.code) || a.name.localeCompare(b.name));
+    return LANGUAGE_CODES.map(code => ({ code, name: code === 'hi-Latn' ? 'Hindi in English letters' : languageName(code), native: nativeLanguageName(code) }));
   }, []);
   const filtered = languages.filter(language => `${language.code} ${language.name} ${language.native}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
   const selectedName = languages.find(language => language.code === selected)?.native;
@@ -37,8 +33,7 @@ export function LanguageChooser({ current = null, onComplete }: { current?: stri
   }
   return <OriginalText><section className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-5 py-8 sm:py-12">
     <header className="space-y-4"><Logo /><Languages className="size-8 text-primary" /><h1 className="font-display text-3xl font-semibold">Choose your language</h1><p className="text-muted-foreground">अपनी भाषा चुनें</p></header>
-    <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input aria-label="Search languages" placeholder="Search languages / भाषा खोजें" value={search} onChange={event => setSearch(event.target.value)} className="h-11 pl-10" /></div>
-    <div role="radiogroup" aria-label="Languages" className="grid max-h-[45dvh] grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
+    <div role="radiogroup" aria-label="Languages" className="grid grid-cols-1 gap-3">
       {filtered.map(language => <Button key={language.code} type="button" role="radio" aria-checked={selected === language.code} variant={selected === language.code ? 'secondary' : 'outline'} disabled={busy} onClick={() => setSelected(language.code)} className="h-auto min-h-14 justify-start whitespace-normal px-3 py-3 text-start"><span className="min-w-0 flex-1"><span className="block break-words text-base" lang={language.code}>{language.native}</span><span className="block text-xs text-muted-foreground">{language.name}</span></span>{selected === language.code && <Check className="shrink-0 text-primary" />}</Button>)}
       {!filtered.length && <p className="py-6 text-sm text-muted-foreground">No languages found</p>}
     </div>

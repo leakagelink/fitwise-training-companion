@@ -1,9 +1,7 @@
 # Account language
+- Only English, Hindi and Hinglish are offered; app text comes from bundled packs (packs/*.json, keyed by static-sources.json) with no live translation calls. Regenerate the packs when static UI text is added; missing strings fall back to English.
 - The account language is owner-scoped and chosen before any signed-in screen is shown; changing language never changes role or onboarding gates.
 - The opt-in app JSX runtime localizes rendered host text and accessibility attributes through a provider-owned memory cache, preserving refs, form values, IDs and numbers; excluded/native text uses OriginalText. No DOM translation mutation is allowed because React owns its nodes.
-- Translation requests are authenticated and owner-scoped. Persist only the allowlisted static app/catalog strings in static-sources.json; allowlisted static translations are also kept on-device per language and preloaded from saved rows so revisited screens never retranslate; dynamic health text and other users' records stay in provider-owned memory only. Regenerate the allowlist when static UI text is added.
 - Nutrition recipes remain canonical English through dietary validation; localization is a presentation layer, not a replacement for allergy checks.
 - Library primitives receive translated string children through the same runtime; input values, native textarea content and structured JSON remain original. Confirmation dialogs resolve explicit booleans, and translation validation preserves every number, unit and confirmation token.
 - Assistant messages save their original language; streaming uses that language directly and older/mismatched replies translate for display without rewriting history.
-- Initial screen packs and newly opened dialogs show a native-language loading state while their mounted controls translate; readiness never remounts active forms or workouts. Numeric clocks/quantities are not translation requests.
-- Numeric values, URLs, emails and UUIDs use restored placeholders in translated prose; changing a count reuses the same template instead of generating another translation or sending private identifiers.

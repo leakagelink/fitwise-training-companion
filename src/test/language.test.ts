@@ -11,11 +11,16 @@ describe('Account language rules', () => {
     expect(needsLanguageChoice('en')).toBe(false);
     expect(needsLanguageChoice('hi')).toBe(false);
   });
-  it('offers the standard language set with major Indian languages and additional script choices', () => {
-    expect(LANGUAGE_CODES.length).toBeGreaterThanOrEqual(180);
-    for (const code of ['en', 'hi', 'mr', 'gu', 'bn', 'ta', 'te', 'kn', 'ml', 'pa', 'or', 'as', 'ur', 'ar', 'fr', 'ja', 'zh-Hant', 'hi-Latn']) expect(isLanguageCode(code)).toBe(true);
-    expect(new Set(LANGUAGE_CODES).size).toBe(LANGUAGE_CODES.length);
-    for (const code of LANGUAGE_CODES) expect(languageName(code)).not.toBe(code);
+  it('offers only English, Hindi and Hinglish', () => {
+    expect(LANGUAGE_CODES).toEqual(['en', 'hi', 'hi-Latn']);
+    for (const code of ['mr', 'ar', 'fr']) expect(isLanguageCode(code)).toBe(false);
+  });
+  it('uses built-in text without any live translation request', async () => {
+    const store = new TranslationStore('hi', undefined, { 'Workout done': 'वर्कआउट पूरा' });
+    store.request('Something new');
+    expect(store.busy).toBe(false);
+    expect(store.text('Workout done')).toBe('वर्कआउट पूरा');
+    expect(await store.resolve(['Something new'])).toEqual(['Something new']);
   });
   it('rejects unknown or injected language identifiers', () => {
     expect(isLanguageCode('xx-invalid')).toBe(false);
