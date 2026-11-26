@@ -61,7 +61,7 @@ export const getThread = createServerFn({ method: "GET" })
     if (thread.error) throw new Error("Conversation not found");
     const messages = await context.supabase
       .from("coach_messages")
-      .select("id,role,parts,created_at")
+      .select("id,role,parts,created_at,language_code")
       .eq("thread_id", data.id)
       .eq("user_id", context.userId)
       .order("created_at");

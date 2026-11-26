@@ -218,6 +218,7 @@ export async function handleCoachChat(request: Request): Promise<Response> {
             user_id: userId,
             thread_id: threadId,
             role: "assistant",
+            language_code: language,
             parts: [{ type: "text", text: answer }],
           })
           .select("id")

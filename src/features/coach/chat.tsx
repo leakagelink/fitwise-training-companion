@@ -18,8 +18,30 @@ import {
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { messageText } from "./model";
-import { OriginalText, useTranslatedText } from '@/features/language/context';
+import { messageText, messageLanguage } from "./model";
+import { OriginalText, useTranslatedText, useLanguageStore } from '@/features/language/context';
+
+function AssistantResponse({ text, originalLanguage, streaming }: { text: string; originalLanguage: string | null; streaming: boolean }) {
+  const language = useLanguageStore();
+  const [translated, setTranslated] = useState(text);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const sameLanguage = originalLanguage === language?.language;
+  useEffect(() => {
+    setTranslated(text); setFailed(false);
+    if (!language || streaming || sameLanguage) return;
+    let cancelled = false;
+    const chunks: string[] = [];
+    for (let start = 0; start < text.length;) {
+      let end = Math.min(text.length, start + 3800);
+      if (end < text.length) { const boundary = text.lastIndexOf('\n\n', end); if (boundary > start + 1500) end = boundary + 2; }
+      chunks.push(text.slice(start, end)); start = end;
+    }
+    void language.resolve(chunks).then(parts => { if (!cancelled) setTranslated(parts.join('')); }).catch(() => { if (!cancelled) setFailed(true); });
+    return () => { cancelled = true; };
+  }, [language, text, streaming, sameLanguage, attempt]);
+  return <><OriginalText><MessageResponse>{streaming || sameLanguage ? text : translated}</MessageResponse></OriginalText>{failed && <Button type="button" variant="ghost" size="sm" onClick={() => setAttempt(value => value + 1)}>Retry translation</Button>}</>;
+}
 
 const eventSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("saved"), id: z.string() }),
@@ -47,6 +69,7 @@ export function CoachChat({
   const abortRef = useRef<AbortController | null>(null);
   const qc = useQueryClient();
   const busy = status === "submitted" || status === "streaming";
+  const language = useLanguageStore();
   const placeholder = useTranslatedText('Ask your fitness coach…');
   const messageLabel = useTranslatedText('Message Customize Coach');
   useEffect(() => {
@@ -59,6 +82,7 @@ export function CoachChat({
     abortRef.current = controller;
     const userId = crypto.randomUUID();
     const assistantId = crypto.randomUUID();
+    const responseLanguage = language?.language ?? 'en';
     setMessages((prev) => [...prev, { id: userId, role: "user", parts: [{ type: "text", text }] }]);
     setDraft("");
     setError("");
@@ -113,6 +137,7 @@ export function CoachChat({
                     {
                       id: assistantId,
                       role: "assistant",
+                      metadata: { language: responseLanguage },
                       parts: [{ type: "text", text: event.text }],
                     },
                   ];
@@ -160,7 +185,7 @@ export function CoachChat({
                     variant="outline"
                     className="h-auto max-w-full whitespace-normal py-2 text-left"
                     onClick={() => {
-                      setDraft(s);
+                      setDraft(language?.text(s) ?? s);
                       textarea.current?.focus({ preventScroll: true });
                     }}
                   >
@@ -179,19 +204,17 @@ export function CoachChat({
                     : "w-full"
                 }
               >
-                <OriginalText>
                 {message.parts.map((part, i) =>
                   part.type === "text" ? (
                     message.role === "assistant" ? (
-                      <MessageResponse key={i}>{part.text}</MessageResponse>
+                      <AssistantResponse key={i} text={part.text} originalLanguage={messageLanguage(message)} streaming={busy && message.id === messages.at(-1)?.id} />
                     ) : (
-                      <p key={i} className="whitespace-pre-wrap break-words">
+                      <OriginalText key={i}><p className="whitespace-pre-wrap break-words">
                         {part.text}
-                      </p>
+                      </p></OriginalText>
                     )
                   ) : null,
                 )}
-                </OriginalText>
               </MessageContent>
             </Message>
           ))}

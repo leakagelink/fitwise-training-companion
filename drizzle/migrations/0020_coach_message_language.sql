@@ -1,0 +1,2 @@
+ALTER TABLE public.coach_messages ADD COLUMN language_code text;
+COMMENT ON COLUMN public.coach_messages.language_code IS 'Language of the original assistant response; display translations never rewrite conversation history.';

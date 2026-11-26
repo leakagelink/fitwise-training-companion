@@ -1,5 +1,6 @@
 import { bootstrapTranslations } from './bootstrap';
 import { canTranslate, translationRequestLimits } from './model';
+import { canPersistTranslation } from './sources';
 
 export type TranslationResult = { source: string; translated: string };
 export type TranslationFetcher = (sources: string[]) => Promise<TranslationResult[]>;
@@ -31,7 +32,7 @@ export class TranslationStore {
   };
   request(source: string) {
     const key = source.trim();
-    if (this.disposed || this.language === 'en' || !canTranslate(key) || this.translations.has(key) || this.rendered.has(key) || this.inFlight.has(key) || this.failed.has(key)) return;
+    if (this.disposed || (this.language === 'en' && canPersistTranslation(key)) || !canTranslate(key) || this.translations.has(key) || this.rendered.has(key) || this.inFlight.has(key) || this.failed.has(key)) return;
     this.waiting.add(key);
     if (!this.timer && !this.active) this.timer = setTimeout(() => { this.timer = undefined; void this.flush(); }, 150);
   }
@@ -65,12 +66,21 @@ export class TranslationStore {
     this.failed.clear(); this.error = false; this.notify(); void this.flush();
   }
   async resolve(sources: string[]): Promise<string[]> {
-    const missing = sources.filter(source => canTranslate(source) && !this.translations.has(source.trim()));
-    if (this.language !== 'en' && missing.length) {
-      const result = await this.fetcher([...new Set(missing.map(s => s.trim()))]);
+    const missing = [...new Set(sources.filter(source => canTranslate(source) && !this.translations.has(source.trim()) && !this.rendered.has(source.trim()) && !(this.language === 'en' && canPersistTranslation(source))).map(source => source.trim()))];
+    for (let index = 0; index < missing.length;) {
+      const batch: string[] = [];
+      let size = 0;
+      while (index < missing.length && batch.length < translationRequestLimits.batch) {
+        const source = missing[index];
+        if (!source || size + source.length > translationRequestLimits.characters) break;
+        batch.push(source); size += source.length; index++;
+      }
+      if (!batch.length) break;
+      const result = await this.fetcher(batch);
       if (this.disposed) throw new Error('Language changed');
       for (const item of result) { this.translations.set(item.source, item.translated); this.rendered.add(item.translated); }
       this.notify();
+      if (batch.some(source => !this.translations.has(source))) throw new Error('Some translations were incomplete');
     }
     return sources.map(this.text);
   }

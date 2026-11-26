@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LANGUAGE_CODES, canTranslate, isLanguageCode, languageDirection, languageInstructions, languageName, needsLanguageChoice, translationKeepsValues } from '@/features/language/model';
 import { TranslationStore } from '@/features/language/store';
 import { translationInputSchema } from '@/features/language/language.functions';
+import { canPersistTranslation } from '@/features/language/sources';
 
 describe('Account language rules', () => {
   it('requires an explicit choice for a first login instead of silently choosing English', () => {
@@ -64,11 +65,23 @@ describe('Private translation cache', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
     store.dispose();
   });
-  it('English needs no translation request', async () => {
+  it('canonical English controls need no translation request', async () => {
     const fetcher = vi.fn(async () => []);
     const store = new TranslationStore('en', fetcher);
-    store.request('Dynamic label'); await store.flush();
+    store.request('Home'); await store.flush();
     expect(fetcher).not.toHaveBeenCalled();
+    store.dispose();
+  });
+  it('never persists user health content in the static translation cache', () => {
+    expect(canPersistTranslation('Home')).toBe(true);
+    expect(canPersistTranslation('Patient Test weighs 83 kg and has a shoulder injury')).toBe(false);
+    expect(canPersistTranslation('My private support note about User 123')).toBe(false);
+  });
+  it('can translate an older non-English answer back to English', async () => {
+    const fetcher = vi.fn(async (sources: string[]) => sources.map(source => ({ source, translated: 'Walk daily' })));
+    const store = new TranslationStore('en', fetcher);
+    expect(await store.resolve(['रोज़ टहलें'])).toEqual(['Walk daily']);
+    expect(fetcher).toHaveBeenCalledTimes(1);
     store.dispose();
   });
   it('does not translate already-rendered target text a second time', async () => {

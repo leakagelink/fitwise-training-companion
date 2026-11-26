@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { UIMessage } from "ai";
+import { isLanguageCode } from '@/features/language/model';
 
 export const bookingSchema = z
   .object({
@@ -12,12 +13,17 @@ export const bookingSchema = z
     message: "Choose an available appointment",
   });
 export const textPartsSchema = z.array(z.object({ type: z.literal("text"), text: z.string() }));
-export function toMessage(row: { id: string; role: string; parts: unknown }): UIMessage {
+export function toMessage(row: { id: string; role: string; parts: unknown; language_code?: string | null }): UIMessage {
   return {
     id: row.id,
     role: row.role === "assistant" ? "assistant" : "user",
     parts: textPartsSchema.parse(row.parts),
+    ...(isLanguageCode(row.language_code) ? { metadata: { language: row.language_code } } : {}),
   };
+}
+export function messageLanguage(message: UIMessage): string | null {
+  const result = z.object({ language: z.string() }).safeParse(message.metadata);
+  return result.success && isLanguageCode(result.data.language) ? result.data.language : null;
 }
 export function messageText(message: UIMessage): string {
   return message.parts

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { isLanguageCode, languageName, translationRequestLimits, translationKeepsValues } from './model';
 import type { TranslationResult } from './store';
+import { canPersistTranslation } from './sources';
 
 const codeSchema = z.string().refine(isLanguageCode, 'Choose a supported language');
 export const translationInputSchema = z.object({
@@ -28,14 +29,14 @@ export const translateAppText = createServerFn({ method: 'POST' }).middleware([r
     const preference = await db.from('account_languages').select('language_code').eq('user_id', context.userId).maybeSingle();
     if (preference.error || preference.data?.language_code !== data.language) throw new Error('Language changed. Refresh this screen.');
     const sources = [...new Set(data.sources)];
-    if (data.language === 'en') return sources.map(source => ({ source, translated: source }));
+    if (data.language === 'en' && sources.every(canPersistTranslation)) return sources.map(source => ({ source, translated: source }));
     const hashes = await Promise.all(sources.map(async source => {
       const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source));
       return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
     }));
     const cached = await db.from('language_translations').select('source_text,translated_text').eq('user_id', context.userId).eq('language_code', data.language).in('source_hash', hashes);
     if (cached.error) throw new Error('Could not load translations');
-    const values = new Map((cached.data ?? []).filter(row => translationKeepsValues(row.source_text, row.translated_text)).map(row => [row.source_text, row.translated_text]));
+    const values = new Map((cached.data ?? []).filter(row => canPersistTranslation(row.source_text) && translationKeepsValues(row.source_text, row.translated_text)).map(row => [row.source_text, row.translated_text]));
     const missing = sources.filter(source => !values.has(source));
     if (missing.length) {
       const { generateCoachObject } = await import('@/lib/ai/ai.server');
@@ -50,14 +51,15 @@ export const translateAppText = createServerFn({ method: 'POST' }).middleware([r
         const source = missing[item.id];
         if (source && !values.has(source) && translationKeepsValues(source, item.text)) values.set(source, item.text);
       }
-      if (missing.some(source => !values.has(source))) throw new Error('Some translations were incomplete. Please retry.');
       const rows = sources.flatMap((source, index) => {
         const translated = values.get(source);
         const hash = hashes[index];
-        return missing.includes(source) && translated && hash ? [{ user_id: context.userId, language_code: data.language, source_hash: hash, source_text: source, translated_text: translated }] : [];
+        return canPersistTranslation(source) && missing.includes(source) && translated && hash ? [{ user_id: context.userId, language_code: data.language, source_hash: hash, source_text: source, translated_text: translated }] : [];
       });
-      const saved = await db.from('language_translations').upsert(rows, { onConflict: 'user_id,language_code,source_hash' });
-      if (saved.error) throw new Error('Could not save translations');
+      if (rows.length) {
+        const saved = await db.from('language_translations').upsert(rows, { onConflict: 'user_id,language_code,source_hash' });
+        if (saved.error) throw new Error('Could not save translations');
+      }
     }
-    return sources.map(source => ({ source, translated: values.get(source) ?? source }));
+    return sources.flatMap(source => { const translated = values.get(source); return translated ? [{ source, translated }] : []; });
   });
