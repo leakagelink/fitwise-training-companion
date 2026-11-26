@@ -8,7 +8,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -20,6 +20,7 @@ import logoAsset from "@/assets/muscles-zone-logo.jpeg.asset.json";
 import { cancelNativeReminders } from "@/lib/native-reminders";
 import { NativeNavigation } from "@/components/native-navigation";
 import { ScreenEffects } from "@/components/screen-effects";
+import { LanguageProvider } from '@/features/language/provider';
 
 function NotFoundComponent() {
   return (
@@ -136,10 +137,12 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const [languageUserId, setLanguageUserId] = useState<string | null>();
 
   useEffect(() => {
     const syncIdentity = createCacheIdentityGuard(queryClient);
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      setLanguageUserId(session?.user.id ?? null);
       const changed = syncIdentity(session?.user.id ?? null);
       if (event !== "SIGNED_OUT" && event !== "USER_UPDATED" && !changed) return;
       // Another account must not receive the previous user's reminders on this phone.
@@ -155,8 +158,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <NativeNavigation />
       <ScreenEffects />
-      <div className="app-viewport"><Outlet /></div>
-      <Toaster position="top-center" />
+      <LanguageProvider userId={languageUserId}>
+        <div className="app-viewport"><Outlet /></div>
+        <Toaster position="top-center" />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

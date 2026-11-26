@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_languages: {
+        Row: {
+          language_code: string
+          selected_at: string
+          user_id: string
+        }
+        Insert: {
+          language_code: string
+          selected_at?: string
+          user_id: string
+        }
+        Update: {
+          language_code?: string
+          selected_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_languages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_activity: {
         Row: {
           action: string
@@ -435,6 +461,41 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "nutrition_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      language_translations: {
+        Row: {
+          created_at: string
+          language_code: string
+          source_hash: string
+          source_text: string
+          translated_text: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          language_code: string
+          source_hash: string
+          source_text: string
+          translated_text: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          language_code?: string
+          source_hash?: string
+          source_text?: string
+          translated_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "language_translations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

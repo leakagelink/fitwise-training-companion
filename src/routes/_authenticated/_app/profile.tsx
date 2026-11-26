@@ -63,6 +63,7 @@ function Profile() {
         <Link to="/onboarding" className="block p-4">
           Edit fitness profile
         </Link>
+        <Button asChild variant="ghost" className="h-auto w-full justify-start p-4"><Link to="/language">Change language</Link></Button>
         <button onClick={toggleTheme} className="block w-full p-4 text-left">
           Toggle light / dark theme
         </button>
